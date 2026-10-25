@@ -422,4 +422,70 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get no => 'Nein';
+
+  @override
+  String get pinTitle => 'PIN-Code';
+
+  @override
+  String get pinIntro =>
+      'Die PIN wird bei jedem Öffnen der App abgefragt und nach einer Minute in einer anderen App. So kann niemand, der das Handy oder den PC nimmt, den Bestand sehen oder ändern.';
+
+  @override
+  String get pinCreate => 'PIN erstellen';
+
+  @override
+  String get pinChange => 'PIN ändern';
+
+  @override
+  String get pinRemove => 'PIN löschen';
+
+  @override
+  String get pinEnter => 'PIN eingeben';
+
+  @override
+  String get pinCurrent => 'Aktuelle PIN eingeben';
+
+  @override
+  String get pinNew => 'Code mit 4 bis 6 Ziffern wählen';
+
+  @override
+  String get pinConfirm => 'Denselben Code noch einmal eingeben';
+
+  @override
+  String get pinMismatch =>
+      'Die beiden Codes stimmen nicht überein. Bitte noch einmal.';
+
+  @override
+  String get pinSaved => 'PIN gespeichert';
+
+  @override
+  String get pinRemoved => 'PIN gelöscht';
+
+  @override
+  String get pinWrong => 'Falscher Code';
+
+  @override
+  String pinWait(int seconds) {
+    return 'Zu viele Versuche. In $seconds s erneut versuchen.';
+  }
+
+  @override
+  String get pinErase => 'Löschen';
+
+  @override
+  String pinDigits(int count) {
+    return '$count Ziffern eingegeben';
+  }
+
+  @override
+  String get pinForgot => 'PIN vergessen?';
+
+  @override
+  String get pinForgotNoAccount =>
+      'Ohne Sync-Konto kann die PIN hier nicht zurückgesetzt werden. Die App muss deinstalliert und neu installiert werden: Der lokale Bestand geht verloren, außer es gibt eine Sicherung.';
+
+  @override
+  String pinForgotWithAccount(String email) {
+    return 'Passwort des Kontos $email eingeben, um die PIN zu löschen.';
+  }
 }

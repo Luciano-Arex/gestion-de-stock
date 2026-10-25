@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../data/database.dart';
 import '../data/locale_controller.dart';
+import '../data/pin_lock.dart';
 import '../data/sync_controller.dart';
 import '../l10n/app_localizations.dart';
 import 'history_screen.dart';
@@ -13,11 +14,12 @@ import 'sync_screen.dart';
 
 /// Accueil : les deux actions du quotidien, en gros, et l'accès au stock.
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key, required this.db, this.sync, this.locale});
+  const HomeScreen({super.key, required this.db, this.sync, this.locale, this.pin});
 
   final AppDatabase db;
   final SyncController? sync;
   final LocaleController? locale;
+  final PinLock? pin;
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +47,7 @@ class HomeScreen extends StatelessWidget {
             tooltip: t.settings,
             icon: const Icon(Icons.settings_outlined),
             onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => SettingsScreen(db: db, locale: locale)),
+              MaterialPageRoute(builder: (_) => SettingsScreen(db: db, locale: locale, pin: pin)),
             ),
           ),
         ],

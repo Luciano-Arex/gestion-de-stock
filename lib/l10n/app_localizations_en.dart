@@ -422,4 +422,69 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get no => 'No';
+
+  @override
+  String get pinTitle => 'PIN code';
+
+  @override
+  String get pinIntro =>
+      'The PIN is asked every time the app opens, and after one minute in another app. It stops someone who picks up the phone or PC from seeing or changing the stock.';
+
+  @override
+  String get pinCreate => 'Create a PIN';
+
+  @override
+  String get pinChange => 'Change the PIN';
+
+  @override
+  String get pinRemove => 'Remove the PIN';
+
+  @override
+  String get pinEnter => 'Enter your PIN';
+
+  @override
+  String get pinCurrent => 'Enter the current PIN';
+
+  @override
+  String get pinNew => 'Choose a code with 4 to 6 digits';
+
+  @override
+  String get pinConfirm => 'Type the same code again';
+
+  @override
+  String get pinMismatch => 'The two codes don\'t match. Try again.';
+
+  @override
+  String get pinSaved => 'PIN saved';
+
+  @override
+  String get pinRemoved => 'PIN removed';
+
+  @override
+  String get pinWrong => 'Wrong code';
+
+  @override
+  String pinWait(int seconds) {
+    return 'Too many attempts. Try again in $seconds s.';
+  }
+
+  @override
+  String get pinErase => 'Delete';
+
+  @override
+  String pinDigits(int count) {
+    return '$count digits entered';
+  }
+
+  @override
+  String get pinForgot => 'Forgot your PIN?';
+
+  @override
+  String get pinForgotNoAccount =>
+      'Without a sync account, the PIN can\'t be reset here. You have to uninstall and reinstall the app: the local stock will be lost unless you have a backup.';
+
+  @override
+  String pinForgotWithAccount(String email) {
+    return 'Enter the password of the account $email to remove the PIN.';
+  }
 }

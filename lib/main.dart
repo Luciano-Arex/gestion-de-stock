@@ -5,10 +5,12 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'data/database.dart';
 import 'data/locale_controller.dart';
+import 'data/pin_lock.dart';
 import 'data/supabase_remote.dart';
 import 'data/sync_controller.dart';
 import 'l10n/app_localizations.dart';
 import 'screens/home_screen.dart';
+import 'screens/pin_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,17 +20,21 @@ Future<void> main() async {
   }
   final db = AppDatabase();
   final locale = await LocaleController.load(db);
-  runApp(StockApp(db: db, sync: SyncController(db), locale: locale));
+  final pin = PinLock(db);
+  await pin.load();
+  runApp(StockApp(db: db, sync: SyncController(db), locale: locale, pin: pin));
 }
 
 class StockApp extends StatelessWidget {
-  const StockApp({super.key, required this.db, this.sync, this.locale});
+  const StockApp({super.key, required this.db, this.sync, this.locale, this.pin});
 
   final AppDatabase db;
   // Absent dans les tests : l'appli fonctionne alors uniquement en local.
   final SyncController? sync;
   // Absent dans les tests : l'interface est alors en français.
   final LocaleController? locale;
+  // Absent dans les tests : pas de code PIN.
+  final PinLock? pin;
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +65,11 @@ class StockApp extends StatelessWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: AppLocalizations.supportedLocales,
-      home: HomeScreen(db: db, sync: sync, locale: this.locale),
+      builder: (context, child) => switch (pin) {
+        final pin? => PinGate(pin: pin, sync: sync, child: child!),
+        null => child!,
+      },
+      home: HomeScreen(db: db, sync: sync, locale: this.locale, pin: pin),
     );
   }
 }

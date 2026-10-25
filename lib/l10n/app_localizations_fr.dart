@@ -424,4 +424,69 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get no => 'Non';
+
+  @override
+  String get pinTitle => 'Code PIN';
+
+  @override
+  String get pinIntro =>
+      'Le code PIN est demandé à chaque ouverture de l\'appli, et après une minute passée sur une autre appli. Il empêche quelqu\'un qui prend le téléphone ou le PC de voir ou modifier le stock.';
+
+  @override
+  String get pinCreate => 'Créer un code PIN';
+
+  @override
+  String get pinChange => 'Changer le code PIN';
+
+  @override
+  String get pinRemove => 'Supprimer le code PIN';
+
+  @override
+  String get pinEnter => 'Entrez votre code PIN';
+
+  @override
+  String get pinCurrent => 'Entrez le code PIN actuel';
+
+  @override
+  String get pinNew => 'Choisissez un code de 4 à 6 chiffres';
+
+  @override
+  String get pinConfirm => 'Retapez le même code';
+
+  @override
+  String get pinMismatch => 'Les deux codes ne sont pas pareils. Recommencez.';
+
+  @override
+  String get pinSaved => 'Code PIN enregistré';
+
+  @override
+  String get pinRemoved => 'Code PIN supprimé';
+
+  @override
+  String get pinWrong => 'Code incorrect';
+
+  @override
+  String pinWait(int seconds) {
+    return 'Trop d\'essais. Réessayez dans $seconds s.';
+  }
+
+  @override
+  String get pinErase => 'Effacer';
+
+  @override
+  String pinDigits(int count) {
+    return '$count chiffres tapés';
+  }
+
+  @override
+  String get pinForgot => 'Code PIN oublié ?';
+
+  @override
+  String get pinForgotNoAccount =>
+      'Sans compte de synchronisation, le code ne peut pas être réinitialisé ici. Il faut désinstaller puis réinstaller l\'appli : le stock local sera perdu, sauf s\'il existe une sauvegarde.';
+
+  @override
+  String pinForgotWithAccount(String email) {
+    return 'Entrez le mot de passe du compte $email pour supprimer le code PIN.';
+  }
 }
