@@ -71,7 +71,7 @@ class _SyncScreenState extends State<SyncScreen> {
         title: Text(label),
         subtitle: last == null
             ? null
-            : Text(t.syncLast(DateFormat.yMd('fr').add_Hm().format(last))),
+            : Text(t.syncLast(DateFormat.yMd(Localizations.localeOf(context).toLanguageTag()).add_Hm().format(last))),
       ),
       if (widget.sync.account case final email?) Text(t.syncAccount(email)),
       const SizedBox(height: 24),

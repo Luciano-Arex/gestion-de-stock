@@ -12,7 +12,7 @@ import 'screens/home_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await initializeDateFormatting('fr');
+  await initializeDateFormatting();
   if (supabaseConfigured) {
     await Supabase.initialize(url: supabaseUrl, publishableKey: supabaseKey);
   }
