@@ -101,5 +101,34 @@
         "type": "String"
       }
     }
-  }
+  },
+  "sync": "Synchronisation",
+  "syncIntro": "Connecte le téléphone et le PC au même compte : ce que tu saisis sur l'un apparaît sur l'autre. Sans internet, l'appli continue de marcher et rattrape le retard dès que la connexion revient.",
+  "syncNotConfigured": "La synchronisation n'est pas encore activée dans cette version de l'appli.",
+  "syncSignedOut": "Pas connecté",
+  "syncIdle": "À jour",
+  "syncSyncing": "Synchronisation…",
+  "syncOffline": "Hors ligne, nouvel essai bientôt",
+  "syncLast": "Dernière synchronisation : {when}",
+  "@syncLast": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "syncAccount": "Compte : {email}",
+  "@syncAccount": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "email": "Adresse e-mail",
+  "password": "Mot de passe",
+  "signIn": "Se connecter",
+  "signOut": "Se déconnecter",
+  "signInError": "Connexion refusée. Vérifie l'adresse et le mot de passe.",
+  "syncNow": "Synchroniser maintenant"
 }

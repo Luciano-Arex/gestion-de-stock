@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 
 import '../data/database.dart';
+import '../data/sync_controller.dart';
 import '../l10n/app_localizations.dart';
 import 'backup_screen.dart';
 import 'movement_screen.dart';
 import 'stock_screen.dart';
+import 'sync_screen.dart';
 
 /// Accueil : les deux actions du quotidien, en gros, et l'accès au stock.
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key, required this.db});
+  const HomeScreen({super.key, required this.db, this.sync});
 
   final AppDatabase db;
+  final SyncController? sync;
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +22,21 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(t.appTitle),
         actions: [
+          if (sync case final sync?)
+            ListenableBuilder(
+              listenable: sync,
+              builder: (context, _) => IconButton(
+                tooltip: t.sync,
+                icon: Icon(switch (sync.status) {
+                  SyncStatus.idle => Icons.cloud_done_outlined,
+                  SyncStatus.syncing => Icons.sync,
+                  _ => Icons.cloud_off_outlined,
+                }),
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => SyncScreen(sync: sync)),
+                ),
+              ),
+            ),
           IconButton(
             tooltip: t.backup,
             icon: const Icon(Icons.save_outlined),

@@ -28,6 +28,8 @@ class Products extends Table {
   TextColumn get barcode => text().nullable()();
   BoolColumn get archived => boolean().withDefault(const Constant(false))();
   DateTimeColumn get updatedAt => dateTime().clientDefault(() => DateTime.now())();
+  // Date du dernier envoi au serveur. À renvoyer si `updatedAt` est plus récent.
+  DateTimeColumn get syncedAt => dateTime().nullable()();
 
   @override
   Set<Column> get primaryKey => {id};
@@ -45,11 +47,20 @@ class Movements extends Table {
   // Pour une correction : le mouvement qu'elle annule.
   TextColumn get cancelsId => text().nullable().references(Movements, #id)();
   DateTimeColumn get createdAt => dateTime().clientDefault(() => DateTime.now())();
-  // Rempli quand le mouvement a été envoyé au serveur (synchronisation, plus tard).
+  // Rempli quand le mouvement a été envoyé au serveur.
   DateTimeColumn get syncedAt => dateTime().nullable()();
 
   @override
   Set<Column> get primaryKey => {id};
+}
+
+/// Petites valeurs persistantes (ex. où en est la synchronisation).
+class Settings extends Table {
+  TextColumn get key => text()();
+  TextColumn get value => text()();
+
+  @override
+  Set<Column> get primaryKey => {key};
 }
 
 /// Levée quand une sortie dépasse la quantité disponible.
@@ -72,7 +83,7 @@ class StockLine {
   bool get isLow => !isOut && quantity <= product.alertThreshold;
 }
 
-@DriftDatabase(tables: [Products, Movements])
+@DriftDatabase(tables: [Products, Movements, Settings])
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor]) : super(executor ?? _openDefault());
 
@@ -108,6 +119,28 @@ class AppDatabase extends _$AppDatabase {
     return (update(products)..where((p) => p.id.equals(productId))).write(
       ProductsCompanion(archived: const Value(true), updatedAt: Value(DateTime.now())),
     );
+  }
+
+  /// Produits modifiés ici depuis le dernier envoi au serveur.
+  SimpleSelectStatement<$ProductsTable, Product> pendingProducts() =>
+      select(products)..where((p) => p.syncedAt.isNull() | p.updatedAt.isBiggerThan(p.syncedAt));
+
+  /// Mouvements pas encore envoyés, du plus ancien au plus récent.
+  SimpleSelectStatement<$MovementsTable, Movement> pendingMovements() => select(movements)
+    ..where((m) => m.syncedAt.isNull())
+    ..orderBy([(m) => OrderingTerm.asc(m.createdAt)]);
+
+  Future<bool> hasPendingChanges() async =>
+      (await (pendingProducts()..limit(1)).get()).isNotEmpty ||
+      (await (pendingMovements()..limit(1)).get()).isNotEmpty;
+
+  Future<String?> readSetting(String key) async {
+    final row = await (select(settings)..where((s) => s.key.equals(key))).getSingleOrNull();
+    return row?.value;
+  }
+
+  Future<void> writeSetting(String key, String value) {
+    return into(settings).insertOnConflictUpdate(Setting(key: key, value: value));
   }
 
   Future<int> stockOf(String productId) async {

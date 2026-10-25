@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "de.gestionstock" "\0"
-            VALUE "FileDescription", "gestion_stock" "\0"
+            VALUE "FileDescription", "Mon stock" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "gestion_stock" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2026 de.gestionstock. All rights reserved." "\0"
             VALUE "OriginalFilename", "gestion_stock.exe" "\0"
-            VALUE "ProductName", "gestion_stock" "\0"
+            VALUE "ProductName", "Mon stock" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

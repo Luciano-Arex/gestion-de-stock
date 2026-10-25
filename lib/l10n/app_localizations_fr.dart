@@ -178,4 +178,56 @@ class AppLocalizationsFr extends AppLocalizations {
   String backupError(String reason) {
     return 'Impossible de lire ce fichier : $reason';
   }
+
+  @override
+  String get sync => 'Synchronisation';
+
+  @override
+  String get syncIntro =>
+      'Connecte le téléphone et le PC au même compte : ce que tu saisis sur l\'un apparaît sur l\'autre. Sans internet, l\'appli continue de marcher et rattrape le retard dès que la connexion revient.';
+
+  @override
+  String get syncNotConfigured =>
+      'La synchronisation n\'est pas encore activée dans cette version de l\'appli.';
+
+  @override
+  String get syncSignedOut => 'Pas connecté';
+
+  @override
+  String get syncIdle => 'À jour';
+
+  @override
+  String get syncSyncing => 'Synchronisation…';
+
+  @override
+  String get syncOffline => 'Hors ligne, nouvel essai bientôt';
+
+  @override
+  String syncLast(String when) {
+    return 'Dernière synchronisation : $when';
+  }
+
+  @override
+  String syncAccount(String email) {
+    return 'Compte : $email';
+  }
+
+  @override
+  String get email => 'Adresse e-mail';
+
+  @override
+  String get password => 'Mot de passe';
+
+  @override
+  String get signIn => 'Se connecter';
+
+  @override
+  String get signOut => 'Se déconnecter';
+
+  @override
+  String get signInError =>
+      'Connexion refusée. Vérifie l\'adresse et le mot de passe.';
+
+  @override
+  String get syncNow => 'Synchroniser maintenant';
 }

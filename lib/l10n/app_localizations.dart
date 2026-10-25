@@ -399,6 +399,96 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Impossible de lire ce fichier : {reason}'**
   String backupError(String reason);
+
+  /// No description provided for @sync.
+  ///
+  /// In fr, this message translates to:
+  /// **'Synchronisation'**
+  String get sync;
+
+  /// No description provided for @syncIntro.
+  ///
+  /// In fr, this message translates to:
+  /// **'Connecte le téléphone et le PC au même compte : ce que tu saisis sur l\'un apparaît sur l\'autre. Sans internet, l\'appli continue de marcher et rattrape le retard dès que la connexion revient.'**
+  String get syncIntro;
+
+  /// No description provided for @syncNotConfigured.
+  ///
+  /// In fr, this message translates to:
+  /// **'La synchronisation n\'est pas encore activée dans cette version de l\'appli.'**
+  String get syncNotConfigured;
+
+  /// No description provided for @syncSignedOut.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pas connecté'**
+  String get syncSignedOut;
+
+  /// No description provided for @syncIdle.
+  ///
+  /// In fr, this message translates to:
+  /// **'À jour'**
+  String get syncIdle;
+
+  /// No description provided for @syncSyncing.
+  ///
+  /// In fr, this message translates to:
+  /// **'Synchronisation…'**
+  String get syncSyncing;
+
+  /// No description provided for @syncOffline.
+  ///
+  /// In fr, this message translates to:
+  /// **'Hors ligne, nouvel essai bientôt'**
+  String get syncOffline;
+
+  /// No description provided for @syncLast.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dernière synchronisation : {when}'**
+  String syncLast(String when);
+
+  /// No description provided for @syncAccount.
+  ///
+  /// In fr, this message translates to:
+  /// **'Compte : {email}'**
+  String syncAccount(String email);
+
+  /// No description provided for @email.
+  ///
+  /// In fr, this message translates to:
+  /// **'Adresse e-mail'**
+  String get email;
+
+  /// No description provided for @password.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mot de passe'**
+  String get password;
+
+  /// No description provided for @signIn.
+  ///
+  /// In fr, this message translates to:
+  /// **'Se connecter'**
+  String get signIn;
+
+  /// No description provided for @signOut.
+  ///
+  /// In fr, this message translates to:
+  /// **'Se déconnecter'**
+  String get signOut;
+
+  /// No description provided for @signInError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Connexion refusée. Vérifie l\'adresse et le mot de passe.'**
+  String get signInError;
+
+  /// No description provided for @syncNow.
+  ///
+  /// In fr, this message translates to:
+  /// **'Synchroniser maintenant'**
+  String get syncNow;
 }
 
 class _AppLocalizationsDelegate
