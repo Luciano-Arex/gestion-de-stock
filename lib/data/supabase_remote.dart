@@ -4,8 +4,17 @@ import 'sync.dart';
 
 /// Adresse et clé publique du projet Supabase, fournies à la compilation :
 /// `flutter build apk --dart-define=SUPABASE_URL=… --dart-define=SUPABASE_KEY=…`
-const supabaseUrl = String.fromEnvironment('SUPABASE_URL');
+final supabaseUrl = projectUrl(const String.fromEnvironment('SUPABASE_URL'));
 const supabaseKey = String.fromEnvironment('SUPABASE_KEY');
+
+/// Ne garde que `https://xxxx.supabase.co`. Le tableau de bord affiche aussi
+/// des adresses comme `…supabase.co/rest/v1/` ; collées telles quelles, toutes
+/// les requêtes partiraient vers un mauvais chemin (« Invalid path »).
+String projectUrl(String raw) {
+  final url = Uri.tryParse(raw.trim());
+  if (url == null || !url.hasScheme || url.host.isEmpty) return raw.trim();
+  return url.origin;
+}
 bool get supabaseConfigured => supabaseUrl.isNotEmpty && supabaseKey.isNotEmpty;
 
 /// Tables décrites dans `supabase/schema.sql`.
