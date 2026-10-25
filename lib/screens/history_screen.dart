@@ -62,6 +62,12 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 builder: (_) => ProductFormScreen(db: widget.db, product: product),
               )),
             ),
+          if (product != null)
+            IconButton(
+              tooltip: t.deleteProduct,
+              icon: const Icon(Icons.delete_outline),
+              onPressed: () => deleteProductWithConfirmation(context, widget.db, product),
+            ),
         ],
       ),
       body: Column(

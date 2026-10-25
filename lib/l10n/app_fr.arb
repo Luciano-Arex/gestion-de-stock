@@ -376,5 +376,33 @@
       }
     }
   },
-  "typeAdjustment": "Inventaire"
+  "typeAdjustment": "Inventaire",
+  "deleteProduct": "Supprimer le produit",
+  "deleteProductTitle": "Supprimer {name} ?",
+  "@deleteProductTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteProductConfirm": "Le produit disparaîtra du stock, de l'historique et des rapports, sur tous tes appareils.\n\nSi tu ne le vends plus mais veux garder une trace de ses ventes, archive-le plutôt.",
+  "archiveInstead": "Archiver plutôt",
+  "delete": "Supprimer",
+  "productDeleted": "{name} a été supprimé",
+  "@productDeleted": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "productArchived": "{name} a été archivé",
+  "@productArchived": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  }
 }

@@ -49,6 +49,9 @@ class Products extends Table {
   IntColumn get alertThreshold => integer().withDefault(const Constant(0))();
   TextColumn get barcode => text().nullable()();
   BoolColumn get archived => boolean().withDefault(const Constant(false))();
+  // Supprimé par l'utilisateur. La ligne reste pour que la suppression se
+  // synchronise et que les mouvements gardent leur produit.
+  BoolColumn get deleted => boolean().withDefault(const Constant(false))();
   DateTimeColumn get updatedAt => dateTime().clientDefault(() => DateTime.now())();
   // Date du dernier envoi au serveur. À renvoyer si `updatedAt` est plus récent.
   DateTimeColumn get syncedAt => dateTime().nullable()();
@@ -145,7 +148,7 @@ class AppDatabase extends _$AppDatabase {
   final String defaultCategoryName;
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -164,6 +167,8 @@ class AppDatabase extends _$AppDatabase {
               Category.autre: 'Autre',
             });
           }
+          // v3 : suppression de produits.
+          if (from < 3) await m.addColumn(products, products.deleted);
         },
       );
 
@@ -249,6 +254,18 @@ class AppDatabase extends _$AppDatabase {
   Future<void> restoreProduct(String productId) {
     return (update(products)..where((p) => p.id.equals(productId))).write(
       ProductsCompanion(archived: const Value(false), updatedAt: Value(DateTime.now())),
+    );
+  }
+
+  /// Supprime un produit : il disparaît du stock, de l'historique et des
+  /// rapports, sur tous les appareils. [undeleteProduct] le fait revenir.
+  Future<void> deleteProduct(String productId) => _setDeleted(productId, true);
+
+  Future<void> undeleteProduct(String productId) => _setDeleted(productId, false);
+
+  Future<void> _setDeleted(String productId, bool deleted) {
+    return (update(products)..where((p) => p.id.equals(productId))).write(
+      ProductsCompanion(deleted: Value(deleted), updatedAt: Value(DateTime.now())),
     );
   }
 
@@ -353,6 +370,7 @@ class AppDatabase extends _$AppDatabase {
       innerJoin(products, products.id.equalsExp(movements.productId)),
       leftOuterJoin(cancellation, cancellation.cancelsId.equalsExp(movements.id)),
     ])
+      ..where(products.deleted.equals(false))
       ..orderBy([OrderingTerm.desc(movements.createdAt)])
       ..limit(limit);
     if (productId != null) query.where(movements.productId.equals(productId));
@@ -394,8 +412,11 @@ class AppDatabase extends _$AppDatabase {
     ).sum();
     final cancelled = existsQuery(select(c)..where((c) => c.cancelsId.equalsExp(m.id)));
     final query = selectOnly(m)
+      ..join([innerJoin(products, products.id.equalsExp(m.productId), useColumns: false)])
       ..addColumns([entered, removed])
-      ..where(m.type.equalsValue(MovementType.correction).not() & cancelled.not());
+      ..where(m.type.equalsValue(MovementType.correction).not() &
+          cancelled.not() &
+          products.deleted.equals(false));
     if (productId != null) query.where(m.productId.equals(productId));
     if (since != null) query.where(m.createdAt.isBiggerOrEqualValue(since));
     return query.watchSingle().map(
@@ -444,7 +465,7 @@ class AppDatabase extends _$AppDatabase {
       leftOuterJoin(movements, movements.productId.equalsExp(products.id)),
     ])
       ..addColumns([total])
-      ..where(products.archived.equals(archived))
+      ..where(products.archived.equals(archived) & products.deleted.equals(false))
       ..groupBy([products.id])
       ..orderBy([
         switch (sort) {

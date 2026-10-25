@@ -30,9 +30,13 @@ create table if not exists products (
   alert_threshold integer not null default 0,
   barcode text,
   archived boolean not null default false,
+  deleted boolean not null default false,
   updated_at timestamptz not null,
   seq bigint not null default nextval('sync_seq')
 );
+
+-- Mise à jour : suppression de produits (la ligne reste, marquée supprimée).
+alter table products add column if not exists deleted boolean not null default false;
 
 create table if not exists movements (
   owner_id uuid not null default auth.uid() references auth.users (id) on delete cascade,
@@ -107,7 +111,8 @@ create trigger categories_keep_latest before update on categories
 -- Ancien nom de la fonction (version 1 du schéma).
 drop function if exists products_keep_latest();
 
--- Chaque compte ne voit et ne modifie que ses propres lignes. Pas de suppression : on archive.
+-- Chaque compte ne voit et ne modifie que ses propres lignes. Pas d'effacement réel :
+-- un produit supprimé est marqué (deleted) pour que les autres appareils le sachent.
 alter table categories enable row level security;
 alter table products enable row level security;
 alter table movements enable row level security;

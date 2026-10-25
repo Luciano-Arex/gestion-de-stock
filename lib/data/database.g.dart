@@ -475,6 +475,21 @@ class $ProductsTable extends Products with TableInfo<$ProductsTable, Product> {
     ),
     defaultValue: const Constant(false),
   );
+  static const VerificationMeta _deletedMeta = const VerificationMeta(
+    'deleted',
+  );
+  @override
+  late final GeneratedColumn<bool> deleted = GeneratedColumn<bool>(
+    'deleted',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("deleted" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
   static const VerificationMeta _updatedAtMeta = const VerificationMeta(
     'updatedAt',
   );
@@ -509,6 +524,7 @@ class $ProductsTable extends Products with TableInfo<$ProductsTable, Product> {
     alertThreshold,
     barcode,
     archived,
+    deleted,
     updatedAt,
     syncedAt,
   ];
@@ -588,6 +604,12 @@ class $ProductsTable extends Products with TableInfo<$ProductsTable, Product> {
         archived.isAcceptableOrUnknown(data['archived']!, _archivedMeta),
       );
     }
+    if (data.containsKey('deleted')) {
+      context.handle(
+        _deletedMeta,
+        deleted.isAcceptableOrUnknown(data['deleted']!, _deletedMeta),
+      );
+    }
     if (data.containsKey('updated_at')) {
       context.handle(
         _updatedAtMeta,
@@ -645,6 +667,10 @@ class $ProductsTable extends Products with TableInfo<$ProductsTable, Product> {
         DriftSqlType.bool,
         data['${effectivePrefix}archived'],
       )!,
+      deleted: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}deleted'],
+      )!,
       updatedAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}updated_at'],
@@ -672,6 +698,7 @@ class Product extends DataClass implements Insertable<Product> {
   final int alertThreshold;
   final String? barcode;
   final bool archived;
+  final bool deleted;
   final DateTime updatedAt;
   final DateTime? syncedAt;
   const Product({
@@ -684,6 +711,7 @@ class Product extends DataClass implements Insertable<Product> {
     required this.alertThreshold,
     this.barcode,
     required this.archived,
+    required this.deleted,
     required this.updatedAt,
     this.syncedAt,
   });
@@ -705,6 +733,7 @@ class Product extends DataClass implements Insertable<Product> {
       map['barcode'] = Variable<String>(barcode);
     }
     map['archived'] = Variable<bool>(archived);
+    map['deleted'] = Variable<bool>(deleted);
     map['updated_at'] = Variable<DateTime>(updatedAt);
     if (!nullToAbsent || syncedAt != null) {
       map['synced_at'] = Variable<DateTime>(syncedAt);
@@ -729,6 +758,7 @@ class Product extends DataClass implements Insertable<Product> {
           ? const Value.absent()
           : Value(barcode),
       archived: Value(archived),
+      deleted: Value(deleted),
       updatedAt: Value(updatedAt),
       syncedAt: syncedAt == null && nullToAbsent
           ? const Value.absent()
@@ -751,6 +781,7 @@ class Product extends DataClass implements Insertable<Product> {
       alertThreshold: serializer.fromJson<int>(json['alertThreshold']),
       barcode: serializer.fromJson<String?>(json['barcode']),
       archived: serializer.fromJson<bool>(json['archived']),
+      deleted: serializer.fromJson<bool>(json['deleted']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
       syncedAt: serializer.fromJson<DateTime?>(json['syncedAt']),
     );
@@ -768,6 +799,7 @@ class Product extends DataClass implements Insertable<Product> {
       'alertThreshold': serializer.toJson<int>(alertThreshold),
       'barcode': serializer.toJson<String?>(barcode),
       'archived': serializer.toJson<bool>(archived),
+      'deleted': serializer.toJson<bool>(deleted),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
       'syncedAt': serializer.toJson<DateTime?>(syncedAt),
     };
@@ -783,6 +815,7 @@ class Product extends DataClass implements Insertable<Product> {
     int? alertThreshold,
     Value<String?> barcode = const Value.absent(),
     bool? archived,
+    bool? deleted,
     DateTime? updatedAt,
     Value<DateTime?> syncedAt = const Value.absent(),
   }) => Product(
@@ -799,6 +832,7 @@ class Product extends DataClass implements Insertable<Product> {
     alertThreshold: alertThreshold ?? this.alertThreshold,
     barcode: barcode.present ? barcode.value : this.barcode,
     archived: archived ?? this.archived,
+    deleted: deleted ?? this.deleted,
     updatedAt: updatedAt ?? this.updatedAt,
     syncedAt: syncedAt.present ? syncedAt.value : this.syncedAt,
   );
@@ -821,6 +855,7 @@ class Product extends DataClass implements Insertable<Product> {
           : this.alertThreshold,
       barcode: data.barcode.present ? data.barcode.value : this.barcode,
       archived: data.archived.present ? data.archived.value : this.archived,
+      deleted: data.deleted.present ? data.deleted.value : this.deleted,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       syncedAt: data.syncedAt.present ? data.syncedAt.value : this.syncedAt,
     );
@@ -838,6 +873,7 @@ class Product extends DataClass implements Insertable<Product> {
           ..write('alertThreshold: $alertThreshold, ')
           ..write('barcode: $barcode, ')
           ..write('archived: $archived, ')
+          ..write('deleted: $deleted, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('syncedAt: $syncedAt')
           ..write(')'))
@@ -855,6 +891,7 @@ class Product extends DataClass implements Insertable<Product> {
     alertThreshold,
     barcode,
     archived,
+    deleted,
     updatedAt,
     syncedAt,
   );
@@ -871,6 +908,7 @@ class Product extends DataClass implements Insertable<Product> {
           other.alertThreshold == this.alertThreshold &&
           other.barcode == this.barcode &&
           other.archived == this.archived &&
+          other.deleted == this.deleted &&
           other.updatedAt == this.updatedAt &&
           other.syncedAt == this.syncedAt);
 }
@@ -885,6 +923,7 @@ class ProductsCompanion extends UpdateCompanion<Product> {
   final Value<int> alertThreshold;
   final Value<String?> barcode;
   final Value<bool> archived;
+  final Value<bool> deleted;
   final Value<DateTime> updatedAt;
   final Value<DateTime?> syncedAt;
   final Value<int> rowid;
@@ -898,6 +937,7 @@ class ProductsCompanion extends UpdateCompanion<Product> {
     this.alertThreshold = const Value.absent(),
     this.barcode = const Value.absent(),
     this.archived = const Value.absent(),
+    this.deleted = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.syncedAt = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -912,6 +952,7 @@ class ProductsCompanion extends UpdateCompanion<Product> {
     this.alertThreshold = const Value.absent(),
     this.barcode = const Value.absent(),
     this.archived = const Value.absent(),
+    this.deleted = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.syncedAt = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -927,6 +968,7 @@ class ProductsCompanion extends UpdateCompanion<Product> {
     Expression<int>? alertThreshold,
     Expression<String>? barcode,
     Expression<bool>? archived,
+    Expression<bool>? deleted,
     Expression<DateTime>? updatedAt,
     Expression<DateTime>? syncedAt,
     Expression<int>? rowid,
@@ -942,6 +984,7 @@ class ProductsCompanion extends UpdateCompanion<Product> {
       if (alertThreshold != null) 'alert_threshold': alertThreshold,
       if (barcode != null) 'barcode': barcode,
       if (archived != null) 'archived': archived,
+      if (deleted != null) 'deleted': deleted,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (syncedAt != null) 'synced_at': syncedAt,
       if (rowid != null) 'rowid': rowid,
@@ -958,6 +1001,7 @@ class ProductsCompanion extends UpdateCompanion<Product> {
     Value<int>? alertThreshold,
     Value<String?>? barcode,
     Value<bool>? archived,
+    Value<bool>? deleted,
     Value<DateTime>? updatedAt,
     Value<DateTime?>? syncedAt,
     Value<int>? rowid,
@@ -972,6 +1016,7 @@ class ProductsCompanion extends UpdateCompanion<Product> {
       alertThreshold: alertThreshold ?? this.alertThreshold,
       barcode: barcode ?? this.barcode,
       archived: archived ?? this.archived,
+      deleted: deleted ?? this.deleted,
       updatedAt: updatedAt ?? this.updatedAt,
       syncedAt: syncedAt ?? this.syncedAt,
       rowid: rowid ?? this.rowid,
@@ -1008,6 +1053,9 @@ class ProductsCompanion extends UpdateCompanion<Product> {
     if (archived.present) {
       map['archived'] = Variable<bool>(archived.value);
     }
+    if (deleted.present) {
+      map['deleted'] = Variable<bool>(deleted.value);
+    }
     if (updatedAt.present) {
       map['updated_at'] = Variable<DateTime>(updatedAt.value);
     }
@@ -1032,6 +1080,7 @@ class ProductsCompanion extends UpdateCompanion<Product> {
           ..write('alertThreshold: $alertThreshold, ')
           ..write('barcode: $barcode, ')
           ..write('archived: $archived, ')
+          ..write('deleted: $deleted, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('syncedAt: $syncedAt, ')
           ..write('rowid: $rowid')
@@ -2056,6 +2105,7 @@ typedef $$ProductsTableCreateCompanionBuilder = ProductsCompanion Function({
   Value<int> alertThreshold,
   Value<String?> barcode,
   Value<bool> archived,
+  Value<bool> deleted,
   Value<DateTime> updatedAt,
   Value<DateTime?> syncedAt,
   Value<int> rowid,
@@ -2070,6 +2120,7 @@ typedef $$ProductsTableUpdateCompanionBuilder = ProductsCompanion Function({
   Value<int> alertThreshold,
   Value<String?> barcode,
   Value<bool> archived,
+  Value<bool> deleted,
   Value<DateTime> updatedAt,
   Value<DateTime?> syncedAt,
   Value<int> rowid,
@@ -2149,6 +2200,11 @@ class $$ProductsTableFilterComposer
 
   ColumnFilters<bool> get archived => $composableBuilder(
     column: $table.archived,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get deleted => $composableBuilder(
+    column: $table.deleted,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -2242,6 +2298,11 @@ class $$ProductsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<bool> get deleted => $composableBuilder(
+    column: $table.deleted,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
     column: $table.updatedAt,
     builder: (column) => ColumnOrderings(column),
@@ -2296,6 +2357,9 @@ class $$ProductsTableAnnotationComposer
 
   GeneratedColumn<bool> get archived =>
       $composableBuilder(column: $table.archived, builder: (column) => column);
+
+  GeneratedColumn<bool> get deleted =>
+      $composableBuilder(column: $table.deleted, builder: (column) => column);
 
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
@@ -2366,6 +2430,7 @@ class $$ProductsTableTableManager
                 Value<int> alertThreshold = const Value.absent(),
                 Value<String?> barcode = const Value.absent(),
                 Value<bool> archived = const Value.absent(),
+                Value<bool> deleted = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<DateTime?> syncedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
@@ -2379,6 +2444,7 @@ class $$ProductsTableTableManager
                 alertThreshold: alertThreshold,
                 barcode: barcode,
                 archived: archived,
+                deleted: deleted,
                 updatedAt: updatedAt,
                 syncedAt: syncedAt,
                 rowid: rowid,
@@ -2394,6 +2460,7 @@ class $$ProductsTableTableManager
                 Value<int> alertThreshold = const Value.absent(),
                 Value<String?> barcode = const Value.absent(),
                 Value<bool> archived = const Value.absent(),
+                Value<bool> deleted = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<DateTime?> syncedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
@@ -2407,6 +2474,7 @@ class $$ProductsTableTableManager
                 alertThreshold: alertThreshold,
                 barcode: barcode,
                 archived: archived,
+                deleted: deleted,
                 updatedAt: updatedAt,
                 syncedAt: syncedAt,
                 rowid: rowid,

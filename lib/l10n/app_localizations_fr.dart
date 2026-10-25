@@ -694,4 +694,32 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get typeAdjustment => 'Inventaire';
+
+  @override
+  String get deleteProduct => 'Supprimer le produit';
+
+  @override
+  String deleteProductTitle(String name) {
+    return 'Supprimer $name ?';
+  }
+
+  @override
+  String get deleteProductConfirm =>
+      'Le produit disparaîtra du stock, de l\'historique et des rapports, sur tous tes appareils.\n\nSi tu ne le vends plus mais veux garder une trace de ses ventes, archive-le plutôt.';
+
+  @override
+  String get archiveInstead => 'Archiver plutôt';
+
+  @override
+  String get delete => 'Supprimer';
+
+  @override
+  String productDeleted(String name) {
+    return '$name a été supprimé';
+  }
+
+  @override
+  String productArchived(String name) {
+    return '$name a été archivé';
+  }
 }

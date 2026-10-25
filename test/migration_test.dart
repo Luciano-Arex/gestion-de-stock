@@ -22,6 +22,18 @@ const _v1Schema = [
   'PRAGMA user_version = 1',
 ];
 
+/// Version 2 : les catégories en plus, pas encore de suppression de produits.
+final _v2Schema = [
+  for (final sql in _v1Schema)
+    if (!sql.startsWith('PRAGMA')) sql,
+  '''CREATE TABLE categories (id TEXT NOT NULL, name TEXT NOT NULL,
+     archived INTEGER NOT NULL DEFAULT 0, updated_at TEXT NOT NULL, synced_at TEXT NULL,
+     PRIMARY KEY (id))''',
+  """INSERT INTO categories (id, name, updated_at)
+     VALUES ('maillot', 'Maillots', '2000-01-01T00:00:00.000')""",
+  'PRAGMA user_version = 2',
+];
+
 void main() {
   setUpAll(() => driftRuntimeOptions.dontWarnAboutMultipleDatabases = true);
 
@@ -47,5 +59,20 @@ void main() {
     final categories = await db.watchCategories().first;
     expect(categories.single.id, Category.autre);
     expect(categories.single.name, 'Sonstiges');
+  });
+
+  test('passer de la version 2 à la 3 permet de supprimer un produit', () async {
+    final db = AppDatabase(NativeDatabase.memory(setup: (raw) {
+      for (final sql in _v2Schema) {
+        raw.execute(sql);
+      }
+    }));
+    addTearDown(db.close);
+
+    final ligne = (await db.watchStock().first).single;
+    expect(ligne.product.deleted, isFalse);
+    expect(ligne.quantity, 4);
+    await db.deleteProduct(ligne.product.id);
+    expect(await db.watchStock().first, isEmpty);
   });
 }

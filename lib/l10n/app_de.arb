@@ -200,5 +200,12 @@
   "countUnchanged": "Inventur {name}: Der Bestand stimmte",
   "lossDone": "{count} × {name} aus dem Lager genommen",
   "countDone": "{name}: Bestand auf {count} korrigiert",
-  "typeAdjustment": "Inventur"
+  "typeAdjustment": "Inventur",
+  "deleteProduct": "Artikel löschen",
+  "deleteProductTitle": "{name} löschen?",
+  "deleteProductConfirm": "Der Artikel verschwindet aus dem Lager, dem Verlauf und den Berichten, auf allen deinen Geräten.\n\nWenn du ihn nur nicht mehr verkaufst und seine Verkäufe behalten willst, archiviere ihn lieber.",
+  "archiveInstead": "Lieber archivieren",
+  "delete": "Löschen",
+  "productDeleted": "{name} wurde gelöscht",
+  "productArchived": "{name} wurde archiviert"
 }

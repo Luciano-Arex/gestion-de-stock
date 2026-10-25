@@ -58,4 +58,32 @@ void main() {
 
     await unmount(tester);
   });
+
+  testWidgets('supprimer un produit depuis sa fiche, puis annuler', (tester) async {
+    await tester.runAsync(() async {
+      await db.addProduct(name: 'Jus gingembre', category: Category.autre, initialQuantity: 5);
+    });
+
+    await tester.pumpWidget(StockApp(db: db));
+    await tester.pumpAndSettle();
+    await openTab(tester, 'Stock');
+    await tester.tap(find.text('Jus gingembre'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byTooltip('Supprimer le produit'));
+    await tester.pumpAndSettle();
+    expect(find.text('Supprimer Jus gingembre ?'), findsOneWidget);
+    expect(find.text('Archiver plutôt'), findsOneWidget);
+    await tester.tap(find.widgetWithText(FilledButton, 'Supprimer'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Jus gingembre a été supprimé'), findsOneWidget);
+    expect(find.text('Jus gingembre'), findsNothing);
+
+    await tester.tap(find.widgetWithText(SnackBarAction, 'Annuler'));
+    await tester.pumpAndSettle();
+    expect(find.text('Jus gingembre'), findsOneWidget);
+
+    await unmount(tester);
+  });
 }

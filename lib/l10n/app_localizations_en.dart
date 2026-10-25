@@ -691,4 +691,32 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get typeAdjustment => 'Stock count';
+
+  @override
+  String get deleteProduct => 'Delete product';
+
+  @override
+  String deleteProductTitle(String name) {
+    return 'Delete $name?';
+  }
+
+  @override
+  String get deleteProductConfirm =>
+      'The product will disappear from the stock, the history and the reports, on all your devices.\n\nIf you just stopped selling it and want to keep a record of its sales, archive it instead.';
+
+  @override
+  String get archiveInstead => 'Archive instead';
+
+  @override
+  String get delete => 'Delete';
+
+  @override
+  String productDeleted(String name) {
+    return '$name was deleted';
+  }
+
+  @override
+  String productArchived(String name) {
+    return '$name was archived';
+  }
 }

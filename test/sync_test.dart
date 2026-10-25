@@ -200,4 +200,32 @@ void main() {
     expect(noms, contains('Divers'));
     expect(noms, isNot(contains('Autre')));
   });
+
+  test('un produit supprimé sur le PC disparaît du téléphone', () async {
+    final p = await pc.addProduct(name: 'Jus bissap', category: Category.autre, initialQuantity: 3);
+    await SyncEngine(pc, server).sync();
+    await SyncEngine(phone, server).sync();
+    expect(await stock(phone), 3);
+
+    await pc.deleteProduct(p.id);
+    await SyncEngine(pc, server).sync();
+    await SyncEngine(phone, server).sync();
+    expect(await phone.watchStock().first, isEmpty);
+    expect(await phone.watchHistory().first, isEmpty);
+  });
+
+  test('une ligne venue d\'un appareil pas encore à jour n\'est pas supprimée', () {
+    final row = productToRow(Product(
+      id: 'p1',
+      name: 'Jus',
+      category: Category.autre,
+      attributes: '{}',
+      alertThreshold: 0,
+      archived: false,
+      deleted: false,
+      updatedAt: DateTime(2026, 10, 25),
+    ))
+      ..remove('deleted');
+    expect(productFromRow(row).deleted, isFalse);
+  });
 }
