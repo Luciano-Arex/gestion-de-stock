@@ -101,7 +101,7 @@ class ArchivedScreen extends StatelessWidget {
               return ListTile(
                 minTileHeight: 64,
                 title: Text(line.product.name),
-                subtitle: Text(t.quantity(line.quantity)),
+                subtitle: Text([?line.product.color, t.quantity(line.quantity)].join(' · ')),
                 onTap: () => Navigator.of(context).push(MaterialPageRoute(
                   builder: (_) => HistoryScreen(db: db, product: line.product),
                 )),
@@ -299,7 +299,7 @@ class _StockTile extends StatelessWidget {
       minTileHeight: 64,
       onTap: onTap,
       title: Text(line.product.name),
-      subtitle: Text(t.quantity(line.quantity)),
+      subtitle: Text([?line.product.color, t.quantity(line.quantity)].join(' · ')),
       trailing: status == null
           ? null
           : Row(

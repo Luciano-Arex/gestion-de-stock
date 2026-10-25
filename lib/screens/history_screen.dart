@@ -189,7 +189,7 @@ class _HistoryTile extends StatelessWidget {
       minTileHeight: 64,
       leading: Icon(icon),
       title: Text(
-        showProduct ? '$label · ${entry.product.name}' : label,
+        showProduct ? '$label · ${entry.product.displayName}' : label,
         style: strike,
       ),
       subtitle: Text(details.join('\n')),
@@ -308,6 +308,14 @@ class _ProductHeader extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(t.quantity(line.quantity), style: text.headlineMedium),
+                if (p.color case final color?)
+                  Row(
+                    children: [
+                      Icon(Icons.palette_outlined, size: 20, color: scheme.onSurfaceVariant),
+                      const SizedBox(width: 8),
+                      Text(color, style: text.titleMedium),
+                    ],
+                  ),
                 if (status != null)
                   Row(
                     children: [

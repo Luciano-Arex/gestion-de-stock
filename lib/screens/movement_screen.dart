@@ -151,7 +151,8 @@ class _QuantityStepState extends State<_QuantityStep> {
       children: [
         Text(widget.line.product.name, style: text.headlineSmall),
         const SizedBox(height: 4),
-        Text(t.quantity(widget.line.quantity), style: text.bodyLarge),
+        Text([?widget.line.product.color, t.quantity(widget.line.quantity)].join(' · '),
+            style: text.bodyLarge),
         const SizedBox(height: 32),
         Text(_counting ? t.countedQuestion : t.howMany, style: text.titleMedium),
         if (_counting) ...[

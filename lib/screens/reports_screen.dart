@@ -86,7 +86,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                   for (final s in report.byProduct.take(10))
                     ListTile(
                       contentPadding: EdgeInsets.zero,
-                      title: Text(s.product.name),
+                      title: Text(s.product.displayName),
                       trailing: Text(t.soldCount(s.units), style: text.titleMedium),
                     ),
                 ],

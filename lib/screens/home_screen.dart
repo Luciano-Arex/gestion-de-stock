@@ -25,7 +25,7 @@ Future<void> recordMovement(BuildContext context, AppDatabase db, MovementKind k
     MaterialPageRoute(builder: (_) => MovementScreen(db: db, kind: kind, product: product)),
   );
   if (result == null) return;
-  final name = result.product.name;
+  final name = result.product.displayName;
   final movement = result.movement;
   // Une seule confirmation à l'écran : la plus récente.
   messenger.hideCurrentSnackBar();

@@ -207,5 +207,8 @@
   "archiveInstead": "Lieber archivieren",
   "delete": "Löschen",
   "productDeleted": "{name} wurde gelöscht",
-  "productArchived": "{name} wurde archiviert"
+  "productArchived": "{name} wurde archiviert",
+  "color": "Farbe (optional)",
+  "colorHelp": "z. B. Schwarz, 1B, Blond 613, Rot-Weiß",
+  "colColor": "Farbe"
 }

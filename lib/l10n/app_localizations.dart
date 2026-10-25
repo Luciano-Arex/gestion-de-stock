@@ -1347,6 +1347,24 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'{name} a été archivé'**
   String productArchived(String name);
+
+  /// No description provided for @color.
+  ///
+  /// In fr, this message translates to:
+  /// **'Couleur (facultatif)'**
+  String get color;
+
+  /// No description provided for @colorHelp.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ex. : Noir, 1B, Blond 613, Rouge et blanc'**
+  String get colorHelp;
+
+  /// No description provided for @colColor.
+  ///
+  /// In fr, this message translates to:
+  /// **'Couleur'**
+  String get colColor;
 }
 
 class _AppLocalizationsDelegate

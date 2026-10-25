@@ -193,6 +193,7 @@ class ExportScreen extends StatelessWidget {
     final messenger = ScaffoldMessenger.of(context);
     final labels = CsvLabels(
       product: t.colProduct,
+      color: t.colColor,
       category: t.colCategory,
       quantity: t.colQuantity,
       threshold: t.colThreshold,

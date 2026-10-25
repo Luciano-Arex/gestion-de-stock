@@ -722,4 +722,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String productArchived(String name) {
     return '$name a été archivé';
   }
+
+  @override
+  String get color => 'Couleur (facultatif)';
+
+  @override
+  String get colorHelp => 'Ex. : Noir, 1B, Blond 613, Rouge et blanc';
+
+  @override
+  String get colColor => 'Couleur';
 }

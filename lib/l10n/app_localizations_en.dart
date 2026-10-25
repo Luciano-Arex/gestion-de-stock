@@ -719,4 +719,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String productArchived(String name) {
     return '$name was archived';
   }
+
+  @override
+  String get color => 'Colour (optional)';
+
+  @override
+  String get colorHelp => 'E.g. Black, 1B, Blonde 613, Red and white';
+
+  @override
+  String get colColor => 'Colour';
 }

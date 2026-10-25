@@ -404,5 +404,8 @@
         "type": "String"
       }
     }
-  }
+  },
+  "color": "Couleur (facultatif)",
+  "colorHelp": "Ex. : Noir, 1B, Blond 613, Rouge et blanc",
+  "colColor": "Couleur"
 }

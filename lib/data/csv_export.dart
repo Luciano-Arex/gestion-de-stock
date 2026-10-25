@@ -32,6 +32,7 @@ class CsvTable {
 class CsvLabels {
   const CsvLabels({
     required this.product,
+    required this.color,
     required this.category,
     required this.quantity,
     required this.threshold,
@@ -47,18 +48,19 @@ class CsvLabels {
     required this.typeName,
   });
 
-  final String product, category, quantity, threshold, purchasePrice, salePrice, barcode;
+  final String product, color, category, quantity, threshold, purchasePrice, salePrice, barcode;
   final String date, type, unitPrice, cancelled, yes, no;
   final String Function(MovementType) typeName;
 }
 
 CsvTable stockCsv(List<StockLine> lines, Map<String, String> categoryNames, CsvLabels l) {
   return CsvTable(
-    [l.product, l.category, l.quantity, l.threshold, l.purchasePrice, l.salePrice, l.barcode],
+    [l.product, l.color, l.category, l.quantity, l.threshold, l.purchasePrice, l.salePrice, l.barcode],
     [
       for (final line in lines)
         [
           line.product.name,
+          line.product.color ?? '',
           categoryNames[line.product.category] ?? '',
           '${line.quantity}',
           '${line.product.alertThreshold}',
