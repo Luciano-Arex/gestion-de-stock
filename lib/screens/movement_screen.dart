@@ -3,40 +3,65 @@ import 'package:flutter/services.dart';
 
 import '../data/database.dart';
 import '../l10n/app_localizations.dart';
+import '../util/money.dart';
 import 'product_form_screen.dart';
 import 'stock_screen.dart';
 
-enum MovementKind { receive, sell }
+/// Les saisies possibles : arrivage, vente, perte (casse, cadeau, usage perso)
+/// et inventaire (on compte, l'appli corrige l'écart).
+enum MovementKind { receive, sell, loss, count }
 
 /// Résultat d'une saisie, pour proposer « Annuler » sur l'accueil.
+///
+/// [movement] est null pour un inventaire où le compte était déjà juste.
 class MovementResult {
   MovementResult(this.movement, this.product, this.quantity);
-  final Movement movement;
+  final Movement? movement;
   final Product product;
   final int quantity;
 }
 
+/// Titre d'une saisie, repris sur l'accueil et sur la fiche produit.
+String movementTitle(AppLocalizations t, MovementKind kind) => switch (kind) {
+      MovementKind.receive => t.received,
+      MovementKind.sell => t.sold,
+      MovementKind.loss => t.lost,
+      MovementKind.count => t.stockCount,
+    };
+
+IconData movementIcon(MovementKind kind) => switch (kind) {
+      MovementKind.receive => Icons.move_to_inbox,
+      MovementKind.sell => Icons.sell,
+      MovementKind.loss => Icons.remove_circle_outline,
+      MovementKind.count => Icons.fact_check_outlined,
+    };
+
 /// Saisie en deux temps : quel produit, puis combien.
+///
+/// Avec [product], la saisie commence directement à la quantité.
 class MovementScreen extends StatefulWidget {
-  const MovementScreen({super.key, required this.db, required this.kind});
+  const MovementScreen({super.key, required this.db, required this.kind, this.product});
 
   final AppDatabase db;
   final MovementKind kind;
+  final StockLine? product;
 
   @override
   State<MovementScreen> createState() => _MovementScreenState();
 }
 
 class _MovementScreenState extends State<MovementScreen> {
-  StockLine? _selected;
+  late StockLine? _selected = widget.product;
 
   @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;
-    final title = widget.kind == MovementKind.receive ? t.received : t.sold;
+    final title = movementTitle(t, widget.kind);
     final selected = _selected;
     return PopScope(
-      canPop: selected == null,
+      // Retour depuis la quantité : on revient au choix du produit, sauf si
+      // le produit était donné d'avance.
+      canPop: selected == null || widget.product != null,
       onPopInvokedWithResult: (didPop, _) {
         if (!didPop) setState(() => _selected = null);
       },
@@ -63,7 +88,8 @@ class _MovementScreenState extends State<MovementScreen> {
 
   Future<void> _createProduct(String name) async {
     final product = await Navigator.of(context).push<Product>(MaterialPageRoute(
-      builder: (_) => ProductFormScreen(db: widget.db, initialName: name),
+      // La quantité se saisit à l'étape suivante.
+      builder: (_) => ProductFormScreen(db: widget.db, initialName: name, askQuantity: false),
     ));
     if (product != null && mounted) setState(() => _selected = StockLine(product, 0));
   }
@@ -81,20 +107,35 @@ class _QuantityStep extends StatefulWidget {
 }
 
 class _QuantityStepState extends State<_QuantityStep> {
-  final _quantity = TextEditingController(text: '1');
+  late final _quantity = TextEditingController(
+      text: widget.kind == MovementKind.count ? '${widget.line.quantity.clamp(0, 99999)}' : '1');
+  late final _price = TextEditingController(
+    text: formatCents(switch (widget.kind) {
+      MovementKind.receive => widget.line.product.purchasePriceCents,
+      MovementKind.sell => widget.line.product.salePriceCents,
+      _ => null,
+    }),
+  );
+  final _note = TextEditingController();
   String? _error;
+  String? _priceError;
   bool _saving = false;
+
+  bool get _counting => widget.kind == MovementKind.count;
+  bool get _hasPrice => widget.kind == MovementKind.receive || widget.kind == MovementKind.sell;
 
   @override
   void dispose() {
     _quantity.dispose();
+    _price.dispose();
+    _note.dispose();
     super.dispose();
   }
 
   int get _value => int.tryParse(_quantity.text) ?? 0;
 
   void _step(int delta) {
-    final next = (_value + delta).clamp(1, 99999);
+    final next = (_value + delta).clamp(_counting ? 0 : 1, 99999);
     setState(() {
       _quantity.text = '$next';
       _error = null;
@@ -112,7 +153,11 @@ class _QuantityStepState extends State<_QuantityStep> {
         const SizedBox(height: 4),
         Text(t.quantity(widget.line.quantity), style: text.bodyLarge),
         const SizedBox(height: 32),
-        Text(t.howMany, style: text.titleMedium),
+        Text(_counting ? t.countedQuestion : t.howMany, style: text.titleMedium),
+        if (_counting) ...[
+          const SizedBox(height: 4),
+          Text(t.countHelp, style: text.bodyMedium),
+        ],
         const SizedBox(height: 12),
         Row(
           children: [
@@ -132,10 +177,9 @@ class _QuantityStepState extends State<_QuantityStep> {
                 keyboardType: TextInputType.number,
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 decoration: InputDecoration(
-                  labelText: t.howMany,
+                  labelText: _counting ? t.countedQuantity : t.howMany,
                   errorText: _error,
                   errorMaxLines: 3,
-                  border: const OutlineInputBorder(),
                 ),
                 onChanged: (_) => setState(() => _error = null),
                 onSubmitted: (_) => _submit(),
@@ -150,11 +194,35 @@ class _QuantityStepState extends State<_QuantityStep> {
             ),
           ],
         ),
+        if (_hasPrice) ...[
+          const SizedBox(height: 24),
+          TextField(
+            controller: _price,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            decoration: InputDecoration(
+              labelText: t.unitPriceLabel,
+              helperText: widget.kind == MovementKind.sell ? t.unitPriceSellHelp : null,
+              suffixText: '€',
+              errorText: _priceError,
+            ),
+            onChanged: (_) => setState(() => _priceError = null),
+          ),
+        ],
+        const SizedBox(height: 16),
+        TextField(
+          controller: _note,
+          textCapitalization: TextCapitalization.sentences,
+          decoration: InputDecoration(
+            labelText: t.noteLabel,
+            helperText: widget.kind == MovementKind.loss ? t.lossNoteHelp : null,
+          ),
+        ),
         const SizedBox(height: 32),
         FilledButton(
           style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(64)),
           onPressed: _saving ? null : _submit,
-          child: Text(t.validate, style: text.titleLarge?.copyWith(color: Theme.of(context).colorScheme.onPrimary)),
+          child: Text(t.validate,
+              style: text.titleLarge?.copyWith(color: Theme.of(context).colorScheme.onPrimary)),
         ),
       ],
     );
@@ -163,16 +231,28 @@ class _QuantityStepState extends State<_QuantityStep> {
   Future<void> _submit() async {
     final t = AppLocalizations.of(context)!;
     final quantity = _value;
-    if (quantity <= 0) {
+    if (quantity <= 0 && !(_counting && _quantity.text.isNotEmpty)) {
       setState(() => _error = t.invalidQuantity);
       return;
     }
+    int? price;
+    try {
+      price = parseCents(_price.text);
+    } on FormatException {
+      setState(() => _priceError = t.invalidPrice);
+      return;
+    }
+    final note = _note.text.trim().isEmpty ? null : _note.text.trim();
     setState(() => _saving = true);
     final product = widget.line.product;
+    final db = widget.db;
     try {
-      final movement = widget.kind == MovementKind.receive
-          ? await widget.db.receive(product.id, quantity, unitPriceCents: product.purchasePriceCents)
-          : await widget.db.sell(product.id, quantity, unitPriceCents: product.salePriceCents);
+      final movement = switch (widget.kind) {
+        MovementKind.receive => await db.receive(product.id, quantity, unitPriceCents: price, note: note),
+        MovementKind.sell => await db.sell(product.id, quantity, unitPriceCents: price, note: note),
+        MovementKind.loss => await db.lose(product.id, quantity, note: note),
+        MovementKind.count => await db.adjustTo(product.id, quantity, note: note),
+      };
       if (mounted) Navigator.of(context).pop(MovementResult(movement, product, quantity));
     } on NotEnoughStock catch (e) {
       setState(() {

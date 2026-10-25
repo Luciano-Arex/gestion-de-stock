@@ -6,7 +6,10 @@ part 'database.g.dart';
 
 const _uuid = Uuid();
 
-/// Identifiants des catégories créées à l'installation. Les autres sont des UUID.
+/// Identifiants des catégories des premières versions. Les autres sont des UUID.
+///
+/// Un nouveau stock ne contient que [autre] : chacun crée ses propres catégories
+/// (maillots, jus, mèches…).
 abstract final class Category {
   static const meche = 'meche';
   static const maillot = 'maillot';
@@ -29,8 +32,9 @@ class Categories extends Table {
 /// Type d'un mouvement de stock.
 ///
 /// `correction` sert uniquement à annuler un mouvement précédent :
-/// un mouvement n'est jamais modifié ni supprimé.
-enum MovementType { received, sold, loss, correction }
+/// un mouvement n'est jamais modifié ni supprimé. `adjustment` est l'écart
+/// trouvé lors d'un inventaire (quantité comptée − quantité calculée).
+enum MovementType { received, sold, loss, correction, adjustment }
 
 /// Une ligne = une combinaison précise (ex. « maillot Cameroun domicile 2024, taille M »).
 class Products extends Table {
@@ -101,6 +105,19 @@ class StockLine {
   bool get isLow => !isOut && quantity <= product.alertThreshold;
 }
 
+/// Ordre de la liste du stock.
+enum StockSort { name, quantityAsc, quantityDesc }
+
+/// Sens des mouvements affichés dans l'historique.
+enum MovementDirection { all, entries, exits }
+
+/// Total des entrées et des sorties sur une période.
+class MovementTotals {
+  const MovementTotals({required this.entered, required this.removed});
+  final int entered;
+  final int removed;
+}
+
 /// Une ligne de l'historique : le mouvement, son produit, et s'il a été annulé.
 class HistoryEntry {
   HistoryEntry(this.movement, this.product, {required this.cancelled});
@@ -114,7 +131,18 @@ class HistoryEntry {
 
 @DriftDatabase(tables: [Categories, Products, Movements, Settings])
 class AppDatabase extends _$AppDatabase {
-  AppDatabase([QueryExecutor? executor]) : super(executor ?? _openDefault());
+  AppDatabase([QueryExecutor? executor, this.defaultCategoryName = 'Autre'])
+      : super(executor ?? driftDatabase(name: localName));
+
+  /// Le stock enregistré sur l'appareil sous le fichier [name].
+  AppDatabase.named(String name, {String defaultCategoryName = 'Autre'})
+      : this(driftDatabase(name: name), defaultCategoryName);
+
+  /// Fichier du stock sans compte (et des versions sans comptes séparés).
+  static const localName = 'gestion_stock';
+
+  /// Nom, dans la langue de l'appli, de la catégorie créée avec un nouveau stock.
+  final String defaultCategoryName;
 
   @override
   int get schemaVersion => 2;
@@ -123,27 +151,30 @@ class AppDatabase extends _$AppDatabase {
   MigrationStrategy get migration => MigrationStrategy(
         onCreate: (m) async {
           await m.createAll();
-          await _insertDefaultCategories();
+          await _insertCategories({Category.autre: defaultCategoryName});
         },
         onUpgrade: (m, from, to) async {
           // v2 : catégories modifiables. Les produits gardent leurs identifiants
           // (« meche », « maillot », « autre »), qui deviennent des lignes de Categories.
           if (from < 2) {
             await m.createTable(categories);
-            await _insertDefaultCategories();
+            await _insertCategories({
+              Category.meche: 'Mèches',
+              Category.maillot: 'Maillots',
+              Category.autre: 'Autre',
+            });
           }
         },
       );
 
-  Future<void> _insertDefaultCategories() async {
+  Future<void> _insertCategories(Map<String, String> names) async {
     // Date ancienne : un renommage fait sur un autre appareil l'emporte toujours.
     final epoch = DateTime.utc(2000);
     await batch((b) => b.insertAll(
           categories,
           [
-            CategoriesCompanion.insert(id: const Value(Category.meche), name: 'Mèches', updatedAt: Value(epoch)),
-            CategoriesCompanion.insert(id: const Value(Category.maillot), name: 'Maillots', updatedAt: Value(epoch)),
-            CategoriesCompanion.insert(id: const Value(Category.autre), name: 'Autre', updatedAt: Value(epoch)),
+            for (final MapEntry(key: id, value: name) in names.entries)
+              CategoriesCompanion.insert(id: Value(id), name: name, updatedAt: Value(epoch)),
           ],
           mode: InsertMode.insertOrIgnore,
         ));
@@ -174,8 +205,7 @@ class AppDatabase extends _$AppDatabase {
       select(categories)
         ..where((c) => c.syncedAt.isNull() | c.updatedAt.isBiggerThan(c.syncedAt));
 
-  static QueryExecutor _openDefault() => driftDatabase(name: 'gestion_stock');
-
+  /// Crée un produit. [initialQuantity] enregistre aussi une première réception.
   Future<Product> addProduct({
     required String name,
     required String category,
@@ -183,15 +213,25 @@ class AppDatabase extends _$AppDatabase {
     int? purchasePriceCents,
     int? salePriceCents,
     String? barcode,
+    int initialQuantity = 0,
   }) {
-    return into(products).insertReturning(ProductsCompanion.insert(
-      name: name,
-      category: category,
-      alertThreshold: Value(alertThreshold),
-      purchasePriceCents: Value(purchasePriceCents),
-      salePriceCents: Value(salePriceCents),
-      barcode: Value(barcode),
-    ));
+    if (initialQuantity < 0) {
+      throw ArgumentError.value(initialQuantity, 'initialQuantity', 'ne peut pas être négative');
+    }
+    return transaction(() async {
+      final product = await into(products).insertReturning(ProductsCompanion.insert(
+        name: name,
+        category: category,
+        alertThreshold: Value(alertThreshold),
+        purchasePriceCents: Value(purchasePriceCents),
+        salePriceCents: Value(salePriceCents),
+        barcode: Value(barcode),
+      ));
+      if (initialQuantity > 0) {
+        await receive(product.id, initialQuantity, unitPriceCents: purchasePriceCents);
+      }
+      return product;
+    });
   }
 
   Future<void> updateProduct(Product product) {
@@ -204,6 +244,16 @@ class AppDatabase extends _$AppDatabase {
       ProductsCompanion(archived: const Value(true), updatedAt: Value(DateTime.now())),
     );
   }
+
+  /// Remet en vente un produit archivé, avec son historique.
+  Future<void> restoreProduct(String productId) {
+    return (update(products)..where((p) => p.id.equals(productId))).write(
+      ProductsCompanion(archived: const Value(false), updatedAt: Value(DateTime.now())),
+    );
+  }
+
+  /// Produits archivés, avec leur quantité, par ordre alphabétique.
+  Stream<List<StockLine>> watchArchived() => _watchLines(archived: true);
 
   /// Produits modifiés ici depuis le dernier envoi au serveur.
   SimpleSelectStatement<$ProductsTable, Product> pendingProducts() =>
@@ -253,6 +303,17 @@ class AppDatabase extends _$AppDatabase {
     return _takeOut(productId, MovementType.loss, quantity, null, note);
   }
 
+  /// Inventaire : enregistre l'écart entre la quantité comptée et le stock
+  /// calculé. Renvoie null si le compte est juste.
+  Future<Movement?> adjustTo(String productId, int counted, {String? note}) {
+    if (counted < 0) throw ArgumentError.value(counted, 'counted', 'ne peut pas être négative');
+    return transaction(() async {
+      final delta = counted - await stockOf(productId);
+      if (delta == 0) return null;
+      return _insertMovement(productId, MovementType.adjustment, delta, null, note);
+    });
+  }
+
   /// Annule un mouvement en ajoutant le mouvement inverse.
   Future<Movement> undo(String movementId) {
     return transaction(() async {
@@ -281,7 +342,12 @@ class AppDatabase extends _$AppDatabase {
   /// Historique des mouvements, du plus récent au plus ancien.
   ///
   /// [productId] limite à un produit, [since] aux mouvements à partir de cette date.
-  Stream<List<HistoryEntry>> watchHistory({String? productId, DateTime? since, int limit = 500}) {
+  Stream<List<HistoryEntry>> watchHistory({
+    String? productId,
+    DateTime? since,
+    MovementDirection direction = MovementDirection.all,
+    int limit = 500,
+  }) {
     final cancellation = alias(movements, 'cancellation');
     final query = select(movements).join([
       innerJoin(products, products.id.equalsExp(movements.productId)),
@@ -291,6 +357,14 @@ class AppDatabase extends _$AppDatabase {
       ..limit(limit);
     if (productId != null) query.where(movements.productId.equals(productId));
     if (since != null) query.where(movements.createdAt.isBiggerOrEqualValue(since));
+    switch (direction) {
+      case MovementDirection.all:
+        break;
+      case MovementDirection.entries:
+        query.where(movements.type.equalsValue(MovementType.received));
+      case MovementDirection.exits:
+        query.where(movements.type.isInValues([MovementType.sold, MovementType.loss]));
+    }
     return query.watch().map((rows) => [
           for (final row in rows)
             HistoryEntry(
@@ -301,9 +375,37 @@ class AppDatabase extends _$AppDatabase {
         ]);
   }
 
+  /// Quantités entrées et sorties, saisies annulées exclues, pour la période
+  /// commençant à [since] (ou depuis toujours).
+  Stream<MovementTotals> watchTotals({String? productId, DateTime? since}) {
+    final m = alias(movements, 'm');
+    final c = alias(movements, 'c');
+    // Réceptions d'un côté, ventes et pertes de l'autre. Les écarts
+    // d'inventaire restent visibles dans la liste, hors des totaux.
+    final entered = CaseWhenExpression<int>(
+      cases: [CaseWhen(m.type.equalsValue(MovementType.received), then: m.delta)],
+      orElse: const Constant(0),
+    ).sum();
+    final removed = CaseWhenExpression<int>(
+      cases: [
+        CaseWhen(m.type.isInValues([MovementType.sold, MovementType.loss]), then: -m.delta),
+      ],
+      orElse: const Constant(0),
+    ).sum();
+    final cancelled = existsQuery(select(c)..where((c) => c.cancelsId.equalsExp(m.id)));
+    final query = selectOnly(m)
+      ..addColumns([entered, removed])
+      ..where(m.type.equalsValue(MovementType.correction).not() & cancelled.not());
+    if (productId != null) query.where(m.productId.equals(productId));
+    if (since != null) query.where(m.createdAt.isBiggerOrEqualValue(since));
+    return query.watchSingle().map(
+        (row) => MovementTotals(entered: row.read(entered) ?? 0, removed: row.read(removed) ?? 0));
+  }
+
   /// Produits en rupture ou sous leur seuil : la liste « à recommander ».
-  Stream<List<StockLine>> watchToReorder({String search = '', String? categoryId}) =>
-      watchStock(search: search, categoryId: categoryId)
+  Stream<List<StockLine>> watchToReorder(
+          {String search = '', String? categoryId, StockSort sort = StockSort.name}) =>
+      watchStock(search: search, categoryId: categoryId, sort: sort)
       .map((lines) => lines.where((l) => l.isOut || l.isLow).toList());
 
   /// Un produit et sa quantité, mis à jour en direct.
@@ -323,15 +425,35 @@ class AppDatabase extends _$AppDatabase {
   /// Liste du stock, mise à jour en direct, produits archivés exclus.
   ///
   /// [search] filtre sur le nom ou le code-barres (majuscules ignorées).
-  Stream<List<StockLine>> watchStock({String search = '', String? categoryId}) {
+  Stream<List<StockLine>> watchStock({
+    String search = '',
+    String? categoryId,
+    StockSort sort = StockSort.name,
+  }) =>
+      _watchLines(search: search, categoryId: categoryId, sort: sort);
+
+  Stream<List<StockLine>> _watchLines({
+    String search = '',
+    String? categoryId,
+    StockSort sort = StockSort.name,
+    bool archived = false,
+  }) {
     final total = movements.delta.sum();
+    final byName = OrderingTerm.asc(products.name.collate(Collate.noCase));
     final query = select(products).join([
       leftOuterJoin(movements, movements.productId.equalsExp(products.id)),
     ])
       ..addColumns([total])
-      ..where(products.archived.equals(false))
+      ..where(products.archived.equals(archived))
       ..groupBy([products.id])
-      ..orderBy([OrderingTerm.asc(products.name.collate(Collate.noCase))]);
+      ..orderBy([
+        switch (sort) {
+          StockSort.name => byName,
+          StockSort.quantityAsc => OrderingTerm.asc(ifNull(total, const Constant(0))),
+          StockSort.quantityDesc => OrderingTerm.desc(ifNull(total, const Constant(0))),
+        },
+        byName,
+      ]);
     if (categoryId != null) query.where(products.category.equals(categoryId));
     final term = search.trim();
     if (term.isNotEmpty) {

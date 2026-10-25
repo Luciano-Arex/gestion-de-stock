@@ -488,4 +488,209 @@ class AppLocalizationsDe extends AppLocalizations {
   String pinForgotWithAccount(String email) {
     return 'Passwort des Kontos $email eingeben, um die PIN zu löschen.';
   }
+
+  @override
+  String get defaultCategory => 'Sonstiges';
+
+  @override
+  String get loginSubtitle => 'Ihr Lager, auf Handy und PC.';
+
+  @override
+  String get createAccount => 'Konto erstellen';
+
+  @override
+  String get showPassword => 'Passwort anzeigen';
+
+  @override
+  String get hidePassword => 'Passwort verbergen';
+
+  @override
+  String get passwordRule => 'Mindestens 6 Zeichen';
+
+  @override
+  String get passwordConfirm => 'Passwort wiederholen';
+
+  @override
+  String get passwordMismatch => 'Die Passwörter stimmen nicht überein';
+
+  @override
+  String signUpCheckEmail(String email) {
+    return 'Konto erstellt. Öffnen Sie die E-Mail an $email, klicken Sie auf den Bestätigungslink und melden Sie sich dann hier an.';
+  }
+
+  @override
+  String get forgotPassword => 'Passwort vergessen?';
+
+  @override
+  String get resetIntro =>
+      'Geben Sie die E-Mail-Adresse Ihres Kontos ein. Sie erhalten einen Code, um ein neues Passwort zu wählen.';
+
+  @override
+  String resetCodeSent(String email) {
+    return 'Ein Code wurde an $email gesendet. Geben Sie ihn unten mit Ihrem neuen Passwort ein.';
+  }
+
+  @override
+  String get resetCode => 'Code aus der E-Mail';
+
+  @override
+  String get newPassword => 'Neues Passwort';
+
+  @override
+  String get resetSend => 'Code anfordern';
+
+  @override
+  String get resetConfirm => 'Passwort ändern';
+
+  @override
+  String get authEmailInvalid => 'Ungültige E-Mail-Adresse';
+
+  @override
+  String get authOffline =>
+      'Keine Internetverbindung. Die erste Anmeldung auf einem Gerät braucht Internet.';
+
+  @override
+  String get authInvalid => 'E-Mail-Adresse oder Passwort falsch';
+
+  @override
+  String get authNotConfirmed =>
+      'Adresse noch nicht bestätigt: Klicken Sie zuerst auf den Link in der E-Mail.';
+
+  @override
+  String get authExists =>
+      'Mit dieser Adresse gibt es schon ein Konto. Bitte anmelden.';
+
+  @override
+  String get authSignupDisabled =>
+      'Das Erstellen von Konten ist auf dem Server ausgeschaltet.';
+
+  @override
+  String get authRateLimit =>
+      'Zu viele Anfragen. Bitte in ein paar Minuten erneut versuchen.';
+
+  @override
+  String get authCodeInvalid => 'Code falsch oder abgelaufen';
+
+  @override
+  String authUnknown(String message) {
+    return 'Fehler: $message';
+  }
+
+  @override
+  String get account => 'Konto';
+
+  @override
+  String get signOutConfirm =>
+      'Sie müssen Ihr Passwort erneut eingeben. Ihr Lager bleibt auf dem Server gespeichert.';
+
+  @override
+  String get signOutPending =>
+      'Einige Eingaben sind noch nicht an den Server gesendet. Sie bleiben auf diesem Gerät und werden bei der nächsten Anmeldung gesendet.';
+
+  @override
+  String get unit => 'Stück';
+
+  @override
+  String get entries => 'Eingänge';
+
+  @override
+  String get exits => 'Ausgänge';
+
+  @override
+  String get summaryProducts => 'Artikel';
+
+  @override
+  String get summaryPieces => 'Stück auf Lager';
+
+  @override
+  String get summaryInToday => 'Eingänge heute';
+
+  @override
+  String get summaryOutToday => 'Ausgänge heute';
+
+  @override
+  String get navHome => 'Start';
+
+  @override
+  String get navStock => 'Lager';
+
+  @override
+  String get lost => 'Verlust / Abgang';
+
+  @override
+  String get stockCount => 'Inventur';
+
+  @override
+  String get countedQuestion => 'Wie viele haben Sie gezählt?';
+
+  @override
+  String get countHelp =>
+      'Zählen Sie, was wirklich im Regal liegt. Die App speichert die Abweichung zum berechneten Bestand.';
+
+  @override
+  String get countedQuantity => 'Gezählte Menge';
+
+  @override
+  String get unitPriceLabel => 'Stückpreis';
+
+  @override
+  String get unitPriceSellHelp => 'Bei Rabatt hier ändern.';
+
+  @override
+  String get noteLabel => 'Notiz (optional)';
+
+  @override
+  String get lossNoteHelp => 'Zum Beispiel: kaputt, verschenkt, Eigenbedarf';
+
+  @override
+  String get initialQuantity => 'Bereits vorhandene Menge';
+
+  @override
+  String get initialQuantityHelp =>
+      'Was Sie heute haben. Sie wird als erster Wareneingang gespeichert und ist im Verlauf sichtbar.';
+
+  @override
+  String get sortBy => 'Sortieren';
+
+  @override
+  String get sortName => 'Nach Name';
+
+  @override
+  String get sortQuantityAsc => 'Menge: niedrigste zuerst';
+
+  @override
+  String get sortQuantityDesc => 'Menge: höchste zuerst';
+
+  @override
+  String get archivedProducts => 'Archivierte Artikel';
+
+  @override
+  String get archivedEmpty =>
+      'Keine archivierten Artikel. Ein archivierter Artikel verschwindet aus dem Lager, sein Verlauf bleibt erhalten.';
+
+  @override
+  String get restore => 'Wieder aufnehmen';
+
+  @override
+  String restored(String name) {
+    return '$name ist wieder im Lager';
+  }
+
+  @override
+  String countUnchanged(String name) {
+    return 'Inventur $name: Der Bestand stimmte';
+  }
+
+  @override
+  String lossDone(int count, String name) {
+    return '$count × $name aus dem Lager genommen';
+  }
+
+  @override
+  String countDone(int count, String name) {
+    return '$name: Bestand auf $count korrigiert';
+  }
+
+  @override
+  String get typeAdjustment => 'Inventur';
 }

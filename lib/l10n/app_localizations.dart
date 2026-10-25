@@ -945,6 +945,366 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Entrez le mot de passe du compte {email} pour supprimer le code PIN.'**
   String pinForgotWithAccount(String email);
+
+  /// No description provided for @defaultCategory.
+  ///
+  /// In fr, this message translates to:
+  /// **'Autre'**
+  String get defaultCategory;
+
+  /// No description provided for @loginSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre stock, sur votre téléphone et votre PC.'**
+  String get loginSubtitle;
+
+  /// No description provided for @createAccount.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer un compte'**
+  String get createAccount;
+
+  /// No description provided for @showPassword.
+  ///
+  /// In fr, this message translates to:
+  /// **'Afficher le mot de passe'**
+  String get showPassword;
+
+  /// No description provided for @hidePassword.
+  ///
+  /// In fr, this message translates to:
+  /// **'Masquer le mot de passe'**
+  String get hidePassword;
+
+  /// No description provided for @passwordRule.
+  ///
+  /// In fr, this message translates to:
+  /// **'Au moins 6 caractères'**
+  String get passwordRule;
+
+  /// No description provided for @passwordConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retapez le mot de passe'**
+  String get passwordConfirm;
+
+  /// No description provided for @passwordMismatch.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les deux mots de passe ne sont pas pareils'**
+  String get passwordMismatch;
+
+  /// No description provided for @signUpCheckEmail.
+  ///
+  /// In fr, this message translates to:
+  /// **'Compte créé. Ouvrez l\'e-mail envoyé à {email}, cliquez sur le lien de confirmation, puis connectez-vous ici.'**
+  String signUpCheckEmail(String email);
+
+  /// No description provided for @forgotPassword.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mot de passe oublié ?'**
+  String get forgotPassword;
+
+  /// No description provided for @resetIntro.
+  ///
+  /// In fr, this message translates to:
+  /// **'Entrez l\'adresse e-mail de votre compte. Vous recevrez un code pour choisir un nouveau mot de passe.'**
+  String get resetIntro;
+
+  /// No description provided for @resetCodeSent.
+  ///
+  /// In fr, this message translates to:
+  /// **'Un code a été envoyé à {email}. Entrez-le ci-dessous avec votre nouveau mot de passe.'**
+  String resetCodeSent(String email);
+
+  /// No description provided for @resetCode.
+  ///
+  /// In fr, this message translates to:
+  /// **'Code reçu par e-mail'**
+  String get resetCode;
+
+  /// No description provided for @newPassword.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouveau mot de passe'**
+  String get newPassword;
+
+  /// No description provided for @resetSend.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recevoir un code'**
+  String get resetSend;
+
+  /// No description provided for @resetConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Changer le mot de passe'**
+  String get resetConfirm;
+
+  /// No description provided for @authEmailInvalid.
+  ///
+  /// In fr, this message translates to:
+  /// **'Adresse e-mail invalide'**
+  String get authEmailInvalid;
+
+  /// No description provided for @authOffline.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pas de connexion internet. La première connexion sur un appareil a besoin d\'internet.'**
+  String get authOffline;
+
+  /// No description provided for @authInvalid.
+  ///
+  /// In fr, this message translates to:
+  /// **'Adresse e-mail ou mot de passe incorrect'**
+  String get authInvalid;
+
+  /// No description provided for @authNotConfirmed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Adresse pas encore confirmée : cliquez d\'abord sur le lien reçu par e-mail.'**
+  String get authNotConfirmed;
+
+  /// No description provided for @authExists.
+  ///
+  /// In fr, this message translates to:
+  /// **'Un compte existe déjà avec cette adresse. Connectez-vous.'**
+  String get authExists;
+
+  /// No description provided for @authSignupDisabled.
+  ///
+  /// In fr, this message translates to:
+  /// **'La création de comptes est désactivée sur le serveur.'**
+  String get authSignupDisabled;
+
+  /// No description provided for @authRateLimit.
+  ///
+  /// In fr, this message translates to:
+  /// **'Trop de demandes. Réessayez dans quelques minutes.'**
+  String get authRateLimit;
+
+  /// No description provided for @authCodeInvalid.
+  ///
+  /// In fr, this message translates to:
+  /// **'Code incorrect ou expiré'**
+  String get authCodeInvalid;
+
+  /// No description provided for @authUnknown.
+  ///
+  /// In fr, this message translates to:
+  /// **'Erreur : {message}'**
+  String authUnknown(String message);
+
+  /// No description provided for @account.
+  ///
+  /// In fr, this message translates to:
+  /// **'Compte'**
+  String get account;
+
+  /// No description provided for @signOutConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vous devrez entrer à nouveau votre mot de passe. Votre stock reste enregistré sur le serveur.'**
+  String get signOutConfirm;
+
+  /// No description provided for @signOutPending.
+  ///
+  /// In fr, this message translates to:
+  /// **'Certaines saisies ne sont pas encore envoyées au serveur. Elles restent sur cet appareil et partiront à votre prochaine connexion.'**
+  String get signOutPending;
+
+  /// No description provided for @unit.
+  ///
+  /// In fr, this message translates to:
+  /// **'pièce'**
+  String get unit;
+
+  /// No description provided for @entries.
+  ///
+  /// In fr, this message translates to:
+  /// **'Entrées'**
+  String get entries;
+
+  /// No description provided for @exits.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sorties'**
+  String get exits;
+
+  /// No description provided for @summaryProducts.
+  ///
+  /// In fr, this message translates to:
+  /// **'articles'**
+  String get summaryProducts;
+
+  /// No description provided for @summaryPieces.
+  ///
+  /// In fr, this message translates to:
+  /// **'pièces en stock'**
+  String get summaryPieces;
+
+  /// No description provided for @summaryInToday.
+  ///
+  /// In fr, this message translates to:
+  /// **'entrées aujourd\'hui'**
+  String get summaryInToday;
+
+  /// No description provided for @summaryOutToday.
+  ///
+  /// In fr, this message translates to:
+  /// **'sorties aujourd\'hui'**
+  String get summaryOutToday;
+
+  /// No description provided for @navHome.
+  ///
+  /// In fr, this message translates to:
+  /// **'Accueil'**
+  String get navHome;
+
+  /// No description provided for @navStock.
+  ///
+  /// In fr, this message translates to:
+  /// **'Stock'**
+  String get navStock;
+
+  /// No description provided for @lost.
+  ///
+  /// In fr, this message translates to:
+  /// **'Perte / sortie'**
+  String get lost;
+
+  /// No description provided for @stockCount.
+  ///
+  /// In fr, this message translates to:
+  /// **'Inventaire'**
+  String get stockCount;
+
+  /// No description provided for @countedQuestion.
+  ///
+  /// In fr, this message translates to:
+  /// **'Combien en avez-vous compté ?'**
+  String get countedQuestion;
+
+  /// No description provided for @countHelp.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comptez ce qui est vraiment en rayon. L\'appli enregistre l\'écart avec la quantité calculée.'**
+  String get countHelp;
+
+  /// No description provided for @countedQuantity.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quantité comptée'**
+  String get countedQuantity;
+
+  /// No description provided for @unitPriceLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prix unitaire'**
+  String get unitPriceLabel;
+
+  /// No description provided for @unitPriceSellHelp.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifiez-le en cas de remise.'**
+  String get unitPriceSellHelp;
+
+  /// No description provided for @noteLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Note (facultatif)'**
+  String get noteLabel;
+
+  /// No description provided for @lossNoteHelp.
+  ///
+  /// In fr, this message translates to:
+  /// **'Par exemple : cassé, offert, usage personnel'**
+  String get lossNoteHelp;
+
+  /// No description provided for @initialQuantity.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quantité déjà en stock'**
+  String get initialQuantity;
+
+  /// No description provided for @initialQuantityHelp.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce que vous avez aujourd\'hui. Elle est enregistrée comme une première réception, visible dans l\'historique.'**
+  String get initialQuantityHelp;
+
+  /// No description provided for @sortBy.
+  ///
+  /// In fr, this message translates to:
+  /// **'Trier'**
+  String get sortBy;
+
+  /// No description provided for @sortName.
+  ///
+  /// In fr, this message translates to:
+  /// **'Par nom'**
+  String get sortName;
+
+  /// No description provided for @sortQuantityAsc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quantité : la plus faible d\'abord'**
+  String get sortQuantityAsc;
+
+  /// No description provided for @sortQuantityDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quantité : la plus forte d\'abord'**
+  String get sortQuantityDesc;
+
+  /// No description provided for @archivedProducts.
+  ///
+  /// In fr, this message translates to:
+  /// **'Produits archivés'**
+  String get archivedProducts;
+
+  /// No description provided for @archivedEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun produit archivé. Un produit archivé disparaît du stock mais garde son historique.'**
+  String get archivedEmpty;
+
+  /// No description provided for @restore.
+  ///
+  /// In fr, this message translates to:
+  /// **'Remettre en vente'**
+  String get restore;
+
+  /// No description provided for @restored.
+  ///
+  /// In fr, this message translates to:
+  /// **'{name} est de retour dans le stock'**
+  String restored(String name);
+
+  /// No description provided for @countUnchanged.
+  ///
+  /// In fr, this message translates to:
+  /// **'Inventaire de {name} : le stock était juste'**
+  String countUnchanged(String name);
+
+  /// No description provided for @lossDone.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count} × {name} sorti du stock'**
+  String lossDone(int count, String name);
+
+  /// No description provided for @countDone.
+  ///
+  /// In fr, this message translates to:
+  /// **'{name} : stock corrigé à {count}'**
+  String countDone(int count, String name);
+
+  /// No description provided for @typeAdjustment.
+  ///
+  /// In fr, this message translates to:
+  /// **'Inventaire'**
+  String get typeAdjustment;
 }
 
 class _AppLocalizationsDelegate

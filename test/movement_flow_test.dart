@@ -5,6 +5,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:gestion_stock/data/database.dart';
 import 'package:gestion_stock/main.dart';
 
+import 'nav.dart';
+
 void main() {
   setUpAll(() => driftRuntimeOptions.dontWarnAboutMultipleDatabases = true);
 
@@ -40,7 +42,8 @@ void main() {
     await tester.tap(find.text('Enregistrer'));
     await tester.pumpAndSettle();
 
-    await tester.enterText(find.byType(TextField), '5');
+    await tester.enterText(find.byType(TextField).first, '5');
+    await tester.ensureVisible(find.text('Valider'));
     await tester.tap(find.text('Valider'));
     await tester.pumpAndSettle();
 
@@ -53,6 +56,7 @@ void main() {
     await tester.tap(find.text('Closure 4x4'));
     await tester.pumpAndSettle();
     await tester.tap(find.byTooltip('Un de plus'));
+    await tester.ensureVisible(find.text('Valider'));
     await tester.tap(find.text('Valider'));
     await tester.pumpAndSettle();
 
@@ -75,7 +79,8 @@ void main() {
     expect(find.text('Nouveau produit'), findsNothing);
     await tester.tap(find.text('Maillot PSG 2025 L'));
     await tester.pumpAndSettle();
-    await tester.enterText(find.byType(TextField), '3');
+    await tester.enterText(find.byType(TextField).first, '3');
+    await tester.ensureVisible(find.text('Valider'));
     await tester.tap(find.text('Valider'));
     await tester.pumpAndSettle();
 
@@ -105,6 +110,36 @@ void main() {
 
     expect(find.text('Saisie annulée'), findsOneWidget);
     expect(await stockOf(tester, 'ondulé'), 0);
+
+    await unmount(tester);
+  });
+
+  testWidgets('créer un produit avec sa quantité, puis faire l\'inventaire depuis sa fiche',
+      (tester) async {
+    await tester.pumpWidget(StockApp(db: db));
+    await tester.pumpAndSettle();
+    await openTab(tester, 'Stock');
+    await tester.tap(find.widgetWithText(FloatingActionButton, 'Nouveau produit'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.widgetWithText(TextFormField, 'Nom du produit'), 'Jus de bissap');
+    await tester.enterText(find.widgetWithText(TextFormField, 'Quantité déjà en stock'), '12');
+    await tester.tap(find.text('Enregistrer'));
+    await tester.pumpAndSettle();
+    expect(await stockOf(tester, 'bissap'), 12);
+
+    await tester.tap(find.text('Jus de bissap'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(FilledButton, 'Inventaire'));
+    await tester.pumpAndSettle();
+    expect(find.text('Combien en avez-vous compté ?'), findsOneWidget);
+    await tester.enterText(find.byType(TextField).first, '10');
+    await tester.ensureVisible(find.text('Valider'));
+    await tester.tap(find.text('Valider'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Jus de bissap : stock corrigé à 10'), findsOneWidget);
+    expect(await stockOf(tester, 'bissap'), 10);
+    expect(find.text('-2'), findsOneWidget, reason: 'écart visible dans l\'historique');
 
     await unmount(tester);
   });

@@ -115,7 +115,7 @@ void main() {
     final first = await SyncEngine(phone, server).sync();
     final second = await SyncEngine(phone, server).sync();
 
-    expect(first.pushed, 5); // 3 catégories de départ + 1 produit + 1 mouvement
+    expect(first.pushed, 3); // catégorie de départ + produit + mouvement
     expect(second.pushed, 0);
     expect(second.pulled, 0);
   });
@@ -191,13 +191,13 @@ void main() {
     expect((await phone.watchStock(categoryId: c.id).first).single.product.name, 'Perruque bob');
   });
 
-  test('les catégories par défaut renommées se synchronisent', () async {
-    await pc.renameCategory(Category.maillot, 'Maillots de foot');
+  test('la catégorie de départ renommée se synchronise', () async {
+    await pc.renameCategory(Category.autre, 'Divers');
     await SyncEngine(pc, server).sync();
     await SyncEngine(phone, server).sync();
 
     final noms = (await phone.watchCategories().first).map((c) => c.name);
-    expect(noms, contains('Maillots de foot'));
-    expect(noms, isNot(contains('Maillots')));
+    expect(noms, contains('Divers'));
+    expect(noms, isNot(contains('Autre')));
   });
 }

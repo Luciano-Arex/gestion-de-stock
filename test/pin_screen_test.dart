@@ -6,6 +6,8 @@ import 'package:gestion_stock/data/database.dart';
 import 'package:gestion_stock/data/pin_lock.dart';
 import 'package:gestion_stock/main.dart';
 
+import 'nav.dart';
+
 void main() {
   setUpAll(() => driftRuntimeOptions.dontWarnAboutMultipleDatabases = true);
 
@@ -30,8 +32,7 @@ void main() {
 
     await tester.pumpWidget(StockApp(db: db, pin: pin));
     await tester.pumpAndSettle();
-    await tester.tap(find.byTooltip('Réglages'));
-    await tester.pumpAndSettle();
+    await openTab(tester, 'Réglages');
     await tester.tap(find.text('Code PIN'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Créer un code PIN'));
@@ -69,8 +70,7 @@ void main() {
 
     await tester.pumpWidget(StockApp(db: db, pin: pin));
     await tester.pumpAndSettle();
-    await tester.tap(find.byTooltip('Réglages'));
-    await tester.pumpAndSettle();
+    await openTab(tester, 'Réglages');
     await tester.tap(find.text('Code PIN'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Supprimer le code PIN'));

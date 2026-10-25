@@ -5,6 +5,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:gestion_stock/data/database.dart';
 import 'package:gestion_stock/main.dart';
 
+import 'nav.dart';
+
 void main() {
   setUpAll(() => driftRuntimeOptions.dontWarnAboutMultipleDatabases = true);
 
@@ -26,16 +28,16 @@ void main() {
 
     await tester.pumpWidget(StockApp(db: db));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Voir mon stock'));
-    await tester.pumpAndSettle();
+    await openTab(tester, 'Stock');
     await tester.tap(find.text('Maillot Bayern 2025 M'));
     await tester.pumpAndSettle();
 
     expect(find.text('3 en stock'), findsOneWidget);
     expect(find.text('Reçu'), findsOneWidget);
     expect(find.text('Vendu'), findsOneWidget);
-    expect(find.text('+4'), findsOneWidget);
+    expect(find.text('+4'), findsNWidgets(2)); // la ligne et le total des entrées
     expect(find.text('-1'), findsOneWidget);
+    expect(find.text('−1'), findsOneWidget); // total des sorties
 
     await unmount(tester);
   });

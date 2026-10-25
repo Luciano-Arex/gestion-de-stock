@@ -41,9 +41,11 @@ void main() {
     expect(categories.map((c) => c.name), containsAll(['Mèches', 'Maillots', 'Autre']));
   });
 
-  test('une nouvelle installation a les trois catégories de départ', () async {
-    final db = AppDatabase(NativeDatabase.memory());
+  test('un nouveau stock part d\'une seule catégorie, dans la langue de l\'appli', () async {
+    final db = AppDatabase(NativeDatabase.memory(), 'Sonstiges');
     addTearDown(db.close);
-    expect(await db.watchCategories().first, hasLength(3));
+    final categories = await db.watchCategories().first;
+    expect(categories.single.id, Category.autre);
+    expect(categories.single.name, 'Sonstiges');
   });
 }

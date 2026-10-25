@@ -261,5 +261,120 @@
         "type": "String"
       }
     }
-  }
+  },
+  "defaultCategory": "Autre",
+  "loginSubtitle": "Votre stock, sur votre téléphone et votre PC.",
+  "createAccount": "Créer un compte",
+  "showPassword": "Afficher le mot de passe",
+  "hidePassword": "Masquer le mot de passe",
+  "passwordRule": "Au moins 6 caractères",
+  "passwordConfirm": "Retapez le mot de passe",
+  "passwordMismatch": "Les deux mots de passe ne sont pas pareils",
+  "signUpCheckEmail": "Compte créé. Ouvrez l'e-mail envoyé à {email}, cliquez sur le lien de confirmation, puis connectez-vous ici.",
+  "@signUpCheckEmail": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "forgotPassword": "Mot de passe oublié ?",
+  "resetIntro": "Entrez l'adresse e-mail de votre compte. Vous recevrez un code pour choisir un nouveau mot de passe.",
+  "resetCodeSent": "Un code a été envoyé à {email}. Entrez-le ci-dessous avec votre nouveau mot de passe.",
+  "@resetCodeSent": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "resetCode": "Code reçu par e-mail",
+  "newPassword": "Nouveau mot de passe",
+  "resetSend": "Recevoir un code",
+  "resetConfirm": "Changer le mot de passe",
+  "authEmailInvalid": "Adresse e-mail invalide",
+  "authOffline": "Pas de connexion internet. La première connexion sur un appareil a besoin d'internet.",
+  "authInvalid": "Adresse e-mail ou mot de passe incorrect",
+  "authNotConfirmed": "Adresse pas encore confirmée : cliquez d'abord sur le lien reçu par e-mail.",
+  "authExists": "Un compte existe déjà avec cette adresse. Connectez-vous.",
+  "authSignupDisabled": "La création de comptes est désactivée sur le serveur.",
+  "authRateLimit": "Trop de demandes. Réessayez dans quelques minutes.",
+  "authCodeInvalid": "Code incorrect ou expiré",
+  "authUnknown": "Erreur : {message}",
+  "@authUnknown": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "account": "Compte",
+  "signOutConfirm": "Vous devrez entrer à nouveau votre mot de passe. Votre stock reste enregistré sur le serveur.",
+  "signOutPending": "Certaines saisies ne sont pas encore envoyées au serveur. Elles restent sur cet appareil et partiront à votre prochaine connexion.",
+  "unit": "pièce",
+  "entries": "Entrées",
+  "exits": "Sorties",
+  "summaryProducts": "articles",
+  "summaryPieces": "pièces en stock",
+  "summaryInToday": "entrées aujourd'hui",
+  "summaryOutToday": "sorties aujourd'hui",
+  "navHome": "Accueil",
+  "navStock": "Stock",
+  "lost": "Perte / sortie",
+  "stockCount": "Inventaire",
+  "countedQuestion": "Combien en avez-vous compté ?",
+  "countHelp": "Comptez ce qui est vraiment en rayon. L'appli enregistre l'écart avec la quantité calculée.",
+  "countedQuantity": "Quantité comptée",
+  "unitPriceLabel": "Prix unitaire",
+  "unitPriceSellHelp": "Modifiez-le en cas de remise.",
+  "noteLabel": "Note (facultatif)",
+  "lossNoteHelp": "Par exemple : cassé, offert, usage personnel",
+  "initialQuantity": "Quantité déjà en stock",
+  "initialQuantityHelp": "Ce que vous avez aujourd'hui. Elle est enregistrée comme une première réception, visible dans l'historique.",
+  "sortBy": "Trier",
+  "sortName": "Par nom",
+  "sortQuantityAsc": "Quantité : la plus faible d'abord",
+  "sortQuantityDesc": "Quantité : la plus forte d'abord",
+  "archivedProducts": "Produits archivés",
+  "archivedEmpty": "Aucun produit archivé. Un produit archivé disparaît du stock mais garde son historique.",
+  "restore": "Remettre en vente",
+  "restored": "{name} est de retour dans le stock",
+  "@restored": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "countUnchanged": "Inventaire de {name} : le stock était juste",
+  "@countUnchanged": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "lossDone": "{count} × {name} sorti du stock",
+  "@lossDone": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "countDone": "{name} : stock corrigé à {count}",
+  "@countDone": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "typeAdjustment": "Inventaire"
 }

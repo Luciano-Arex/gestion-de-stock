@@ -487,4 +487,208 @@ class AppLocalizationsEn extends AppLocalizations {
   String pinForgotWithAccount(String email) {
     return 'Enter the password of the account $email to remove the PIN.';
   }
+
+  @override
+  String get defaultCategory => 'Other';
+
+  @override
+  String get loginSubtitle => 'Your stock, on your phone and your PC.';
+
+  @override
+  String get createAccount => 'Create account';
+
+  @override
+  String get showPassword => 'Show password';
+
+  @override
+  String get hidePassword => 'Hide password';
+
+  @override
+  String get passwordRule => 'At least 6 characters';
+
+  @override
+  String get passwordConfirm => 'Type the password again';
+
+  @override
+  String get passwordMismatch => 'The two passwords don\'t match';
+
+  @override
+  String signUpCheckEmail(String email) {
+    return 'Account created. Open the email sent to $email, click the confirmation link, then sign in here.';
+  }
+
+  @override
+  String get forgotPassword => 'Forgot your password?';
+
+  @override
+  String get resetIntro =>
+      'Enter your account\'s email address. You\'ll receive a code to choose a new password.';
+
+  @override
+  String resetCodeSent(String email) {
+    return 'A code was sent to $email. Enter it below with your new password.';
+  }
+
+  @override
+  String get resetCode => 'Code from the email';
+
+  @override
+  String get newPassword => 'New password';
+
+  @override
+  String get resetSend => 'Get a code';
+
+  @override
+  String get resetConfirm => 'Change password';
+
+  @override
+  String get authEmailInvalid => 'Invalid email address';
+
+  @override
+  String get authOffline =>
+      'No internet connection. The first sign-in on a device needs internet.';
+
+  @override
+  String get authInvalid => 'Wrong email address or password';
+
+  @override
+  String get authNotConfirmed =>
+      'Address not confirmed yet: first click the link in the email.';
+
+  @override
+  String get authExists =>
+      'An account already exists with this address. Please sign in.';
+
+  @override
+  String get authSignupDisabled =>
+      'Creating accounts is turned off on the server.';
+
+  @override
+  String get authRateLimit => 'Too many requests. Try again in a few minutes.';
+
+  @override
+  String get authCodeInvalid => 'Wrong or expired code';
+
+  @override
+  String authUnknown(String message) {
+    return 'Error: $message';
+  }
+
+  @override
+  String get account => 'Account';
+
+  @override
+  String get signOutConfirm =>
+      'You\'ll need to enter your password again. Your stock stays saved on the server.';
+
+  @override
+  String get signOutPending =>
+      'Some entries haven\'t been sent to the server yet. They stay on this device and will be sent next time you sign in.';
+
+  @override
+  String get unit => 'item';
+
+  @override
+  String get entries => 'In';
+
+  @override
+  String get exits => 'Out';
+
+  @override
+  String get summaryProducts => 'items';
+
+  @override
+  String get summaryPieces => 'units in stock';
+
+  @override
+  String get summaryInToday => 'in today';
+
+  @override
+  String get summaryOutToday => 'out today';
+
+  @override
+  String get navHome => 'Home';
+
+  @override
+  String get navStock => 'Stock';
+
+  @override
+  String get lost => 'Loss / other out';
+
+  @override
+  String get stockCount => 'Stock count';
+
+  @override
+  String get countedQuestion => 'How many did you count?';
+
+  @override
+  String get countHelp =>
+      'Count what\'s really on the shelf. The app records the difference with the calculated quantity.';
+
+  @override
+  String get countedQuantity => 'Counted quantity';
+
+  @override
+  String get unitPriceLabel => 'Unit price';
+
+  @override
+  String get unitPriceSellHelp => 'Change it for a discount.';
+
+  @override
+  String get noteLabel => 'Note (optional)';
+
+  @override
+  String get lossNoteHelp => 'For example: broken, given away, personal use';
+
+  @override
+  String get initialQuantity => 'Quantity already in stock';
+
+  @override
+  String get initialQuantityHelp =>
+      'What you have today. It\'s recorded as a first delivery, visible in the history.';
+
+  @override
+  String get sortBy => 'Sort';
+
+  @override
+  String get sortName => 'By name';
+
+  @override
+  String get sortQuantityAsc => 'Quantity: lowest first';
+
+  @override
+  String get sortQuantityDesc => 'Quantity: highest first';
+
+  @override
+  String get archivedProducts => 'Archived products';
+
+  @override
+  String get archivedEmpty =>
+      'No archived products. An archived product leaves the stock list but keeps its history.';
+
+  @override
+  String get restore => 'Restore';
+
+  @override
+  String restored(String name) {
+    return '$name is back in the stock';
+  }
+
+  @override
+  String countUnchanged(String name) {
+    return 'Stock count for $name: the stock was right';
+  }
+
+  @override
+  String lossDone(int count, String name) {
+    return '$count × $name taken out of stock';
+  }
+
+  @override
+  String countDone(int count, String name) {
+    return '$name: stock set to $count';
+  }
+
+  @override
+  String get typeAdjustment => 'Stock count';
 }

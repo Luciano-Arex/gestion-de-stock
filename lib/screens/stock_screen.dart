@@ -6,7 +6,7 @@ import 'history_screen.dart';
 import 'product_form_screen.dart';
 
 /// Liste de tous les produits avec la quantité restante.
-class StockScreen extends StatelessWidget {
+class StockScreen extends StatefulWidget {
   const StockScreen({super.key, required this.db, this.reorderOnly = false});
 
   final AppDatabase db;
@@ -14,10 +14,41 @@ class StockScreen extends StatelessWidget {
   final bool reorderOnly;
 
   @override
+  State<StockScreen> createState() => _StockScreenState();
+}
+
+class _StockScreenState extends State<StockScreen> {
+  StockSort _sort = StockSort.name;
+
+  @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;
+    final db = widget.db;
     return Scaffold(
-      appBar: AppBar(title: Text(reorderOnly ? t.toReorder : t.myStock)),
+      appBar: AppBar(
+        title: Text(widget.reorderOnly ? t.toReorder : t.myStock),
+        actions: [
+          PopupMenuButton<StockSort>(
+            tooltip: t.sortBy,
+            icon: const Icon(Icons.sort),
+            initialValue: _sort,
+            onSelected: (s) => setState(() => _sort = s),
+            itemBuilder: (_) => [
+              PopupMenuItem(value: StockSort.name, child: Text(t.sortName)),
+              PopupMenuItem(value: StockSort.quantityAsc, child: Text(t.sortQuantityAsc)),
+              PopupMenuItem(value: StockSort.quantityDesc, child: Text(t.sortQuantityDesc)),
+            ],
+          ),
+          if (!widget.reorderOnly)
+            IconButton(
+              tooltip: t.archivedProducts,
+              icon: const Icon(Icons.inventory_outlined),
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => ArchivedScreen(db: db)),
+              ),
+            ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton.extended(
         icon: const Icon(Icons.add),
         label: Text(t.newProduct),
@@ -27,10 +58,67 @@ class StockScreen extends StatelessWidget {
       ),
       body: ProductSearchList(
         db: db,
-        reorderOnly: reorderOnly,
+        reorderOnly: widget.reorderOnly,
+        sort: _sort,
         onTap: (line) => Navigator.of(context).push(
           MaterialPageRoute(builder: (_) => HistoryScreen(db: db, product: line.product)),
         ),
+      ),
+    );
+  }
+}
+
+/// Produits qu'on ne vend plus. Leur historique est gardé, on peut les remettre en vente.
+class ArchivedScreen extends StatelessWidget {
+  const ArchivedScreen({super.key, required this.db});
+
+  final AppDatabase db;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
+    final messenger = ScaffoldMessenger.of(context);
+    return Scaffold(
+      appBar: AppBar(title: Text(t.archivedProducts)),
+      body: StreamBuilder<List<StockLine>>(
+        stream: db.watchArchived(),
+        builder: (context, snapshot) {
+          final lines = snapshot.data;
+          if (lines == null) return const Center(child: CircularProgressIndicator());
+          if (lines.isEmpty) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Text(t.archivedEmpty, textAlign: TextAlign.center),
+              ),
+            );
+          }
+          return ListView.separated(
+            itemCount: lines.length,
+            separatorBuilder: (_, _) => const Divider(height: 1),
+            itemBuilder: (context, i) {
+              final line = lines[i];
+              return ListTile(
+                minTileHeight: 64,
+                title: Text(line.product.name),
+                subtitle: Text(t.quantity(line.quantity)),
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                  builder: (_) => HistoryScreen(db: db, product: line.product),
+                )),
+                trailing: TextButton.icon(
+                  icon: const Icon(Icons.unarchive_outlined),
+                  label: Text(t.restore),
+                  onPressed: () async {
+                    await db.restoreProduct(line.product.id);
+                    messenger.hideCurrentSnackBar();
+                    messenger.showSnackBar(
+                        SnackBar(content: Text(t.restored(line.product.name))));
+                  },
+                ),
+              );
+            },
+          );
+        },
       ),
     );
   }
@@ -47,6 +135,7 @@ class ProductSearchList extends StatefulWidget {
     this.onCreate,
     this.autofocus = false,
     this.reorderOnly = false,
+    this.sort = StockSort.name,
   });
 
   final AppDatabase db;
@@ -55,6 +144,7 @@ class ProductSearchList extends StatefulWidget {
   final ValueChanged<String>? onCreate;
   final bool autofocus;
   final bool reorderOnly;
+  final StockSort sort;
 
   @override
   State<ProductSearchList> createState() => _ProductSearchListState();
@@ -68,8 +158,14 @@ class _ProductSearchListState extends State<ProductSearchList> {
   Stream<List<StockLine>> _watch() {
     final search = _search.text;
     return widget.reorderOnly
-        ? widget.db.watchToReorder(search: search, categoryId: _categoryId)
-        : widget.db.watchStock(search: search, categoryId: _categoryId);
+        ? widget.db.watchToReorder(search: search, categoryId: _categoryId, sort: widget.sort)
+        : widget.db.watchStock(search: search, categoryId: _categoryId, sort: widget.sort);
+  }
+
+  @override
+  void didUpdateWidget(ProductSearchList old) {
+    super.didUpdateWidget(old);
+    if (old.sort != widget.sort) _stream = _watch();
   }
 
   @override
@@ -91,7 +187,6 @@ class _ProductSearchListState extends State<ProductSearchList> {
             decoration: InputDecoration(
               labelText: t.search,
               prefixIcon: const Icon(Icons.search),
-              border: const OutlineInputBorder(),
             ),
             onChanged: (text) => setState(() => _stream = _watch()),
           ),
@@ -144,7 +239,7 @@ class _ProductSearchListState extends State<ProductSearchList> {
   }
 }
 
-/// Puces « Toutes / Mèches / Maillots… » pour filtrer la liste.
+/// Puces « Toutes » et une par catégorie, pour filtrer la liste.
 class _CategoryFilter extends StatelessWidget {
   const _CategoryFilter({required this.db, required this.selected, required this.onSelected});
 

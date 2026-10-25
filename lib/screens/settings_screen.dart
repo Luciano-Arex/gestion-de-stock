@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
+import '../data/account.dart';
 import '../data/csv_export.dart';
 import '../data/database.dart';
 import '../data/locale_controller.dart';
@@ -11,14 +12,17 @@ import '../l10n/app_localizations.dart';
 import 'backup_screen.dart';
 import 'categories_screen.dart';
 import 'pin_screen.dart';
+import 'stock_screen.dart';
 
-/// Langue, code PIN, catégories, sauvegarde et export.
+/// Compte, langue, code PIN, catégories, sauvegarde et export.
 class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({super.key, required this.db, this.locale, this.pin});
+  const SettingsScreen({super.key, required this.db, this.locale, this.pin, this.accounts});
 
   final AppDatabase db;
   final LocaleController? locale;
   final PinLock? pin;
+  // Absent sans serveur : pas de compte.
+  final AccountController? accounts;
 
   // Les langues gardent leur propre nom, pour qu'on retrouve la sienne.
   static const languages = {'fr': 'Français', 'en': 'English', 'de': 'Deutsch'};
@@ -31,13 +35,24 @@ class SettingsScreen extends StatelessWidget {
       appBar: AppBar(title: Text(t.settings)),
       body: ListView(
         children: [
-          if (locale != null)
+          if (accounts case final accounts?)
+            ListTile(
+              minTileHeight: 64,
+              leading: const Icon(Icons.account_circle_outlined),
+              title: Text(t.account),
+              subtitle: Text(accounts.current?.email ?? ''),
+              trailing: TextButton(
+                onPressed: () => _signOut(context, accounts),
+                child: Text(t.signOut),
+              ),
+            ),
+          if (locale case final locale?)
             ListTile(
               minTileHeight: 64,
               leading: const Icon(Icons.language),
               title: Text(t.language),
               subtitle: Text(languages[current] ?? current),
-              onTap: () => _chooseLanguage(context),
+              onTap: () => chooseLanguage(context, locale),
             ),
           if (pin case final pin?)
             ListenableBuilder(
@@ -62,6 +77,14 @@ class SettingsScreen extends StatelessWidget {
           ),
           ListTile(
             minTileHeight: 64,
+            leading: const Icon(Icons.inventory_outlined),
+            title: Text(t.archivedProducts),
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => ArchivedScreen(db: db)),
+            ),
+          ),
+          ListTile(
+            minTileHeight: 64,
             leading: const Icon(Icons.save_outlined),
             title: Text(t.backup),
             onTap: () => Navigator.of(context).push(
@@ -81,34 +104,54 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  Future<void> _chooseLanguage(BuildContext context) async {
+  Future<void> _signOut(BuildContext context, AccountController accounts) async {
     final t = AppLocalizations.of(context)!;
-    final chosen = await showDialog<String>(
+    final pending = await db.hasPendingChanges();
+    if (!context.mounted) return;
+    final ok = await showDialog<bool>(
       context: context,
-      builder: (context) => SimpleDialog(
-        title: Text(t.language),
-        children: [
-          SimpleDialogOption(
-            onPressed: () => Navigator.pop(context, ''),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: Text(t.languageSystem),
-            ),
-          ),
-          for (final MapEntry(:key, :value) in languages.entries)
-            SimpleDialogOption(
-              onPressed: () => Navigator.pop(context, key),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                child: Text(value),
-              ),
-            ),
+      builder: (context) => AlertDialog(
+        title: Text(t.signOut),
+        content: Text(pending ? t.signOutPending : t.signOutConfirm),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: Text(t.cancel)),
+          FilledButton(onPressed: () => Navigator.pop(context, true), child: Text(t.signOut)),
         ],
       ),
     );
-    if (chosen == null) return;
-    await locale!.choose(chosen.isEmpty ? null : Locale(chosen));
+    if (ok == true) await accounts.auth.signOut();
   }
+}
+
+/// Choix de la langue, aussi proposé sur la page de connexion.
+Future<void> chooseLanguage(BuildContext context, LocaleController locale) async {
+  final t = AppLocalizations.of(context)!;
+  const languages = SettingsScreen.languages;
+  final chosen = await showDialog<String>(
+    context: context,
+    builder: (context) => SimpleDialog(
+      title: Text(t.language),
+      children: [
+        SimpleDialogOption(
+          onPressed: () => Navigator.pop(context, ''),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Text(t.languageSystem),
+          ),
+        ),
+        for (final MapEntry(:key, :value) in languages.entries)
+          SimpleDialogOption(
+            onPressed: () => Navigator.pop(context, key),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Text(value),
+            ),
+          ),
+      ],
+    ),
+  );
+  if (chosen == null) return;
+  await locale.choose(chosen.isEmpty ? null : Locale(chosen));
 }
 
 /// Export du stock et de l'historique en CSV pour Excel.
@@ -167,6 +210,7 @@ class ExportScreen extends StatelessWidget {
         MovementType.sold => t.typeSold,
         MovementType.loss => t.typeLoss,
         MovementType.correction => t.typeCorrection,
+        MovementType.adjustment => t.typeAdjustment,
       },
     );
     final CsvTable table;

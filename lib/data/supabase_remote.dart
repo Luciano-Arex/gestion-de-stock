@@ -14,19 +14,27 @@ class SupabaseRemote implements SyncRemote {
 
   final SupabaseClient client;
 
+  // Chaque ligne appartient au compte connecté : le serveur refuse les autres.
+  List<Map<String, Object?>> _owned(List<Map<String, Object?>> rows) {
+    final owner = client.auth.currentUser!.id;
+    return [for (final r in rows) {...r, 'owner_id': owner}];
+  }
+
   @override
   Future<void> upsertCategories(List<Map<String, Object?>> rows) async {
-    await client.from('categories').upsert(rows, onConflict: 'id');
+    await client.from('categories').upsert(_owned(rows), onConflict: 'owner_id,id');
   }
 
   @override
   Future<void> upsertProducts(List<Map<String, Object?>> rows) async {
-    await client.from('products').upsert(rows, onConflict: 'id');
+    await client.from('products').upsert(_owned(rows), onConflict: 'id');
   }
 
   @override
   Future<void> insertMovements(List<Map<String, Object?>> rows) async {
-    await client.from('movements').upsert(rows, onConflict: 'id', ignoreDuplicates: true);
+    await client
+        .from('movements')
+        .upsert(_owned(rows), onConflict: 'id', ignoreDuplicates: true);
   }
 
   @override
