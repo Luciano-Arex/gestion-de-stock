@@ -86,4 +86,27 @@ void main() {
 
     await unmount(tester);
   });
+
+  testWidgets('le bandeau « Annuler » d\'une suppression part tout seul', (tester) async {
+    await tester.runAsync(() async {
+      await db.addProduct(name: 'Jus ananas', category: Category.autre);
+    });
+
+    await tester.pumpWidget(StockApp(db: db));
+    await tester.pumpAndSettle();
+    await openTab(tester, 'Stock');
+    await tester.tap(find.text('Jus ananas'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('Supprimer le produit'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(FilledButton, 'Supprimer'));
+    await tester.pumpAndSettle();
+    expect(find.text('Jus ananas a été supprimé'), findsOneWidget);
+
+    await tester.pump(const Duration(seconds: 6));
+    await tester.pumpAndSettle();
+    expect(find.text('Jus ananas a été supprimé'), findsNothing);
+
+    await unmount(tester);
+  });
 }

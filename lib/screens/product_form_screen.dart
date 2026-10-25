@@ -53,7 +53,9 @@ Future<void> deleteProductWithConfirmation(
     ..hideCurrentSnackBar()
     ..showSnackBar(SnackBar(
       content: Text(deleting ? t.productDeleted(product.name) : t.productArchived(product.name)),
-      duration: const Duration(seconds: 6),
+      duration: const Duration(seconds: 5),
+      // Avec un bouton, Flutter garde le bandeau jusqu'à ce qu'on le ferme : on veut qu'il parte seul.
+      persist: false,
       action: SnackBarAction(
         label: t.undo,
         onPressed: () =>
