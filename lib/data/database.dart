@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 import 'package:uuid/uuid.dart';
@@ -96,6 +98,44 @@ class NotEnoughStock implements Exception {
 
   @override
   String toString() => 'NotEnoughStock(available: $available, requested: $requested)';
+}
+
+Map<String, Object?> _decodeAttributes(String json) {
+  try {
+    final decoded = jsonDecode(json);
+    return decoded is Map<String, Object?> ? decoded : const {};
+  } on FormatException {
+    return const {};
+  }
+}
+
+/// [attributes] avec [color] à la place de l'ancienne couleur (supprimée si
+/// vide). Les autres attributs éventuels sont gardés tels quels.
+String attributesWithColor(String attributes, String? color) {
+  final next = Map<String, Object?>.of(_decodeAttributes(attributes));
+  final value = color?.trim() ?? '';
+  if (value.isEmpty) {
+    next.remove('color');
+  } else {
+    next['color'] = value;
+  }
+  return jsonEncode(next);
+}
+
+/// Attributs libres d'un produit, rangés en JSON dans `attributes`.
+extension ProductAttributes on Product {
+  /// Couleur saisie librement (« Noir », « 1B », « Blond 613 »…), ou null.
+  String? get color {
+    final value = _decodeAttributes(attributes)['color'];
+    return value is String && value.trim().isNotEmpty ? value : null;
+  }
+
+  /// Le nom suivi de la couleur, pour distinguer deux produits de même nom
+  /// dans l'historique et les rapports.
+  String get displayName => switch (color) {
+        final c? => '$name ($c)',
+        null => name,
+      };
 }
 
 /// Un produit et sa quantité en stock.
@@ -218,6 +258,7 @@ class AppDatabase extends _$AppDatabase {
     int? purchasePriceCents,
     int? salePriceCents,
     String? barcode,
+    String? color,
     int initialQuantity = 0,
   }) {
     if (initialQuantity < 0) {
@@ -231,12 +272,20 @@ class AppDatabase extends _$AppDatabase {
         purchasePriceCents: Value(purchasePriceCents),
         salePriceCents: Value(salePriceCents),
         barcode: Value(barcode),
+        attributes: Value(attributesWithColor('{}', color)),
       ));
       if (initialQuantity > 0) {
         await receive(product.id, initialQuantity, unitPriceCents: purchasePriceCents);
       }
       return product;
     });
+  }
+
+  /// Couleurs déjà utilisées, pour les proposer à la saisie.
+  Future<List<String>> knownColors() async {
+    final rows = await (select(products)..where((p) => p.deleted.equals(false))).get();
+    final colors = {for (final p in rows) ?p.color};
+    return colors.toList()..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
   }
 
   Future<void> updateProduct(Product product) {
@@ -445,7 +494,7 @@ class AppDatabase extends _$AppDatabase {
 
   /// Liste du stock, mise à jour en direct, produits archivés exclus.
   ///
-  /// [search] filtre sur le nom ou le code-barres (majuscules ignorées).
+  /// [search] filtre sur le nom, la couleur ou le code-barres (majuscules ignorées).
   Stream<List<StockLine>> watchStock({
     String search = '',
     String? categoryId,
@@ -479,7 +528,10 @@ class AppDatabase extends _$AppDatabase {
     final term = search.trim();
     if (term.isNotEmpty) {
       final pattern = '%${term.replaceAll('%', '').replaceAll('_', '')}%';
-      query.where(products.name.like(pattern) | products.barcode.like(pattern));
+      // La couleur est rangée dans les attributs : « noir » trouve aussi un tissage noir.
+      query.where(products.name.like(pattern) |
+          products.barcode.like(pattern) |
+          products.attributes.like(pattern));
     }
     return query.watch().map((rows) => [
           for (final row in rows) StockLine(row.readTable(products), row.read(total) ?? 0),

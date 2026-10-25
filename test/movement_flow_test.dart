@@ -143,4 +143,32 @@ void main() {
 
     await unmount(tester);
   });
+
+  testWidgets('la couleur, facultative, se saisit à la création et s\'affiche dans le stock',
+      (tester) async {
+    await tester.pumpWidget(StockApp(db: db));
+    await tester.pumpAndSettle();
+    await openTab(tester, 'Stock');
+    await tester.tap(find.widgetWithText(FloatingActionButton, 'Nouveau produit'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.widgetWithText(TextFormField, 'Nom du produit'), 'Tissage 22 pouces');
+    await tester.enterText(find.widgetWithText(TextFormField, 'Couleur (facultatif)'), 'Noir 1B');
+    await tester.enterText(find.widgetWithText(TextFormField, 'Quantité déjà en stock'), '4');
+    await tester.tap(find.text('Enregistrer'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Noir 1B · 4 en stock'), findsOneWidget);
+
+    // Sur la fiche, puis dans le formulaire de modification.
+    await tester.tap(find.text('Tissage 22 pouces'));
+    await tester.pumpAndSettle();
+    expect(find.text('Noir 1B'), findsOneWidget);
+    await tester.tap(find.byTooltip('Modifier le produit'));
+    await tester.pumpAndSettle();
+    final field = tester.widget<TextFormField>(
+        find.widgetWithText(TextFormField, 'Couleur (facultatif)'));
+    expect(field.controller!.text, 'Noir 1B');
+
+    await unmount(tester);
+  });
 }

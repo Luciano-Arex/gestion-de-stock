@@ -230,4 +230,31 @@ void main() {
     await db.deleteProduct(maillot.id);
     expect(await db.watchArchived().first, isEmpty);
   });
+
+  test('couleur : enregistrée, modifiable, et trouvée par la recherche', () async {
+    final p = await db.addProduct(name: 'Tissage 22', category: Category.meche, color: ' Blond 613 ');
+    expect(p.color, 'Blond 613');
+    expect((await db.watchStock(search: 'blond').first).single.product.id, p.id);
+    expect(p.displayName, 'Tissage 22 (Blond 613)');
+
+    // Changer la couleur garde les autres attributs.
+    await db.updateProduct(p.copyWith(
+        attributes: attributesWithColor('{"longueur":"22"}', 'Noir')));
+    final modifie = (await db.watchStock(search: 'Tissage').first).single.product;
+    expect(modifie.color, 'Noir');
+    expect(modifie.attributes, contains('longueur'));
+
+    // Vider le champ retire la couleur.
+    await db.updateProduct(modifie.copyWith(attributes: attributesWithColor(modifie.attributes, '')));
+    expect((await db.watchStock(search: 'Tissage').first).single.product.color, isNull);
+    expect(maillot.color, isNull);
+    expect(maillot.displayName, maillot.name);
+  });
+
+  test('les couleurs déjà utilisées sont proposées, sans doublon', () async {
+    await db.addProduct(name: 'A', category: Category.autre, color: 'Rouge');
+    await db.addProduct(name: 'B', category: Category.autre, color: 'Rouge');
+    await db.addProduct(name: 'C', category: Category.autre, color: 'blanc');
+    expect(await db.knownColors(), ['blanc', 'Rouge']);
+  });
 }

@@ -94,15 +94,21 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
   late final _purchasePrice =
       TextEditingController(text: formatCents(widget.product?.purchasePriceCents));
   late final _barcode = TextEditingController(text: widget.product?.barcode ?? '');
+  late final _color = TextEditingController(text: widget.product?.color ?? '');
+  final _colorFocus = FocusNode();
+  // Couleurs déjà saisies sur d'autres produits, proposées en tapant.
+  late final Future<List<String>> _knownColors = widget.db.knownColors();
   final _initialQuantity = TextEditingController(text: '0');
   late String _category = widget.product?.category ?? Category.autre;
   bool _saving = false;
 
   @override
   void dispose() {
-    for (final c in [_name, _threshold, _salePrice, _purchasePrice, _barcode, _initialQuantity]) {
+    for (final c in [_name, _threshold, _salePrice, _purchasePrice, _barcode, _color]) {
       c.dispose();
     }
+    _initialQuantity.dispose();
+    _colorFocus.dispose();
     super.dispose();
   }
 
@@ -139,6 +145,31 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                   helperText: t.productNameHelp,
                 ),
                 validator: (v) => (v == null || v.trim().isEmpty) ? t.productNameRequired : null,
+              ),
+              const SizedBox(height: 16),
+              FutureBuilder<List<String>>(
+                future: _knownColors,
+                builder: (context, snapshot) => Autocomplete<String>(
+                  textEditingController: _color,
+                  focusNode: _colorFocus,
+                  optionsBuilder: (value) {
+                    final typed = value.text.trim().toLowerCase();
+                    return (snapshot.data ?? const <String>[]).where(
+                        (c) => c.toLowerCase().contains(typed) && c.toLowerCase() != typed);
+                  },
+                  fieldViewBuilder: (context, controller, focusNode, onSubmitted) => TextFormField(
+                    controller: controller,
+                    focusNode: focusNode,
+                    textCapitalization: TextCapitalization.sentences,
+                    textInputAction: TextInputAction.next,
+                    decoration: InputDecoration(
+                      labelText: t.color,
+                      helperText: t.colorHelp,
+                      prefixIcon: const Icon(Icons.palette_outlined),
+                    ),
+                    onFieldSubmitted: (_) => onSubmitted(),
+                  ),
+                ),
               ),
               if (existing == null && widget.askQuantity) ...[
                 const SizedBox(height: 16),
@@ -267,6 +298,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
         salePriceCents: sale,
         purchasePriceCents: purchase,
         barcode: barcode,
+        color: _color.text,
         initialQuantity: int.tryParse(_initialQuantity.text) ?? 0,
       );
     } else {
@@ -277,6 +309,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
         salePriceCents: Value(sale),
         purchasePriceCents: Value(purchase),
         barcode: Value(barcode),
+        attributes: attributesWithColor(existing.attributes, _color.text),
       );
       await widget.db.updateProduct(saved);
     }

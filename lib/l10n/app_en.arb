@@ -207,5 +207,8 @@
   "archiveInstead": "Archive instead",
   "delete": "Delete",
   "productDeleted": "{name} was deleted",
-  "productArchived": "{name} was archived"
+  "productArchived": "{name} was archived",
+  "color": "Colour (optional)",
+  "colorHelp": "E.g. Black, 1B, Blonde 613, Red and white",
+  "colColor": "Colour"
 }
