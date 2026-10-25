@@ -148,4 +148,34 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get invalidPrice => 'Prix non valide. Ex. : 25 ou 25,50';
+
+  @override
+  String get backup => 'Sauvegarde';
+
+  @override
+  String get backupIntro =>
+      'Une sauvegarde est un fichier qui contient tous tes produits et tout l\'historique. Range-la sur une clé USB ou dans ton espace cloud. Fais-en une au moins une fois par semaine.';
+
+  @override
+  String get backupCreate => 'Créer une sauvegarde';
+
+  @override
+  String get backupCreated => 'Sauvegarde enregistrée';
+
+  @override
+  String get backupRestore => 'Restaurer une sauvegarde';
+
+  @override
+  String get backupRestoreConfirm =>
+      'Les produits et les saisies du fichier seront ajoutés à ceux déjà présents. Rien n\'est effacé, et une saisie déjà présente n\'est pas comptée deux fois.';
+
+  @override
+  String backupRestored(int products, int movements) {
+    return '$products produits et $movements nouvelles saisies restaurés';
+  }
+
+  @override
+  String backupError(String reason) {
+    return 'Impossible de lire ce fichier : $reason';
+  }
 }

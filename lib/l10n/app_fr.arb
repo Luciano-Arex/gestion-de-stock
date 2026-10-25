@@ -9,7 +9,13 @@
   "stockEmpty": "Aucun produit pour l'instant.",
   "noResult": "Aucun produit ne correspond.",
   "quantity": "{count} en stock",
-  "@quantity": { "placeholders": { "count": { "type": "int" } } },
+  "@quantity": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "outOfStock": "Rupture",
   "lowStock": "À recommander",
   "search": "Chercher un produit",
@@ -39,12 +45,61 @@
   "validate": "Valider",
   "invalidQuantity": "Indique un nombre supérieur à 0.",
   "notEnoughStock": "Il n'en reste que {count}. Vérifie la quantité.",
-  "@notEnoughStock": { "placeholders": { "count": { "type": "int" } } },
+  "@notEnoughStock": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "receivedDone": "{count} × {name} ajouté au stock",
-  "@receivedDone": { "placeholders": { "count": { "type": "int" }, "name": { "type": "String" } } },
+  "@receivedDone": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "soldDone": "{count} × {name} retiré du stock",
-  "@soldDone": { "placeholders": { "count": { "type": "int" }, "name": { "type": "String" } } },
+  "@soldDone": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "undo": "Annuler",
   "undone": "Saisie annulée",
-  "invalidPrice": "Prix non valide. Ex. : 25 ou 25,50"
+  "invalidPrice": "Prix non valide. Ex. : 25 ou 25,50",
+  "backup": "Sauvegarde",
+  "backupIntro": "Une sauvegarde est un fichier qui contient tous tes produits et tout l'historique. Range-la sur une clé USB ou dans ton espace cloud. Fais-en une au moins une fois par semaine.",
+  "backupCreate": "Créer une sauvegarde",
+  "backupCreated": "Sauvegarde enregistrée",
+  "backupRestore": "Restaurer une sauvegarde",
+  "backupRestoreConfirm": "Les produits et les saisies du fichier seront ajoutés à ceux déjà présents. Rien n'est effacé, et une saisie déjà présente n'est pas comptée deux fois.",
+  "backupRestored": "{products} produits et {movements} nouvelles saisies restaurés",
+  "@backupRestored": {
+    "placeholders": {
+      "products": {
+        "type": "int"
+      },
+      "movements": {
+        "type": "int"
+      }
+    }
+  },
+  "backupError": "Impossible de lire ce fichier : {reason}",
+  "@backupError": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  }
 }

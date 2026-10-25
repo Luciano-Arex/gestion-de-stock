@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../data/database.dart';
 import '../l10n/app_localizations.dart';
+import 'backup_screen.dart';
 import 'movement_screen.dart';
 import 'stock_screen.dart';
 
@@ -15,7 +16,18 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(title: Text(t.appTitle)),
+      appBar: AppBar(
+        title: Text(t.appTitle),
+        actions: [
+          IconButton(
+            tooltip: t.backup,
+            icon: const Icon(Icons.save_outlined),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => BackupScreen(db: db)),
+            ),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(

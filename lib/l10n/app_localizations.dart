@@ -351,6 +351,54 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Prix non valide. Ex. : 25 ou 25,50'**
   String get invalidPrice;
+
+  /// No description provided for @backup.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sauvegarde'**
+  String get backup;
+
+  /// No description provided for @backupIntro.
+  ///
+  /// In fr, this message translates to:
+  /// **'Une sauvegarde est un fichier qui contient tous tes produits et tout l\'historique. Range-la sur une clé USB ou dans ton espace cloud. Fais-en une au moins une fois par semaine.'**
+  String get backupIntro;
+
+  /// No description provided for @backupCreate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer une sauvegarde'**
+  String get backupCreate;
+
+  /// No description provided for @backupCreated.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sauvegarde enregistrée'**
+  String get backupCreated;
+
+  /// No description provided for @backupRestore.
+  ///
+  /// In fr, this message translates to:
+  /// **'Restaurer une sauvegarde'**
+  String get backupRestore;
+
+  /// No description provided for @backupRestoreConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les produits et les saisies du fichier seront ajoutés à ceux déjà présents. Rien n\'est effacé, et une saisie déjà présente n\'est pas comptée deux fois.'**
+  String get backupRestoreConfirm;
+
+  /// No description provided for @backupRestored.
+  ///
+  /// In fr, this message translates to:
+  /// **'{products} produits et {movements} nouvelles saisies restaurés'**
+  String backupRestored(int products, int movements);
+
+  /// No description provided for @backupError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de lire ce fichier : {reason}'**
+  String backupError(String reason);
 }
 
 class _AppLocalizationsDelegate
