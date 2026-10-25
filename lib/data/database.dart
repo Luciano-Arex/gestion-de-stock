@@ -83,6 +83,17 @@ class StockLine {
   bool get isLow => !isOut && quantity <= product.alertThreshold;
 }
 
+/// Une ligne de l'historique : le mouvement, son produit, et s'il a été annulé.
+class HistoryEntry {
+  HistoryEntry(this.movement, this.product, {required this.cancelled});
+  final Movement movement;
+  final Product product;
+  final bool cancelled;
+
+  /// Une saisie normale encore valable, qu'on peut annuler.
+  bool get canUndo => !cancelled && movement.type != MovementType.correction;
+}
+
 @DriftDatabase(tables: [Products, Movements, Settings])
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor]) : super(executor ?? _openDefault());
@@ -179,6 +190,11 @@ class AppDatabase extends _$AppDatabase {
       if (alreadyCancelled != null) {
         throw StateError('Mouvement déjà annulé');
       }
+      // Annuler une réception déjà vendue ferait passer le stock sous zéro.
+      if (original.delta > 0) {
+        final available = await stockOf(original.productId);
+        if (available < original.delta) throw NotEnoughStock(available, original.delta);
+      }
       return into(movements).insertReturning(MovementsCompanion.insert(
         productId: original.productId,
         type: MovementType.correction,
@@ -186,6 +202,47 @@ class AppDatabase extends _$AppDatabase {
         cancelsId: Value(original.id),
       ));
     });
+  }
+
+  /// Historique des mouvements, du plus récent au plus ancien.
+  ///
+  /// [productId] limite à un produit, [since] aux mouvements à partir de cette date.
+  Stream<List<HistoryEntry>> watchHistory({String? productId, DateTime? since, int limit = 500}) {
+    final cancellation = alias(movements, 'cancellation');
+    final query = select(movements).join([
+      innerJoin(products, products.id.equalsExp(movements.productId)),
+      leftOuterJoin(cancellation, cancellation.cancelsId.equalsExp(movements.id)),
+    ])
+      ..orderBy([OrderingTerm.desc(movements.createdAt)])
+      ..limit(limit);
+    if (productId != null) query.where(movements.productId.equals(productId));
+    if (since != null) query.where(movements.createdAt.isBiggerOrEqualValue(since));
+    return query.watch().map((rows) => [
+          for (final row in rows)
+            HistoryEntry(
+              row.readTable(movements),
+              row.readTable(products),
+              cancelled: row.readTableOrNull(cancellation) != null,
+            ),
+        ]);
+  }
+
+  /// Produits en rupture ou sous leur seuil : la liste « à recommander ».
+  Stream<List<StockLine>> watchToReorder({String search = ''}) => watchStock(search: search)
+      .map((lines) => lines.where((l) => l.isOut || l.isLow).toList());
+
+  /// Un produit et sa quantité, mis à jour en direct.
+  Stream<StockLine> watchProduct(String productId) {
+    final total = movements.delta.sum();
+    final query = select(products).join([
+      leftOuterJoin(movements, movements.productId.equalsExp(products.id)),
+    ])
+      ..addColumns([total])
+      ..where(products.id.equals(productId))
+      ..groupBy([products.id]);
+    return query
+        .watchSingle()
+        .map((row) => StockLine(row.readTable(products), row.read(total) ?? 0));
   }
 
   /// Liste du stock, mise à jour en direct, produits archivés exclus.

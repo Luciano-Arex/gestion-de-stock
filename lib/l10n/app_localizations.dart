@@ -489,6 +489,120 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Synchroniser maintenant'**
   String get syncNow;
+
+  /// No description provided for @history.
+  ///
+  /// In fr, this message translates to:
+  /// **'Historique'**
+  String get history;
+
+  /// No description provided for @historyEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune saisie sur cette période.'**
+  String get historyEmpty;
+
+  /// No description provided for @periodToday.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aujourd\'hui'**
+  String get periodToday;
+
+  /// No description provided for @period7.
+  ///
+  /// In fr, this message translates to:
+  /// **'7 jours'**
+  String get period7;
+
+  /// No description provided for @period30.
+  ///
+  /// In fr, this message translates to:
+  /// **'30 jours'**
+  String get period30;
+
+  /// No description provided for @periodAll.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tout'**
+  String get periodAll;
+
+  /// No description provided for @typeReceived.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reçu'**
+  String get typeReceived;
+
+  /// No description provided for @typeSold.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vendu'**
+  String get typeSold;
+
+  /// No description provided for @typeLoss.
+  ///
+  /// In fr, this message translates to:
+  /// **'Perte'**
+  String get typeLoss;
+
+  /// No description provided for @typeCorrection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annulation'**
+  String get typeCorrection;
+
+  /// No description provided for @cancelled.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annulée'**
+  String get cancelled;
+
+  /// No description provided for @undoEntry.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annuler cette saisie'**
+  String get undoEntry;
+
+  /// No description provided for @undoEntryConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'La quantité sera remise comme avant. La saisie reste visible dans l\'historique, marquée « Annulée ».'**
+  String get undoEntryConfirm;
+
+  /// No description provided for @toReorder.
+  ///
+  /// In fr, this message translates to:
+  /// **'À recommander'**
+  String get toReorder;
+
+  /// No description provided for @toReorderCount.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 produit à recommander} other{{count} produits à recommander}}'**
+  String toReorderCount(int count);
+
+  /// No description provided for @toReorderEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rien à recommander pour l\'instant.'**
+  String get toReorderEmpty;
+
+  /// No description provided for @undoNotEnough.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible d\'annuler : une partie a déjà été vendue (il en reste {count}).'**
+  String undoNotEnough(int count);
+
+  /// No description provided for @salePriceShort.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vente :'**
+  String get salePriceShort;
+
+  /// No description provided for @purchasePriceShort.
+  ///
+  /// In fr, this message translates to:
+  /// **'Achat :'**
+  String get purchasePriceShort;
 }
 
 class _AppLocalizationsDelegate

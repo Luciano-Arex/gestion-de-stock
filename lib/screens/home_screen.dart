@@ -4,6 +4,7 @@ import '../data/database.dart';
 import '../data/sync_controller.dart';
 import '../l10n/app_localizations.dart';
 import 'backup_screen.dart';
+import 'history_screen.dart';
 import 'movement_screen.dart';
 import 'stock_screen.dart';
 import 'sync_screen.dart';
@@ -48,14 +49,14 @@ class HomeScreen extends StatelessWidget {
       ),
       body: SafeArea(
         child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 520),
-            child: Padding(
-              padding: const EdgeInsets.all(24),
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 520),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  _ReorderBanner(db: db),
                   _BigAction(
                     icon: Icons.move_to_inbox,
                     label: t.received,
@@ -70,13 +71,16 @@ class HomeScreen extends StatelessWidget {
                     onPressed: () => _record(context, MovementKind.sell),
                   ),
                   const SizedBox(height: 40),
-                  OutlinedButton.icon(
-                    style: OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(56)),
-                    icon: const Icon(Icons.inventory_2),
-                    label: Text(t.myStock),
-                    onPressed: () => Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => StockScreen(db: db)),
-                    ),
+                  _SecondaryAction(
+                    icon: Icons.inventory_2,
+                    label: t.myStock,
+                    builder: (_) => StockScreen(db: db),
+                  ),
+                  const SizedBox(height: 12),
+                  _SecondaryAction(
+                    icon: Icons.history,
+                    label: t.history,
+                    builder: (_) => HistoryScreen(db: db),
                   ),
                 ],
               ),
@@ -106,9 +110,13 @@ class HomeScreen extends StatelessWidget {
       action: SnackBarAction(
         label: t.undo,
         onPressed: () async {
-          await db.undo(result.movement.id);
           messenger.hideCurrentSnackBar();
-          messenger.showSnackBar(SnackBar(content: Text(t.undone)));
+          try {
+            await db.undo(result.movement.id);
+            messenger.showSnackBar(SnackBar(content: Text(t.undone)));
+          } on NotEnoughStock catch (e) {
+            messenger.showSnackBar(SnackBar(content: Text(t.undoNotEnough(e.available))));
+          }
         },
       ),
     ));
@@ -153,6 +161,62 @@ class _BigAction extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _SecondaryAction extends StatelessWidget {
+  const _SecondaryAction({required this.icon, required this.label, required this.builder});
+
+  final IconData icon;
+  final String label;
+  final WidgetBuilder builder;
+
+  @override
+  Widget build(BuildContext context) {
+    return OutlinedButton.icon(
+      style: OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(56)),
+      icon: Icon(icon),
+      label: Text(label),
+      onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: builder)),
+    );
+  }
+}
+
+/// Bandeau visible seulement quand des produits sont sous leur seuil.
+class _ReorderBanner extends StatelessWidget {
+  const _ReorderBanner({required this.db});
+
+  final AppDatabase db;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
+    final scheme = Theme.of(context).colorScheme;
+    return StreamBuilder<List<StockLine>>(
+      stream: db.watchToReorder(),
+      builder: (context, snapshot) {
+        final count = snapshot.data?.length ?? 0;
+        if (count == 0) return const SizedBox.shrink();
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 24),
+          child: Card(
+            color: scheme.tertiaryContainer,
+            child: ListTile(
+              minTileHeight: 64,
+              leading: Icon(Icons.warning_amber, color: scheme.onTertiaryContainer),
+              title: Text(
+                t.toReorderCount(count),
+                style: TextStyle(color: scheme.onTertiaryContainer, fontWeight: FontWeight.bold),
+              ),
+              trailing: Icon(Icons.chevron_right, color: scheme.onTertiaryContainer),
+              onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                builder: (_) => StockScreen(db: db, reorderOnly: true),
+              )),
+            ),
+          ),
+        );
+      },
     );
   }
 }

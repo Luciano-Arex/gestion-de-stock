@@ -2,19 +2,22 @@ import 'package:flutter/material.dart';
 
 import '../data/database.dart';
 import '../l10n/app_localizations.dart';
+import 'history_screen.dart';
 import 'product_form_screen.dart';
 
 /// Liste de tous les produits avec la quantité restante.
 class StockScreen extends StatelessWidget {
-  const StockScreen({super.key, required this.db});
+  const StockScreen({super.key, required this.db, this.reorderOnly = false});
 
   final AppDatabase db;
+  // N'affiche que les ruptures et les produits sous leur seuil.
+  final bool reorderOnly;
 
   @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(title: Text(t.myStock)),
+      appBar: AppBar(title: Text(reorderOnly ? t.toReorder : t.myStock)),
       floatingActionButton: FloatingActionButton.extended(
         icon: const Icon(Icons.add),
         label: Text(t.newProduct),
@@ -24,8 +27,9 @@ class StockScreen extends StatelessWidget {
       ),
       body: ProductSearchList(
         db: db,
+        reorderOnly: reorderOnly,
         onTap: (line) => Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => ProductFormScreen(db: db, product: line.product)),
+          MaterialPageRoute(builder: (_) => HistoryScreen(db: db, product: line.product)),
         ),
       ),
     );
@@ -42,6 +46,7 @@ class ProductSearchList extends StatefulWidget {
     required this.onTap,
     this.onCreate,
     this.autofocus = false,
+    this.reorderOnly = false,
   });
 
   final AppDatabase db;
@@ -49,6 +54,7 @@ class ProductSearchList extends StatefulWidget {
   // Si fourni, propose « Nouveau produit » avec le texte cherché.
   final ValueChanged<String>? onCreate;
   final bool autofocus;
+  final bool reorderOnly;
 
   @override
   State<ProductSearchList> createState() => _ProductSearchListState();
@@ -56,7 +62,11 @@ class ProductSearchList extends StatefulWidget {
 
 class _ProductSearchListState extends State<ProductSearchList> {
   final _search = TextEditingController();
-  late Stream<List<StockLine>> _stream = widget.db.watchStock();
+  late Stream<List<StockLine>> _stream = _watch('');
+
+  Stream<List<StockLine>> _watch(String search) => widget.reorderOnly
+      ? widget.db.watchToReorder(search: search)
+      : widget.db.watchStock(search: search);
 
   @override
   void dispose() {
@@ -79,7 +89,7 @@ class _ProductSearchListState extends State<ProductSearchList> {
               prefixIcon: const Icon(Icons.search),
               border: const OutlineInputBorder(),
             ),
-            onChanged: (text) => setState(() => _stream = widget.db.watchStock(search: text)),
+            onChanged: (text) => setState(() => _stream = _watch(text)),
           ),
         ),
         if (widget.onCreate != null)
@@ -100,7 +110,11 @@ class _ProductSearchListState extends State<ProductSearchList> {
               if (lines == null) return const Center(child: CircularProgressIndicator());
               if (lines.isEmpty) {
                 return Center(
-                  child: Text(_search.text.trim().isEmpty ? t.stockEmpty : t.noResult),
+                  child: Text(_search.text.trim().isNotEmpty
+                      ? t.noResult
+                      : widget.reorderOnly
+                          ? t.toReorderEmpty
+                          : t.stockEmpty),
                 );
               }
               return ListView.separated(

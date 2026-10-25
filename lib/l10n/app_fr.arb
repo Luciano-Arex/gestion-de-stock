@@ -130,5 +130,38 @@
   "signIn": "Se connecter",
   "signOut": "Se déconnecter",
   "signInError": "Connexion refusée. Vérifie l'adresse et le mot de passe.",
-  "syncNow": "Synchroniser maintenant"
+  "syncNow": "Synchroniser maintenant",
+  "history": "Historique",
+  "historyEmpty": "Aucune saisie sur cette période.",
+  "periodToday": "Aujourd'hui",
+  "period7": "7 jours",
+  "period30": "30 jours",
+  "periodAll": "Tout",
+  "typeReceived": "Reçu",
+  "typeSold": "Vendu",
+  "typeLoss": "Perte",
+  "typeCorrection": "Annulation",
+  "cancelled": "Annulée",
+  "undoEntry": "Annuler cette saisie",
+  "undoEntryConfirm": "La quantité sera remise comme avant. La saisie reste visible dans l'historique, marquée « Annulée ».",
+  "toReorder": "À recommander",
+  "toReorderCount": "{count, plural, =1{1 produit à recommander} other{{count} produits à recommander}}",
+  "@toReorderCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "toReorderEmpty": "Rien à recommander pour l'instant.",
+  "undoNotEnough": "Impossible d'annuler : une partie a déjà été vendue (il en reste {count}).",
+  "@undoNotEnough": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "salePriceShort": "Vente :",
+  "purchasePriceShort": "Achat :"
 }

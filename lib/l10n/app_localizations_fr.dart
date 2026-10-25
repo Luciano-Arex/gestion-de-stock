@@ -230,4 +230,72 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get syncNow => 'Synchroniser maintenant';
+
+  @override
+  String get history => 'Historique';
+
+  @override
+  String get historyEmpty => 'Aucune saisie sur cette période.';
+
+  @override
+  String get periodToday => 'Aujourd\'hui';
+
+  @override
+  String get period7 => '7 jours';
+
+  @override
+  String get period30 => '30 jours';
+
+  @override
+  String get periodAll => 'Tout';
+
+  @override
+  String get typeReceived => 'Reçu';
+
+  @override
+  String get typeSold => 'Vendu';
+
+  @override
+  String get typeLoss => 'Perte';
+
+  @override
+  String get typeCorrection => 'Annulation';
+
+  @override
+  String get cancelled => 'Annulée';
+
+  @override
+  String get undoEntry => 'Annuler cette saisie';
+
+  @override
+  String get undoEntryConfirm =>
+      'La quantité sera remise comme avant. La saisie reste visible dans l\'historique, marquée « Annulée ».';
+
+  @override
+  String get toReorder => 'À recommander';
+
+  @override
+  String toReorderCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count produits à recommander',
+      one: '1 produit à recommander',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get toReorderEmpty => 'Rien à recommander pour l\'instant.';
+
+  @override
+  String undoNotEnough(int count) {
+    return 'Impossible d\'annuler : une partie a déjà été vendue (il en reste $count).';
+  }
+
+  @override
+  String get salePriceShort => 'Vente :';
+
+  @override
+  String get purchasePriceShort => 'Achat :';
 }

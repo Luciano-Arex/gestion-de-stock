@@ -92,4 +92,53 @@ void main() {
     expect(parNom[maillot.name]!.isLow, isTrue);
     expect(parNom[meche.name]!.isOut, isTrue);
   });
+
+  test('l\'historique liste les mouvements du plus récent au plus ancien', () async {
+    await db.receive(maillot.id, 5);
+    await Future<void>.delayed(const Duration(milliseconds: 5));
+    final vente = await db.sell(maillot.id, 2);
+
+    final historique = await db.watchHistory().first;
+    expect(historique.map((h) => h.movement.type), [MovementType.sold, MovementType.received]);
+    expect(historique.first.movement.id, vente.id);
+    expect(historique.first.product.name, maillot.name);
+  });
+
+  test('l\'historique signale les saisies annulées', () async {
+    final vente = await db.receive(maillot.id, 5).then((_) => db.sell(maillot.id, 1));
+    await db.undo(vente.id);
+
+    final historique = await db.watchHistory().first;
+    final original = historique.singleWhere((h) => h.movement.id == vente.id);
+    final correction = historique.singleWhere((h) => h.movement.type == MovementType.correction);
+    expect(original.cancelled, isTrue);
+    expect(original.canUndo, isFalse);
+    expect(correction.canUndo, isFalse);
+  });
+
+  test('l\'historique se filtre par produit et par date', () async {
+    final autre = await db.addProduct(name: 'Closure', category: Category.meche);
+    await db.receive(maillot.id, 1);
+    await db.receive(autre.id, 1);
+
+    expect(await db.watchHistory(productId: autre.id).first, hasLength(1));
+    final demain = DateTime.now().add(const Duration(days: 1));
+    expect(await db.watchHistory(since: demain).first, isEmpty);
+  });
+
+  test('la liste à recommander contient ruptures et seuils bas', () async {
+    final bien = await db.addProduct(name: 'Bien fourni', category: Category.autre);
+    await db.receive(bien.id, 50);
+    await db.receive(maillot.id, 1); // seuil 2
+
+    final liste = await db.watchToReorder().first;
+    expect(liste.map((l) => l.product.name), [maillot.name]);
+  });
+
+  test('annuler une réception déjà vendue est refusé', () async {
+    final arrivage = await db.receive(maillot.id, 3);
+    await db.sell(maillot.id, 2);
+    await expectLater(db.undo(arrivage.id), throwsA(isA<NotEnoughStock>()));
+    expect(await db.stockOf(maillot.id), 1);
+  });
 }
