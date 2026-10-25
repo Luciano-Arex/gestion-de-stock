@@ -7,21 +7,29 @@ import 'package:gestion_stock/data/sync.dart';
 /// Serveur en mémoire qui se comporte comme le schéma Supabase :
 /// numéro `seq` partagé, produit gardé s'il est plus récent, mouvements uniques.
 class FakeRemote implements SyncRemote {
+  final categories = <String, Map<String, Object?>>{};
   final products = <String, Map<String, Object?>>{};
   final movements = <String, Map<String, Object?>>{};
   var _seq = 0;
   var calls = 0;
 
   @override
-  Future<void> upsertProducts(List<Map<String, Object?>> rows) async {
+  Future<void> upsertCategories(List<Map<String, Object?>> rows) async =>
+      _upsertLatest(categories, rows);
+
+  @override
+  Future<void> upsertProducts(List<Map<String, Object?>> rows) async =>
+      _upsertLatest(products, rows);
+
+  void _upsertLatest(Map<String, Map<String, Object?>> table, List<Map<String, Object?>> rows) {
     for (final row in rows) {
-      final existing = products[row['id']];
+      final existing = table[row['id']];
       if (existing != null &&
           DateTime.parse(existing['updated_at'] as String)
               .isAfter(DateTime.parse(row['updated_at'] as String))) {
         continue;
       }
-      products[row['id'] as String] = {...row, 'seq': ++_seq};
+      table[row['id'] as String] = {...row, 'seq': ++_seq};
     }
   }
 
@@ -33,15 +41,18 @@ class FakeRemote implements SyncRemote {
   }
 
   @override
-  Future<({List<Map<String, Object?>> products, List<Map<String, Object?>> movements})>
-      changesSince(int cursor, int limit) async {
+  Future<RemoteChanges> changesSince(int cursor, int limit) async {
     calls++;
     List<Map<String, Object?>> after(Iterable<Map<String, Object?>> rows) =>
         (rows.where((r) => (r['seq'] as int) > cursor).toList()
               ..sort((a, b) => (a['seq'] as int).compareTo(b['seq'] as int)))
             .take(limit)
             .toList();
-    return (products: after(products.values), movements: after(movements.values));
+    return (
+      categories: after(categories.values),
+      products: after(products.values),
+      movements: after(movements.values),
+    );
   }
 }
 
@@ -104,7 +115,7 @@ void main() {
     final first = await SyncEngine(phone, server).sync();
     final second = await SyncEngine(phone, server).sync();
 
-    expect(first.pushed, 2);
+    expect(first.pushed, 5); // 3 catégories de départ + 1 produit + 1 mouvement
     expect(second.pushed, 0);
     expect(second.pulled, 0);
   });
@@ -167,5 +178,26 @@ void main() {
 
     expect(report.pulled, 1);
     expect(await stock(phone), 2);
+  });
+
+  test('une catégorie créée sur le PC apparaît sur le téléphone', () async {
+    final c = await pc.addCategory('Perruques');
+    await pc.addProduct(name: 'Perruque bob', category: c.id);
+    await SyncEngine(pc, server).sync();
+    await SyncEngine(phone, server).sync();
+
+    final noms = (await phone.watchCategories().first).map((c) => c.name);
+    expect(noms, contains('Perruques'));
+    expect((await phone.watchStock(categoryId: c.id).first).single.product.name, 'Perruque bob');
+  });
+
+  test('les catégories par défaut renommées se synchronisent', () async {
+    await pc.renameCategory(Category.maillot, 'Maillots de foot');
+    await SyncEngine(pc, server).sync();
+    await SyncEngine(phone, server).sync();
+
+    final noms = (await phone.watchCategories().first).map((c) => c.name);
+    expect(noms, contains('Maillots de foot'));
+    expect(noms, isNot(contains('Maillots')));
   });
 }

@@ -15,6 +15,11 @@ class SupabaseRemote implements SyncRemote {
   final SupabaseClient client;
 
   @override
+  Future<void> upsertCategories(List<Map<String, Object?>> rows) async {
+    await client.from('categories').upsert(rows, onConflict: 'id');
+  }
+
+  @override
   Future<void> upsertProducts(List<Map<String, Object?>> rows) async {
     await client.from('products').upsert(rows, onConflict: 'id');
   }
@@ -25,12 +30,12 @@ class SupabaseRemote implements SyncRemote {
   }
 
   @override
-  Future<({List<Map<String, Object?>> products, List<Map<String, Object?>> movements})>
-      changesSince(int cursor, int limit) async {
+  Future<RemoteChanges> changesSince(int cursor, int limit) async {
     final results = await Future.wait([
+      client.from('categories').select().gt('seq', cursor).order('seq').limit(limit),
       client.from('products').select().gt('seq', cursor).order('seq').limit(limit),
       client.from('movements').select().gt('seq', cursor).order('seq').limit(limit),
     ]);
-    return (products: results[0], movements: results[1]);
+    return (categories: results[0], products: results[1], movements: results[2]);
   }
 }

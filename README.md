@@ -9,6 +9,13 @@ Spécification : https://claude.ai/artifact/Kns1HWGZScfQDtdxxBJ6YB
 - Accueil avec deux grands boutons « J'ai reçu » et « J'ai vendu » : choisir le produit (ou le créer pendant une réception), indiquer la quantité, valider. Un bouton « Annuler » reste affiché quelques secondes après chaque saisie.
 - Liste du stock avec recherche ; ruptures et seuils bas signalés par un mot et une icône, pas seulement une couleur.
 - Fiches produits : nom, catégorie, seuil d'alerte, prix (facultatifs), code-barres (facultatif), archivage.
+- Fiche produit : quantité, état, prix et historique complet du produit.
+- Historique général filtré par période, avec annulation d'une saisie.
+- Bandeau « À recommander » sur l'accueil quand des produits passent sous leur seuil.
+- Catégories personnalisables (créer, renommer, retirer) et filtre par catégorie.
+- Rapports : valeur du stock, articles vendus, chiffre d'affaires, marge, meilleures ventes.
+- Export du stock et de l'historique en CSV pour Excel.
+- Interface en français, anglais et allemand (Réglages › Langue).
 - Sauvegarde et restauration dans un fichier JSON.
 - Synchronisation entre le téléphone et le PC via Supabase. L'appli marche hors ligne et rattrape le retard quand internet revient.
 

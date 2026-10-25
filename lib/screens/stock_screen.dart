@@ -2,19 +2,22 @@ import 'package:flutter/material.dart';
 
 import '../data/database.dart';
 import '../l10n/app_localizations.dart';
+import 'history_screen.dart';
 import 'product_form_screen.dart';
 
 /// Liste de tous les produits avec la quantité restante.
 class StockScreen extends StatelessWidget {
-  const StockScreen({super.key, required this.db});
+  const StockScreen({super.key, required this.db, this.reorderOnly = false});
 
   final AppDatabase db;
+  // N'affiche que les ruptures et les produits sous leur seuil.
+  final bool reorderOnly;
 
   @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(title: Text(t.myStock)),
+      appBar: AppBar(title: Text(reorderOnly ? t.toReorder : t.myStock)),
       floatingActionButton: FloatingActionButton.extended(
         icon: const Icon(Icons.add),
         label: Text(t.newProduct),
@@ -24,8 +27,9 @@ class StockScreen extends StatelessWidget {
       ),
       body: ProductSearchList(
         db: db,
+        reorderOnly: reorderOnly,
         onTap: (line) => Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => ProductFormScreen(db: db, product: line.product)),
+          MaterialPageRoute(builder: (_) => HistoryScreen(db: db, product: line.product)),
         ),
       ),
     );
@@ -42,6 +46,7 @@ class ProductSearchList extends StatefulWidget {
     required this.onTap,
     this.onCreate,
     this.autofocus = false,
+    this.reorderOnly = false,
   });
 
   final AppDatabase db;
@@ -49,6 +54,7 @@ class ProductSearchList extends StatefulWidget {
   // Si fourni, propose « Nouveau produit » avec le texte cherché.
   final ValueChanged<String>? onCreate;
   final bool autofocus;
+  final bool reorderOnly;
 
   @override
   State<ProductSearchList> createState() => _ProductSearchListState();
@@ -56,7 +62,15 @@ class ProductSearchList extends StatefulWidget {
 
 class _ProductSearchListState extends State<ProductSearchList> {
   final _search = TextEditingController();
-  late Stream<List<StockLine>> _stream = widget.db.watchStock();
+  String? _categoryId;
+  late Stream<List<StockLine>> _stream = _watch();
+
+  Stream<List<StockLine>> _watch() {
+    final search = _search.text;
+    return widget.reorderOnly
+        ? widget.db.watchToReorder(search: search, categoryId: _categoryId)
+        : widget.db.watchStock(search: search, categoryId: _categoryId);
+  }
 
   @override
   void dispose() {
@@ -79,8 +93,16 @@ class _ProductSearchListState extends State<ProductSearchList> {
               prefixIcon: const Icon(Icons.search),
               border: const OutlineInputBorder(),
             ),
-            onChanged: (text) => setState(() => _stream = widget.db.watchStock(search: text)),
+            onChanged: (text) => setState(() => _stream = _watch()),
           ),
+        ),
+        _CategoryFilter(
+          db: widget.db,
+          selected: _categoryId,
+          onSelected: (id) => setState(() {
+            _categoryId = id;
+            _stream = _watch();
+          }),
         ),
         if (widget.onCreate != null)
           Padding(
@@ -100,7 +122,11 @@ class _ProductSearchListState extends State<ProductSearchList> {
               if (lines == null) return const Center(child: CircularProgressIndicator());
               if (lines.isEmpty) {
                 return Center(
-                  child: Text(_search.text.trim().isEmpty ? t.stockEmpty : t.noResult),
+                  child: Text(_search.text.trim().isNotEmpty
+                      ? t.noResult
+                      : widget.reorderOnly
+                          ? t.toReorderEmpty
+                          : t.stockEmpty),
                 );
               }
               return ListView.separated(
@@ -114,6 +140,46 @@ class _ProductSearchListState extends State<ProductSearchList> {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// Puces « Toutes / Mèches / Maillots… » pour filtrer la liste.
+class _CategoryFilter extends StatelessWidget {
+  const _CategoryFilter({required this.db, required this.selected, required this.onSelected});
+
+  final AppDatabase db;
+  final String? selected;
+  final ValueChanged<String?> onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
+    return StreamBuilder<List<ProductCategory>>(
+      stream: db.watchCategories(),
+      builder: (context, snapshot) {
+        final categories = snapshot.data ?? const <ProductCategory>[];
+        return SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+          child: Row(
+            children: [
+              for (final (id, name) in [
+                (null, t.allCategories),
+                for (final c in categories) (c.id, c.name),
+              ])
+                Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: ChoiceChip(
+                    label: Text(name),
+                    selected: selected == id,
+                    onSelected: (_) => onSelected(id),
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

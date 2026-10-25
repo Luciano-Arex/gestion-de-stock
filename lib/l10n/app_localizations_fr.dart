@@ -67,15 +67,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get category => 'Catégorie';
 
   @override
-  String get categoryMeche => 'Mèches';
-
-  @override
-  String get categoryMaillot => 'Maillots';
-
-  @override
-  String get categoryAutre => 'Autre';
-
-  @override
   String get alertThreshold => 'Me prévenir à partir de';
 
   @override
@@ -230,4 +221,207 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get syncNow => 'Synchroniser maintenant';
+
+  @override
+  String get history => 'Historique';
+
+  @override
+  String get historyEmpty => 'Aucune saisie sur cette période.';
+
+  @override
+  String get periodToday => 'Aujourd\'hui';
+
+  @override
+  String get period7 => '7 jours';
+
+  @override
+  String get period30 => '30 jours';
+
+  @override
+  String get periodAll => 'Tout';
+
+  @override
+  String get typeReceived => 'Reçu';
+
+  @override
+  String get typeSold => 'Vendu';
+
+  @override
+  String get typeLoss => 'Perte';
+
+  @override
+  String get typeCorrection => 'Annulation';
+
+  @override
+  String get cancelled => 'Annulée';
+
+  @override
+  String get undoEntry => 'Annuler cette saisie';
+
+  @override
+  String get undoEntryConfirm =>
+      'La quantité sera remise comme avant. La saisie reste visible dans l\'historique, marquée « Annulée ».';
+
+  @override
+  String get toReorder => 'À recommander';
+
+  @override
+  String toReorderCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count produits à recommander',
+      one: '1 produit à recommander',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get toReorderEmpty => 'Rien à recommander pour l\'instant.';
+
+  @override
+  String undoNotEnough(int count) {
+    return 'Impossible d\'annuler : une partie a déjà été vendue (il en reste $count).';
+  }
+
+  @override
+  String get salePriceShort => 'Vente :';
+
+  @override
+  String get purchasePriceShort => 'Achat :';
+
+  @override
+  String get categories => 'Catégories';
+
+  @override
+  String get newCategory => 'Nouvelle catégorie';
+
+  @override
+  String get renameCategory => 'Renommer la catégorie';
+
+  @override
+  String get categoryName => 'Nom de la catégorie';
+
+  @override
+  String get removeCategory => 'Retirer la catégorie';
+
+  @override
+  String removeCategoryConfirm(String name) {
+    return '« $name » ne sera plus proposée. Les produits de cette catégorie restent dans le stock.';
+  }
+
+  @override
+  String get allCategories => 'Toutes';
+
+  @override
+  String get settings => 'Réglages';
+
+  @override
+  String get language => 'Langue';
+
+  @override
+  String get languageSystem => 'Celle du téléphone / PC';
+
+  @override
+  String get reports => 'Rapports';
+
+  @override
+  String get stockValue => 'Valeur du stock';
+
+  @override
+  String get stockValueHelp =>
+      'Quantité × prix d\'achat, pour les produits en stock.';
+
+  @override
+  String productsWithoutPrice(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count produits sans prix d\'achat ne sont pas comptés.',
+      one: '1 produit sans prix d\'achat n\'est pas compté.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get salesSummary => 'Ventes';
+
+  @override
+  String get unitsSold => 'Articles vendus';
+
+  @override
+  String get revenue => 'Chiffre d\'affaires';
+
+  @override
+  String get margin => 'Marge';
+
+  @override
+  String get marginHelp =>
+      'Prix de chaque vente moins le prix d\'achat actuel du produit. Les ventes sans prix ne sont pas comptées.';
+
+  @override
+  String get bestSellers => 'Meilleures ventes';
+
+  @override
+  String soldCount(int count) {
+    return '$count vendus';
+  }
+
+  @override
+  String get noSales => 'Aucune vente sur cette période.';
+
+  @override
+  String get exportTitle => 'Export Excel';
+
+  @override
+  String get exportIntro =>
+      'Ces fichiers s\'ouvrent dans Excel ou LibreOffice, pour consulter ou imprimer. Pour remettre des données dans l\'appli, utilise la sauvegarde.';
+
+  @override
+  String get exportStock => 'Exporter le stock';
+
+  @override
+  String get exportHistory => 'Exporter l\'historique';
+
+  @override
+  String get exportDone => 'Fichier enregistré';
+
+  @override
+  String get colProduct => 'Produit';
+
+  @override
+  String get colCategory => 'Catégorie';
+
+  @override
+  String get colQuantity => 'Quantité';
+
+  @override
+  String get colThreshold => 'Seuil d\'alerte';
+
+  @override
+  String get colPurchasePrice => 'Prix d\'achat';
+
+  @override
+  String get colSalePrice => 'Prix de vente';
+
+  @override
+  String get colBarcode => 'Code-barres';
+
+  @override
+  String get colDate => 'Date';
+
+  @override
+  String get colType => 'Type';
+
+  @override
+  String get colUnitPrice => 'Prix unitaire';
+
+  @override
+  String get colCancelled => 'Annulée';
+
+  @override
+  String get yes => 'Oui';
+
+  @override
+  String get no => 'Non';
 }

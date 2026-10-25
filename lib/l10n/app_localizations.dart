@@ -5,6 +5,8 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
+import 'app_localizations_de.dart';
+import 'app_localizations_en.dart';
 import 'app_localizations_fr.dart';
 
 // ignore_for_file: type=lint
@@ -92,7 +94,11 @@ abstract class AppLocalizations {
       ];
 
   /// A list of this localizations delegate's supported locales.
-  static const List<Locale> supportedLocales = <Locale>[Locale('fr')];
+  static const List<Locale> supportedLocales = <Locale>[
+    Locale('de'),
+    Locale('en'),
+    Locale('fr'),
+  ];
 
   /// No description provided for @appTitle.
   ///
@@ -201,24 +207,6 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Catégorie'**
   String get category;
-
-  /// No description provided for @categoryMeche.
-  ///
-  /// In fr, this message translates to:
-  /// **'Mèches'**
-  String get categoryMeche;
-
-  /// No description provided for @categoryMaillot.
-  ///
-  /// In fr, this message translates to:
-  /// **'Maillots'**
-  String get categoryMaillot;
-
-  /// No description provided for @categoryAutre.
-  ///
-  /// In fr, this message translates to:
-  /// **'Autre'**
-  String get categoryAutre;
 
   /// No description provided for @alertThreshold.
   ///
@@ -489,6 +477,360 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Synchroniser maintenant'**
   String get syncNow;
+
+  /// No description provided for @history.
+  ///
+  /// In fr, this message translates to:
+  /// **'Historique'**
+  String get history;
+
+  /// No description provided for @historyEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune saisie sur cette période.'**
+  String get historyEmpty;
+
+  /// No description provided for @periodToday.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aujourd\'hui'**
+  String get periodToday;
+
+  /// No description provided for @period7.
+  ///
+  /// In fr, this message translates to:
+  /// **'7 jours'**
+  String get period7;
+
+  /// No description provided for @period30.
+  ///
+  /// In fr, this message translates to:
+  /// **'30 jours'**
+  String get period30;
+
+  /// No description provided for @periodAll.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tout'**
+  String get periodAll;
+
+  /// No description provided for @typeReceived.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reçu'**
+  String get typeReceived;
+
+  /// No description provided for @typeSold.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vendu'**
+  String get typeSold;
+
+  /// No description provided for @typeLoss.
+  ///
+  /// In fr, this message translates to:
+  /// **'Perte'**
+  String get typeLoss;
+
+  /// No description provided for @typeCorrection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annulation'**
+  String get typeCorrection;
+
+  /// No description provided for @cancelled.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annulée'**
+  String get cancelled;
+
+  /// No description provided for @undoEntry.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annuler cette saisie'**
+  String get undoEntry;
+
+  /// No description provided for @undoEntryConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'La quantité sera remise comme avant. La saisie reste visible dans l\'historique, marquée « Annulée ».'**
+  String get undoEntryConfirm;
+
+  /// No description provided for @toReorder.
+  ///
+  /// In fr, this message translates to:
+  /// **'À recommander'**
+  String get toReorder;
+
+  /// No description provided for @toReorderCount.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 produit à recommander} other{{count} produits à recommander}}'**
+  String toReorderCount(int count);
+
+  /// No description provided for @toReorderEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rien à recommander pour l\'instant.'**
+  String get toReorderEmpty;
+
+  /// No description provided for @undoNotEnough.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible d\'annuler : une partie a déjà été vendue (il en reste {count}).'**
+  String undoNotEnough(int count);
+
+  /// No description provided for @salePriceShort.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vente :'**
+  String get salePriceShort;
+
+  /// No description provided for @purchasePriceShort.
+  ///
+  /// In fr, this message translates to:
+  /// **'Achat :'**
+  String get purchasePriceShort;
+
+  /// No description provided for @categories.
+  ///
+  /// In fr, this message translates to:
+  /// **'Catégories'**
+  String get categories;
+
+  /// No description provided for @newCategory.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouvelle catégorie'**
+  String get newCategory;
+
+  /// No description provided for @renameCategory.
+  ///
+  /// In fr, this message translates to:
+  /// **'Renommer la catégorie'**
+  String get renameCategory;
+
+  /// No description provided for @categoryName.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom de la catégorie'**
+  String get categoryName;
+
+  /// No description provided for @removeCategory.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer la catégorie'**
+  String get removeCategory;
+
+  /// No description provided for @removeCategoryConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'« {name} » ne sera plus proposée. Les produits de cette catégorie restent dans le stock.'**
+  String removeCategoryConfirm(String name);
+
+  /// No description provided for @allCategories.
+  ///
+  /// In fr, this message translates to:
+  /// **'Toutes'**
+  String get allCategories;
+
+  /// No description provided for @settings.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réglages'**
+  String get settings;
+
+  /// No description provided for @language.
+  ///
+  /// In fr, this message translates to:
+  /// **'Langue'**
+  String get language;
+
+  /// No description provided for @languageSystem.
+  ///
+  /// In fr, this message translates to:
+  /// **'Celle du téléphone / PC'**
+  String get languageSystem;
+
+  /// No description provided for @reports.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rapports'**
+  String get reports;
+
+  /// No description provided for @stockValue.
+  ///
+  /// In fr, this message translates to:
+  /// **'Valeur du stock'**
+  String get stockValue;
+
+  /// No description provided for @stockValueHelp.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quantité × prix d\'achat, pour les produits en stock.'**
+  String get stockValueHelp;
+
+  /// No description provided for @productsWithoutPrice.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 produit sans prix d\'achat n\'est pas compté.} other{{count} produits sans prix d\'achat ne sont pas comptés.}}'**
+  String productsWithoutPrice(int count);
+
+  /// No description provided for @salesSummary.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ventes'**
+  String get salesSummary;
+
+  /// No description provided for @unitsSold.
+  ///
+  /// In fr, this message translates to:
+  /// **'Articles vendus'**
+  String get unitsSold;
+
+  /// No description provided for @revenue.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chiffre d\'affaires'**
+  String get revenue;
+
+  /// No description provided for @margin.
+  ///
+  /// In fr, this message translates to:
+  /// **'Marge'**
+  String get margin;
+
+  /// No description provided for @marginHelp.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prix de chaque vente moins le prix d\'achat actuel du produit. Les ventes sans prix ne sont pas comptées.'**
+  String get marginHelp;
+
+  /// No description provided for @bestSellers.
+  ///
+  /// In fr, this message translates to:
+  /// **'Meilleures ventes'**
+  String get bestSellers;
+
+  /// No description provided for @soldCount.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count} vendus'**
+  String soldCount(int count);
+
+  /// No description provided for @noSales.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune vente sur cette période.'**
+  String get noSales;
+
+  /// No description provided for @exportTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Export Excel'**
+  String get exportTitle;
+
+  /// No description provided for @exportIntro.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ces fichiers s\'ouvrent dans Excel ou LibreOffice, pour consulter ou imprimer. Pour remettre des données dans l\'appli, utilise la sauvegarde.'**
+  String get exportIntro;
+
+  /// No description provided for @exportStock.
+  ///
+  /// In fr, this message translates to:
+  /// **'Exporter le stock'**
+  String get exportStock;
+
+  /// No description provided for @exportHistory.
+  ///
+  /// In fr, this message translates to:
+  /// **'Exporter l\'historique'**
+  String get exportHistory;
+
+  /// No description provided for @exportDone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fichier enregistré'**
+  String get exportDone;
+
+  /// No description provided for @colProduct.
+  ///
+  /// In fr, this message translates to:
+  /// **'Produit'**
+  String get colProduct;
+
+  /// No description provided for @colCategory.
+  ///
+  /// In fr, this message translates to:
+  /// **'Catégorie'**
+  String get colCategory;
+
+  /// No description provided for @colQuantity.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quantité'**
+  String get colQuantity;
+
+  /// No description provided for @colThreshold.
+  ///
+  /// In fr, this message translates to:
+  /// **'Seuil d\'alerte'**
+  String get colThreshold;
+
+  /// No description provided for @colPurchasePrice.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prix d\'achat'**
+  String get colPurchasePrice;
+
+  /// No description provided for @colSalePrice.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prix de vente'**
+  String get colSalePrice;
+
+  /// No description provided for @colBarcode.
+  ///
+  /// In fr, this message translates to:
+  /// **'Code-barres'**
+  String get colBarcode;
+
+  /// No description provided for @colDate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Date'**
+  String get colDate;
+
+  /// No description provided for @colType.
+  ///
+  /// In fr, this message translates to:
+  /// **'Type'**
+  String get colType;
+
+  /// No description provided for @colUnitPrice.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prix unitaire'**
+  String get colUnitPrice;
+
+  /// No description provided for @colCancelled.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annulée'**
+  String get colCancelled;
+
+  /// No description provided for @yes.
+  ///
+  /// In fr, this message translates to:
+  /// **'Oui'**
+  String get yes;
+
+  /// No description provided for @no.
+  ///
+  /// In fr, this message translates to:
+  /// **'Non'**
+  String get no;
 }
 
 class _AppLocalizationsDelegate
@@ -502,7 +844,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['fr'].contains(locale.languageCode);
+      <String>['de', 'en', 'fr'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -511,6 +853,10 @@ class _AppLocalizationsDelegate
 AppLocalizations lookupAppLocalizations(Locale locale) {
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
+    case 'de':
+      return AppLocalizationsDe();
+    case 'en':
+      return AppLocalizationsEn();
     case 'fr':
       return AppLocalizationsFr();
   }

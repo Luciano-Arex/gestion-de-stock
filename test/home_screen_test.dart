@@ -8,6 +8,13 @@ import 'package:gestion_stock/main.dart';
 void main() {
   setUpAll(() => driftRuntimeOptions.dontWarnAboutMultipleDatabases = true);
 
+  // drift annule ses requêtes en direct avec un timer : on démonte l'appli
+  // pour le laisser s'exécuter avant la fin du test.
+  Future<void> unmount(WidgetTester tester) async {
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump(Duration.zero);
+  }
+
   testWidgets('l\'accueil montre les deux actions principales', (tester) async {
     final db = AppDatabase(NativeDatabase.memory());
     addTearDown(db.close);
@@ -18,6 +25,7 @@ void main() {
     expect(find.text("J'ai reçu"), findsOneWidget);
     expect(find.text("J'ai vendu"), findsOneWidget);
     expect(find.text('Voir mon stock'), findsOneWidget);
+    await unmount(tester);
   });
 
   testWidgets('les boutons respectent la taille tactile minimale', (tester) async {
@@ -30,6 +38,7 @@ void main() {
     await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
     await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
     await expectLater(tester, meetsGuideline(textContrastGuideline));
+    await unmount(tester);
   });
 
   testWidgets('la liste du stock affiche une rupture en toutes lettres', (tester) async {
@@ -46,9 +55,6 @@ void main() {
     expect(find.text('Rupture'), findsOneWidget);
     expect(find.byIcon(Icons.error), findsOneWidget);
 
-    // drift annule ses requêtes en direct avec un timer : on démonte l'écran
-    // pour le laisser s'exécuter avant la fin du test.
-    await tester.pumpWidget(const SizedBox());
-    await tester.pump(Duration.zero);
+    await unmount(tester);
   });
 }
