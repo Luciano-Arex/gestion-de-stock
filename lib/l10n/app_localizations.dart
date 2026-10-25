@@ -645,6 +645,186 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Celle du téléphone / PC'**
   String get languageSystem;
+
+  /// No description provided for @reports.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rapports'**
+  String get reports;
+
+  /// No description provided for @stockValue.
+  ///
+  /// In fr, this message translates to:
+  /// **'Valeur du stock'**
+  String get stockValue;
+
+  /// No description provided for @stockValueHelp.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quantité × prix d\'achat, pour les produits en stock.'**
+  String get stockValueHelp;
+
+  /// No description provided for @productsWithoutPrice.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 produit sans prix d\'achat n\'est pas compté.} other{{count} produits sans prix d\'achat ne sont pas comptés.}}'**
+  String productsWithoutPrice(int count);
+
+  /// No description provided for @salesSummary.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ventes'**
+  String get salesSummary;
+
+  /// No description provided for @unitsSold.
+  ///
+  /// In fr, this message translates to:
+  /// **'Articles vendus'**
+  String get unitsSold;
+
+  /// No description provided for @revenue.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chiffre d\'affaires'**
+  String get revenue;
+
+  /// No description provided for @margin.
+  ///
+  /// In fr, this message translates to:
+  /// **'Marge'**
+  String get margin;
+
+  /// No description provided for @marginHelp.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prix de chaque vente moins le prix d\'achat actuel du produit. Les ventes sans prix ne sont pas comptées.'**
+  String get marginHelp;
+
+  /// No description provided for @bestSellers.
+  ///
+  /// In fr, this message translates to:
+  /// **'Meilleures ventes'**
+  String get bestSellers;
+
+  /// No description provided for @soldCount.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count} vendus'**
+  String soldCount(int count);
+
+  /// No description provided for @noSales.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune vente sur cette période.'**
+  String get noSales;
+
+  /// No description provided for @exportTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Export Excel'**
+  String get exportTitle;
+
+  /// No description provided for @exportIntro.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ces fichiers s\'ouvrent dans Excel ou LibreOffice, pour consulter ou imprimer. Pour remettre des données dans l\'appli, utilise la sauvegarde.'**
+  String get exportIntro;
+
+  /// No description provided for @exportStock.
+  ///
+  /// In fr, this message translates to:
+  /// **'Exporter le stock'**
+  String get exportStock;
+
+  /// No description provided for @exportHistory.
+  ///
+  /// In fr, this message translates to:
+  /// **'Exporter l\'historique'**
+  String get exportHistory;
+
+  /// No description provided for @exportDone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fichier enregistré'**
+  String get exportDone;
+
+  /// No description provided for @colProduct.
+  ///
+  /// In fr, this message translates to:
+  /// **'Produit'**
+  String get colProduct;
+
+  /// No description provided for @colCategory.
+  ///
+  /// In fr, this message translates to:
+  /// **'Catégorie'**
+  String get colCategory;
+
+  /// No description provided for @colQuantity.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quantité'**
+  String get colQuantity;
+
+  /// No description provided for @colThreshold.
+  ///
+  /// In fr, this message translates to:
+  /// **'Seuil d\'alerte'**
+  String get colThreshold;
+
+  /// No description provided for @colPurchasePrice.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prix d\'achat'**
+  String get colPurchasePrice;
+
+  /// No description provided for @colSalePrice.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prix de vente'**
+  String get colSalePrice;
+
+  /// No description provided for @colBarcode.
+  ///
+  /// In fr, this message translates to:
+  /// **'Code-barres'**
+  String get colBarcode;
+
+  /// No description provided for @colDate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Date'**
+  String get colDate;
+
+  /// No description provided for @colType.
+  ///
+  /// In fr, this message translates to:
+  /// **'Type'**
+  String get colType;
+
+  /// No description provided for @colUnitPrice.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prix unitaire'**
+  String get colUnitPrice;
+
+  /// No description provided for @colCancelled.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annulée'**
+  String get colCancelled;
+
+  /// No description provided for @yes.
+  ///
+  /// In fr, this message translates to:
+  /// **'Oui'**
+  String get yes;
+
+  /// No description provided for @no.
+  ///
+  /// In fr, this message translates to:
+  /// **'Non'**
+  String get no;
 }
 
 class _AppLocalizationsDelegate

@@ -321,4 +321,107 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get languageSystem => 'Celle du téléphone / PC';
+
+  @override
+  String get reports => 'Rapports';
+
+  @override
+  String get stockValue => 'Valeur du stock';
+
+  @override
+  String get stockValueHelp =>
+      'Quantité × prix d\'achat, pour les produits en stock.';
+
+  @override
+  String productsWithoutPrice(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count produits sans prix d\'achat ne sont pas comptés.',
+      one: '1 produit sans prix d\'achat n\'est pas compté.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get salesSummary => 'Ventes';
+
+  @override
+  String get unitsSold => 'Articles vendus';
+
+  @override
+  String get revenue => 'Chiffre d\'affaires';
+
+  @override
+  String get margin => 'Marge';
+
+  @override
+  String get marginHelp =>
+      'Prix de chaque vente moins le prix d\'achat actuel du produit. Les ventes sans prix ne sont pas comptées.';
+
+  @override
+  String get bestSellers => 'Meilleures ventes';
+
+  @override
+  String soldCount(int count) {
+    return '$count vendus';
+  }
+
+  @override
+  String get noSales => 'Aucune vente sur cette période.';
+
+  @override
+  String get exportTitle => 'Export Excel';
+
+  @override
+  String get exportIntro =>
+      'Ces fichiers s\'ouvrent dans Excel ou LibreOffice, pour consulter ou imprimer. Pour remettre des données dans l\'appli, utilise la sauvegarde.';
+
+  @override
+  String get exportStock => 'Exporter le stock';
+
+  @override
+  String get exportHistory => 'Exporter l\'historique';
+
+  @override
+  String get exportDone => 'Fichier enregistré';
+
+  @override
+  String get colProduct => 'Produit';
+
+  @override
+  String get colCategory => 'Catégorie';
+
+  @override
+  String get colQuantity => 'Quantité';
+
+  @override
+  String get colThreshold => 'Seuil d\'alerte';
+
+  @override
+  String get colPurchasePrice => 'Prix d\'achat';
+
+  @override
+  String get colSalePrice => 'Prix de vente';
+
+  @override
+  String get colBarcode => 'Code-barres';
+
+  @override
+  String get colDate => 'Date';
+
+  @override
+  String get colType => 'Type';
+
+  @override
+  String get colUnitPrice => 'Prix unitaire';
+
+  @override
+  String get colCancelled => 'Annulée';
+
+  @override
+  String get yes => 'Oui';
+
+  @override
+  String get no => 'Non';
 }

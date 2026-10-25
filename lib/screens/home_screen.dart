@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
 
 import '../data/database.dart';
+import '../data/locale_controller.dart';
 import '../data/sync_controller.dart';
 import '../l10n/app_localizations.dart';
-import 'backup_screen.dart';
 import 'history_screen.dart';
 import 'movement_screen.dart';
+import 'reports_screen.dart';
+import 'settings_screen.dart';
 import 'stock_screen.dart';
 import 'sync_screen.dart';
 
 /// Accueil : les deux actions du quotidien, en gros, et l'accès au stock.
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key, required this.db, this.sync});
+  const HomeScreen({super.key, required this.db, this.sync, this.locale});
 
   final AppDatabase db;
   final SyncController? sync;
+  final LocaleController? locale;
 
   @override
   Widget build(BuildContext context) {
@@ -39,10 +42,10 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
           IconButton(
-            tooltip: t.backup,
-            icon: const Icon(Icons.save_outlined),
+            tooltip: t.settings,
+            icon: const Icon(Icons.settings_outlined),
             onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => BackupScreen(db: db)),
+              MaterialPageRoute(builder: (_) => SettingsScreen(db: db, locale: locale)),
             ),
           ),
         ],
@@ -81,6 +84,12 @@ class HomeScreen extends StatelessWidget {
                     icon: Icons.history,
                     label: t.history,
                     builder: (_) => HistoryScreen(db: db),
+                  ),
+                  const SizedBox(height: 12),
+                  _SecondaryAction(
+                    icon: Icons.bar_chart,
+                    label: t.reports,
+                    builder: (_) => ReportsScreen(db: db),
                   ),
                 ],
               ),

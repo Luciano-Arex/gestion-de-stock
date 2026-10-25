@@ -8,6 +8,18 @@ import 'product_form_screen.dart';
 
 enum HistoryPeriod { today, week, month, all }
 
+/// Début de la période, ou null pour « Tout ».
+DateTime? periodStart(HistoryPeriod period) {
+  final now = DateTime.now();
+  final today = DateTime(now.year, now.month, now.day);
+  return switch (period) {
+    HistoryPeriod.today => today,
+    HistoryPeriod.week => today.subtract(const Duration(days: 6)),
+    HistoryPeriod.month => today.subtract(const Duration(days: 29)),
+    HistoryPeriod.all => null,
+  };
+}
+
 /// Journal des saisies, pour un produit ou pour tout le stock.
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key, required this.db, this.product});
@@ -24,17 +36,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
   HistoryPeriod _period = HistoryPeriod.month;
   late Stream<List<HistoryEntry>> _stream = _watch();
 
-  Stream<List<HistoryEntry>> _watch() {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final since = switch (_period) {
-      HistoryPeriod.today => today,
-      HistoryPeriod.week => today.subtract(const Duration(days: 6)),
-      HistoryPeriod.month => today.subtract(const Duration(days: 29)),
-      HistoryPeriod.all => null,
-    };
-    return widget.db.watchHistory(productId: widget.product?.id, since: since);
-  }
+  Stream<List<HistoryEntry>> _watch() =>
+      widget.db.watchHistory(productId: widget.product?.id, since: periodStart(_period));
 
   @override
   Widget build(BuildContext context) {

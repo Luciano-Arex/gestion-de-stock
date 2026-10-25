@@ -177,5 +177,49 @@
   "allCategories": "Toutes",
   "settings": "Réglages",
   "language": "Langue",
-  "languageSystem": "Celle du téléphone / PC"
+  "languageSystem": "Celle du téléphone / PC",
+  "reports": "Rapports",
+  "stockValue": "Valeur du stock",
+  "stockValueHelp": "Quantité × prix d'achat, pour les produits en stock.",
+  "productsWithoutPrice": "{count, plural, =1{1 produit sans prix d'achat n'est pas compté.} other{{count} produits sans prix d'achat ne sont pas comptés.}}",
+  "@productsWithoutPrice": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "salesSummary": "Ventes",
+  "unitsSold": "Articles vendus",
+  "revenue": "Chiffre d'affaires",
+  "margin": "Marge",
+  "marginHelp": "Prix de chaque vente moins le prix d'achat actuel du produit. Les ventes sans prix ne sont pas comptées.",
+  "bestSellers": "Meilleures ventes",
+  "soldCount": "{count} vendus",
+  "@soldCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noSales": "Aucune vente sur cette période.",
+  "exportTitle": "Export Excel",
+  "exportIntro": "Ces fichiers s'ouvrent dans Excel ou LibreOffice, pour consulter ou imprimer. Pour remettre des données dans l'appli, utilise la sauvegarde.",
+  "exportStock": "Exporter le stock",
+  "exportHistory": "Exporter l'historique",
+  "exportDone": "Fichier enregistré",
+  "colProduct": "Produit",
+  "colCategory": "Catégorie",
+  "colQuantity": "Quantité",
+  "colThreshold": "Seuil d'alerte",
+  "colPurchasePrice": "Prix d'achat",
+  "colSalePrice": "Prix de vente",
+  "colBarcode": "Code-barres",
+  "colDate": "Date",
+  "colType": "Type",
+  "colUnitPrice": "Prix unitaire",
+  "colCancelled": "Annulée",
+  "yes": "Oui",
+  "no": "Non"
 }
