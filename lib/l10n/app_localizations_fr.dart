@@ -67,15 +67,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get category => 'Catégorie';
 
   @override
-  String get categoryMeche => 'Mèches';
-
-  @override
-  String get categoryMaillot => 'Maillots';
-
-  @override
-  String get categoryAutre => 'Autre';
-
-  @override
   String get alertThreshold => 'Me prévenir à partir de';
 
   @override
@@ -298,4 +289,36 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get purchasePriceShort => 'Achat :';
+
+  @override
+  String get categories => 'Catégories';
+
+  @override
+  String get newCategory => 'Nouvelle catégorie';
+
+  @override
+  String get renameCategory => 'Renommer la catégorie';
+
+  @override
+  String get categoryName => 'Nom de la catégorie';
+
+  @override
+  String get removeCategory => 'Retirer la catégorie';
+
+  @override
+  String removeCategoryConfirm(String name) {
+    return '« $name » ne sera plus proposée. Les produits de cette catégorie restent dans le stock.';
+  }
+
+  @override
+  String get allCategories => 'Toutes';
+
+  @override
+  String get settings => 'Réglages';
+
+  @override
+  String get language => 'Langue';
+
+  @override
+  String get languageSystem => 'Celle du téléphone / PC';
 }

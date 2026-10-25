@@ -202,24 +202,6 @@ abstract class AppLocalizations {
   /// **'Catégorie'**
   String get category;
 
-  /// No description provided for @categoryMeche.
-  ///
-  /// In fr, this message translates to:
-  /// **'Mèches'**
-  String get categoryMeche;
-
-  /// No description provided for @categoryMaillot.
-  ///
-  /// In fr, this message translates to:
-  /// **'Maillots'**
-  String get categoryMaillot;
-
-  /// No description provided for @categoryAutre.
-  ///
-  /// In fr, this message translates to:
-  /// **'Autre'**
-  String get categoryAutre;
-
   /// No description provided for @alertThreshold.
   ///
   /// In fr, this message translates to:
@@ -603,6 +585,66 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Achat :'**
   String get purchasePriceShort;
+
+  /// No description provided for @categories.
+  ///
+  /// In fr, this message translates to:
+  /// **'Catégories'**
+  String get categories;
+
+  /// No description provided for @newCategory.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouvelle catégorie'**
+  String get newCategory;
+
+  /// No description provided for @renameCategory.
+  ///
+  /// In fr, this message translates to:
+  /// **'Renommer la catégorie'**
+  String get renameCategory;
+
+  /// No description provided for @categoryName.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom de la catégorie'**
+  String get categoryName;
+
+  /// No description provided for @removeCategory.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer la catégorie'**
+  String get removeCategory;
+
+  /// No description provided for @removeCategoryConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'« {name} » ne sera plus proposée. Les produits de cette catégorie restent dans le stock.'**
+  String removeCategoryConfirm(String name);
+
+  /// No description provided for @allCategories.
+  ///
+  /// In fr, this message translates to:
+  /// **'Toutes'**
+  String get allCategories;
+
+  /// No description provided for @settings.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réglages'**
+  String get settings;
+
+  /// No description provided for @language.
+  ///
+  /// In fr, this message translates to:
+  /// **'Langue'**
+  String get language;
+
+  /// No description provided for @languageSystem.
+  ///
+  /// In fr, this message translates to:
+  /// **'Celle du téléphone / PC'**
+  String get languageSystem;
 }
 
 class _AppLocalizationsDelegate

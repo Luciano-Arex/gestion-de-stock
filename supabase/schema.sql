@@ -5,6 +5,14 @@
 -- le dernier numéro vu et ne redemande que ce qui est plus récent.
 create sequence if not exists sync_seq;
 
+create table if not exists categories (
+  id text primary key,
+  name text not null,
+  archived boolean not null default false,
+  updated_at timestamptz not null,
+  seq bigint not null default nextval('sync_seq')
+);
+
 create table if not exists products (
   id text primary key,
   name text not null,
@@ -31,12 +39,13 @@ create table if not exists movements (
   seq bigint not null default nextval('sync_seq')
 );
 
+create index if not exists categories_seq on categories (seq);
 create index if not exists products_seq on products (seq);
 create index if not exists movements_seq on movements (seq);
 
--- Produit : la modification la plus récente gagne. Une version plus ancienne
+-- Produit ou catégorie : la modification la plus récente gagne. Une version plus ancienne
 -- envoyée en retard par un appareil resté hors ligne est ignorée.
-create or replace function products_keep_latest() returns trigger
+create or replace function keep_latest() returns trigger
 language plpgsql as $$
 begin
   if new.updated_at < old.updated_at then
@@ -49,11 +58,26 @@ $$;
 
 drop trigger if exists products_keep_latest on products;
 create trigger products_keep_latest before update on products
-  for each row execute function products_keep_latest();
+  for each row execute function keep_latest();
+
+drop trigger if exists categories_keep_latest on categories;
+create trigger categories_keep_latest before update on categories
+  for each row execute function keep_latest();
+
+-- Ancien nom de la fonction (version 1 du schéma).
+drop function if exists products_keep_latest();
 
 -- Accès réservé au compte connecté. Pas de suppression : on archive.
+alter table categories enable row level security;
 alter table products enable row level security;
 alter table movements enable row level security;
+
+drop policy if exists "lecture" on categories;
+drop policy if exists "ajout" on categories;
+drop policy if exists "modification" on categories;
+create policy "lecture" on categories for select to authenticated using (true);
+create policy "ajout" on categories for insert to authenticated with check (true);
+create policy "modification" on categories for update to authenticated using (true);
 
 drop policy if exists "lecture" on products;
 drop policy if exists "ajout" on products;
@@ -69,5 +93,6 @@ create policy "ajout" on movements for insert to authenticated with check (true)
 
 -- Supabase donne déjà ces droits par défaut ; on les écrit pour être explicite.
 grant usage on sequence sync_seq to authenticated;
+grant select, insert, update on categories to authenticated;
 grant select, insert, update on products to authenticated;
 grant select, insert on movements to authenticated;

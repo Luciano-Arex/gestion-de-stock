@@ -62,11 +62,15 @@ class ProductSearchList extends StatefulWidget {
 
 class _ProductSearchListState extends State<ProductSearchList> {
   final _search = TextEditingController();
-  late Stream<List<StockLine>> _stream = _watch('');
+  String? _categoryId;
+  late Stream<List<StockLine>> _stream = _watch();
 
-  Stream<List<StockLine>> _watch(String search) => widget.reorderOnly
-      ? widget.db.watchToReorder(search: search)
-      : widget.db.watchStock(search: search);
+  Stream<List<StockLine>> _watch() {
+    final search = _search.text;
+    return widget.reorderOnly
+        ? widget.db.watchToReorder(search: search, categoryId: _categoryId)
+        : widget.db.watchStock(search: search, categoryId: _categoryId);
+  }
 
   @override
   void dispose() {
@@ -89,8 +93,16 @@ class _ProductSearchListState extends State<ProductSearchList> {
               prefixIcon: const Icon(Icons.search),
               border: const OutlineInputBorder(),
             ),
-            onChanged: (text) => setState(() => _stream = _watch(text)),
+            onChanged: (text) => setState(() => _stream = _watch()),
           ),
+        ),
+        _CategoryFilter(
+          db: widget.db,
+          selected: _categoryId,
+          onSelected: (id) => setState(() {
+            _categoryId = id;
+            _stream = _watch();
+          }),
         ),
         if (widget.onCreate != null)
           Padding(
@@ -128,6 +140,46 @@ class _ProductSearchListState extends State<ProductSearchList> {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// Puces « Toutes / Mèches / Maillots… » pour filtrer la liste.
+class _CategoryFilter extends StatelessWidget {
+  const _CategoryFilter({required this.db, required this.selected, required this.onSelected});
+
+  final AppDatabase db;
+  final String? selected;
+  final ValueChanged<String?> onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
+    return StreamBuilder<List<ProductCategory>>(
+      stream: db.watchCategories(),
+      builder: (context, snapshot) {
+        final categories = snapshot.data ?? const <ProductCategory>[];
+        return SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+          child: Row(
+            children: [
+              for (final (id, name) in [
+                (null, t.allCategories),
+                for (final c in categories) (c.id, c.name),
+              ])
+                Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: ChoiceChip(
+                    label: Text(name),
+                    selected: selected == id,
+                    onSelected: (_) => onSelected(id),
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import '../data/database.dart';
 import '../l10n/app_localizations.dart';
 import '../util/money.dart';
+import 'categories_screen.dart';
 
 /// Création ou modification d'un produit. Renvoie le produit enregistré.
 class ProductFormScreen extends StatefulWidget {
@@ -27,7 +28,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
   late final _purchasePrice =
       TextEditingController(text: formatCents(widget.product?.purchasePriceCents));
   late final _barcode = TextEditingController(text: widget.product?.barcode ?? '');
-  late Category _category = widget.product?.category ?? Category.meche;
+  late String _category = widget.product?.category ?? Category.autre;
   bool _saving = false;
 
   @override
@@ -76,14 +77,25 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
               const SizedBox(height: 24),
               Text(t.category, style: Theme.of(context).textTheme.titleMedium),
               const SizedBox(height: 8),
-              SegmentedButton<Category>(
-                segments: [
-                  ButtonSegment(value: Category.meche, label: Text(t.categoryMeche)),
-                  ButtonSegment(value: Category.maillot, label: Text(t.categoryMaillot)),
-                  ButtonSegment(value: Category.autre, label: Text(t.categoryAutre)),
-                ],
-                selected: {_category},
-                onSelectionChanged: (s) => setState(() => _category = s.single),
+              StreamBuilder<List<ProductCategory>>(
+                stream: widget.db.watchCategories(),
+                builder: (context, snapshot) => Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    for (final c in snapshot.data ?? const <ProductCategory>[])
+                      ChoiceChip(
+                        label: Text(c.name),
+                        selected: c.id == _category,
+                        onSelected: (_) => setState(() => _category = c.id),
+                      ),
+                    ActionChip(
+                      avatar: const Icon(Icons.add),
+                      label: Text(t.newCategory),
+                      onPressed: _createCategory,
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(height: 24),
               TextFormField(
@@ -179,6 +191,13 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
       await widget.db.updateProduct(saved);
     }
     if (mounted) Navigator.of(context).pop(saved);
+  }
+
+  Future<void> _createCategory() async {
+    final name = await askCategoryName(context);
+    if (name == null) return;
+    final created = await widget.db.addCategory(name);
+    if (mounted) setState(() => _category = created.id);
   }
 
   Future<void> _archive() async {

@@ -25,9 +25,6 @@
   "productNameHelp": "Ex. : Maillot Cameroun domicile 2024, taille M",
   "productNameRequired": "Indique un nom.",
   "category": "Catégorie",
-  "categoryMeche": "Mèches",
-  "categoryMaillot": "Maillots",
-  "categoryAutre": "Autre",
   "alertThreshold": "Me prévenir à partir de",
   "alertThresholdHelp": "Le produit passe « À recommander » quand il en reste ce nombre ou moins.",
   "salePrice": "Prix de vente (facultatif)",
@@ -163,5 +160,22 @@
     }
   },
   "salePriceShort": "Vente :",
-  "purchasePriceShort": "Achat :"
+  "purchasePriceShort": "Achat :",
+  "categories": "Catégories",
+  "newCategory": "Nouvelle catégorie",
+  "renameCategory": "Renommer la catégorie",
+  "categoryName": "Nom de la catégorie",
+  "removeCategory": "Retirer la catégorie",
+  "removeCategoryConfirm": "« {name} » ne sera plus proposée. Les produits de cette catégorie restent dans le stock.",
+  "@removeCategoryConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "allCategories": "Toutes",
+  "settings": "Réglages",
+  "language": "Langue",
+  "languageSystem": "Celle du téléphone / PC"
 }

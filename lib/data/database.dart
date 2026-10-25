@@ -6,8 +6,25 @@ part 'database.g.dart';
 
 const _uuid = Uuid();
 
-/// Catégories de produits vendus. Stockées par leur nom.
-enum Category { meche, maillot, autre }
+/// Identifiants des catégories créées à l'installation. Les autres sont des UUID.
+abstract final class Category {
+  static const meche = 'meche';
+  static const maillot = 'maillot';
+  static const autre = 'autre';
+}
+
+/// Catégories de produits, modifiables par l'utilisatrice.
+@DataClassName('ProductCategory')
+class Categories extends Table {
+  TextColumn get id => text().clientDefault(() => _uuid.v4())();
+  TextColumn get name => text().withLength(min: 1, max: 100)();
+  BoolColumn get archived => boolean().withDefault(const Constant(false))();
+  DateTimeColumn get updatedAt => dateTime().clientDefault(() => DateTime.now())();
+  DateTimeColumn get syncedAt => dateTime().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
 
 /// Type d'un mouvement de stock.
 ///
@@ -19,7 +36,8 @@ enum MovementType { received, sold, loss, correction }
 class Products extends Table {
   TextColumn get id => text().clientDefault(() => _uuid.v4())();
   TextColumn get name => text().withLength(min: 1, max: 200)();
-  TextColumn get category => textEnum<Category>()();
+  // Identifiant d'une ligne de Categories.
+  TextColumn get category => text()();
   // Attributs libres (taille, couleur, longueur, club, saison…), en JSON.
   TextColumn get attributes => text().withDefault(const Constant('{}'))();
   IntColumn get purchasePriceCents => integer().nullable()();
@@ -94,18 +112,73 @@ class HistoryEntry {
   bool get canUndo => !cancelled && movement.type != MovementType.correction;
 }
 
-@DriftDatabase(tables: [Products, Movements, Settings])
+@DriftDatabase(tables: [Categories, Products, Movements, Settings])
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor]) : super(executor ?? _openDefault());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+        onCreate: (m) async {
+          await m.createAll();
+          await _insertDefaultCategories();
+        },
+        onUpgrade: (m, from, to) async {
+          // v2 : catégories modifiables. Les produits gardent leurs identifiants
+          // (« meche », « maillot », « autre »), qui deviennent des lignes de Categories.
+          if (from < 2) {
+            await m.createTable(categories);
+            await _insertDefaultCategories();
+          }
+        },
+      );
+
+  Future<void> _insertDefaultCategories() async {
+    // Date ancienne : un renommage fait sur un autre appareil l'emporte toujours.
+    final epoch = DateTime.utc(2000);
+    await batch((b) => b.insertAll(
+          categories,
+          [
+            CategoriesCompanion.insert(id: const Value(Category.meche), name: 'Mèches', updatedAt: Value(epoch)),
+            CategoriesCompanion.insert(id: const Value(Category.maillot), name: 'Maillots', updatedAt: Value(epoch)),
+            CategoriesCompanion.insert(id: const Value(Category.autre), name: 'Autre', updatedAt: Value(epoch)),
+          ],
+          mode: InsertMode.insertOrIgnore,
+        ));
+  }
+
+  /// Catégories actives, par ordre alphabétique, mises à jour en direct.
+  Stream<List<ProductCategory>> watchCategories() => (select(categories)
+        ..where((c) => c.archived.equals(false))
+        ..orderBy([(c) => OrderingTerm.asc(c.name.collate(Collate.noCase))]))
+      .watch();
+
+  Future<ProductCategory> addCategory(String name) =>
+      into(categories).insertReturning(CategoriesCompanion.insert(name: name.trim()));
+
+  Future<void> renameCategory(String id, String name) =>
+      (update(categories)..where((c) => c.id.equals(id))).write(
+        CategoriesCompanion(name: Value(name.trim()), updatedAt: Value(DateTime.now())),
+      );
+
+  /// Masque une catégorie. Ses produits restent visibles, sous « Sans catégorie ».
+  Future<void> archiveCategory(String id) =>
+      (update(categories)..where((c) => c.id.equals(id))).write(
+        CategoriesCompanion(archived: const Value(true), updatedAt: Value(DateTime.now())),
+      );
+
+  /// Catégories modifiées ici depuis le dernier envoi au serveur.
+  SimpleSelectStatement<$CategoriesTable, ProductCategory> pendingCategories() =>
+      select(categories)
+        ..where((c) => c.syncedAt.isNull() | c.updatedAt.isBiggerThan(c.syncedAt));
 
   static QueryExecutor _openDefault() => driftDatabase(name: 'gestion_stock');
 
   Future<Product> addProduct({
     required String name,
-    required Category category,
+    required String category,
     int alertThreshold = 0,
     int? purchasePriceCents,
     int? salePriceCents,
@@ -142,6 +215,7 @@ class AppDatabase extends _$AppDatabase {
     ..orderBy([(m) => OrderingTerm.asc(m.createdAt)]);
 
   Future<bool> hasPendingChanges() async =>
+      (await (pendingCategories()..limit(1)).get()).isNotEmpty ||
       (await (pendingProducts()..limit(1)).get()).isNotEmpty ||
       (await (pendingMovements()..limit(1)).get()).isNotEmpty;
 
@@ -228,7 +302,8 @@ class AppDatabase extends _$AppDatabase {
   }
 
   /// Produits en rupture ou sous leur seuil : la liste « à recommander ».
-  Stream<List<StockLine>> watchToReorder({String search = ''}) => watchStock(search: search)
+  Stream<List<StockLine>> watchToReorder({String search = '', String? categoryId}) =>
+      watchStock(search: search, categoryId: categoryId)
       .map((lines) => lines.where((l) => l.isOut || l.isLow).toList());
 
   /// Un produit et sa quantité, mis à jour en direct.
@@ -248,7 +323,7 @@ class AppDatabase extends _$AppDatabase {
   /// Liste du stock, mise à jour en direct, produits archivés exclus.
   ///
   /// [search] filtre sur le nom ou le code-barres (majuscules ignorées).
-  Stream<List<StockLine>> watchStock({String search = ''}) {
+  Stream<List<StockLine>> watchStock({String search = '', String? categoryId}) {
     final total = movements.delta.sum();
     final query = select(products).join([
       leftOuterJoin(movements, movements.productId.equalsExp(products.id)),
@@ -257,6 +332,7 @@ class AppDatabase extends _$AppDatabase {
       ..where(products.archived.equals(false))
       ..groupBy([products.id])
       ..orderBy([OrderingTerm.asc(products.name.collate(Collate.noCase))]);
+    if (categoryId != null) query.where(products.category.equals(categoryId));
     final term = search.trim();
     if (term.isNotEmpty) {
       final pattern = '%${term.replaceAll('%', '').replaceAll('_', '')}%';
