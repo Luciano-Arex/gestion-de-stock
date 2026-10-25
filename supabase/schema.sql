@@ -153,3 +153,21 @@ grant usage on sequence sync_seq to authenticated;
 grant select, insert, update on categories to authenticated;
 grant select, insert, update on products to authenticated;
 grant select, insert on movements to authenticated;
+
+-- Mises à jour en direct : le serveur prévient les appareils connectés au même
+-- compte dès qu'une ligne change. Chaque compte ne reçoit que ses propres
+-- lignes (les règles de sécurité ci-dessus s'appliquent aussi ici).
+do $$
+declare
+  t text;
+begin
+  if exists (select 1 from pg_publication where pubname = 'supabase_realtime') then
+    foreach t in array array['categories', 'products', 'movements'] loop
+      if not exists (select 1 from pg_publication_tables
+                     where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = t) then
+        execute format('alter publication supabase_realtime add table %I', t);
+      end if;
+    end loop;
+  end if;
+end;
+$$;
