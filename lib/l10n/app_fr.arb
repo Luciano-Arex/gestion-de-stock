@@ -1,0 +1,15 @@
+{
+  "@@locale": "fr",
+  "appTitle": "Mon stock",
+  "received": "J'ai reçu",
+  "receivedHint": "Enregistrer un arrivage",
+  "sold": "J'ai vendu",
+  "soldHint": "Enregistrer une vente",
+  "myStock": "Voir mon stock",
+  "stockEmpty": "Aucun produit pour l'instant.",
+  "quantity": "{count} en stock",
+  "@quantity": { "placeholders": { "count": { "type": "int" } } },
+  "outOfStock": "Rupture",
+  "lowStock": "À recommander",
+  "comingSoon": "Cet écran arrive dans la prochaine étape."
+}
