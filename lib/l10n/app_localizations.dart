@@ -831,6 +831,120 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Non'**
   String get no;
+
+  /// No description provided for @pinTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Code PIN'**
+  String get pinTitle;
+
+  /// No description provided for @pinIntro.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le code PIN est demandé à chaque ouverture de l\'appli, et après une minute passée sur une autre appli. Il empêche quelqu\'un qui prend le téléphone ou le PC de voir ou modifier le stock.'**
+  String get pinIntro;
+
+  /// No description provided for @pinCreate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer un code PIN'**
+  String get pinCreate;
+
+  /// No description provided for @pinChange.
+  ///
+  /// In fr, this message translates to:
+  /// **'Changer le code PIN'**
+  String get pinChange;
+
+  /// No description provided for @pinRemove.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer le code PIN'**
+  String get pinRemove;
+
+  /// No description provided for @pinEnter.
+  ///
+  /// In fr, this message translates to:
+  /// **'Entrez votre code PIN'**
+  String get pinEnter;
+
+  /// No description provided for @pinCurrent.
+  ///
+  /// In fr, this message translates to:
+  /// **'Entrez le code PIN actuel'**
+  String get pinCurrent;
+
+  /// No description provided for @pinNew.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisissez un code de 4 à 6 chiffres'**
+  String get pinNew;
+
+  /// No description provided for @pinConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retapez le même code'**
+  String get pinConfirm;
+
+  /// No description provided for @pinMismatch.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les deux codes ne sont pas pareils. Recommencez.'**
+  String get pinMismatch;
+
+  /// No description provided for @pinSaved.
+  ///
+  /// In fr, this message translates to:
+  /// **'Code PIN enregistré'**
+  String get pinSaved;
+
+  /// No description provided for @pinRemoved.
+  ///
+  /// In fr, this message translates to:
+  /// **'Code PIN supprimé'**
+  String get pinRemoved;
+
+  /// No description provided for @pinWrong.
+  ///
+  /// In fr, this message translates to:
+  /// **'Code incorrect'**
+  String get pinWrong;
+
+  /// No description provided for @pinWait.
+  ///
+  /// In fr, this message translates to:
+  /// **'Trop d\'essais. Réessayez dans {seconds} s.'**
+  String pinWait(int seconds);
+
+  /// No description provided for @pinErase.
+  ///
+  /// In fr, this message translates to:
+  /// **'Effacer'**
+  String get pinErase;
+
+  /// No description provided for @pinDigits.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count} chiffres tapés'**
+  String pinDigits(int count);
+
+  /// No description provided for @pinForgot.
+  ///
+  /// In fr, this message translates to:
+  /// **'Code PIN oublié ?'**
+  String get pinForgot;
+
+  /// No description provided for @pinForgotNoAccount.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sans compte de synchronisation, le code ne peut pas être réinitialisé ici. Il faut désinstaller puis réinstaller l\'appli : le stock local sera perdu, sauf s\'il existe une sauvegarde.'**
+  String get pinForgotNoAccount;
+
+  /// No description provided for @pinForgotWithAccount.
+  ///
+  /// In fr, this message translates to:
+  /// **'Entrez le mot de passe du compte {email} pour supprimer le code PIN.'**
+  String pinForgotWithAccount(String email);
 }
 
 class _AppLocalizationsDelegate

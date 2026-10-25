@@ -6,16 +6,19 @@ import 'package:flutter/material.dart';
 import '../data/csv_export.dart';
 import '../data/database.dart';
 import '../data/locale_controller.dart';
+import '../data/pin_lock.dart';
 import '../l10n/app_localizations.dart';
 import 'backup_screen.dart';
 import 'categories_screen.dart';
+import 'pin_screen.dart';
 
-/// Langue, catégories, sauvegarde et export.
+/// Langue, code PIN, catégories, sauvegarde et export.
 class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({super.key, required this.db, this.locale});
+  const SettingsScreen({super.key, required this.db, this.locale, this.pin});
 
   final AppDatabase db;
   final LocaleController? locale;
+  final PinLock? pin;
 
   // Les langues gardent leur propre nom, pour qu'on retrouve la sienne.
   static const languages = {'fr': 'Français', 'en': 'English', 'de': 'Deutsch'};
@@ -35,6 +38,19 @@ class SettingsScreen extends StatelessWidget {
               title: Text(t.language),
               subtitle: Text(languages[current] ?? current),
               onTap: () => _chooseLanguage(context),
+            ),
+          if (pin case final pin?)
+            ListenableBuilder(
+              listenable: pin,
+              builder: (context, _) => ListTile(
+                minTileHeight: 64,
+                leading: Icon(pin.enabled ? Icons.lock_outline : Icons.lock_open_outlined),
+                title: Text(t.pinTitle),
+                subtitle: Text(pin.enabled ? t.pinChange : t.pinCreate),
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => PinSettingsScreen(pin: pin)),
+                ),
+              ),
             ),
           ListTile(
             minTileHeight: 64,
