@@ -207,4 +207,27 @@ void main() {
     expect(await names(StockSort.quantityAsc), ['Jus C', 'Jus B', 'Jus A']);
     expect(await names(StockSort.quantityDesc), ['Jus A', 'Jus B', 'Jus C']);
   });
+
+  test('un produit supprimé disparaît partout, et peut revenir', () async {
+    final p = await db.addProduct(name: 'Jus mangue', category: Category.autre, initialQuantity: 6);
+    await db.sell(p.id, 2);
+    await db.receive(maillot.id, 3);
+
+    await db.deleteProduct(p.id);
+    expect(await db.watchStock(search: 'Jus').first, isEmpty);
+    expect(await db.watchArchived().first, isEmpty);
+    expect((await db.watchHistory().first).map((e) => e.product.id), everyElement(maillot.id));
+    final totals = await db.watchTotals().first;
+    expect((totals.entered, totals.removed), (3, 0));
+
+    await db.undeleteProduct(p.id);
+    expect((await db.watchStock(search: 'Jus').first).single.quantity, 4);
+    expect((await db.watchTotals().first).entered, 9);
+  });
+
+  test('supprimer un produit archivé le retire aussi des archives', () async {
+    await db.archiveProduct(maillot.id);
+    await db.deleteProduct(maillot.id);
+    expect(await db.watchArchived().first, isEmpty);
+  });
 }

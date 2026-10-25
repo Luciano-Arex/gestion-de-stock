@@ -200,5 +200,12 @@
   "countUnchanged": "Stock count for {name}: the stock was right",
   "lossDone": "{count} × {name} taken out of stock",
   "countDone": "{name}: stock set to {count}",
-  "typeAdjustment": "Stock count"
+  "typeAdjustment": "Stock count",
+  "deleteProduct": "Delete product",
+  "deleteProductTitle": "Delete {name}?",
+  "deleteProductConfirm": "The product will disappear from the stock, the history and the reports, on all your devices.\n\nIf you just stopped selling it and want to keep a record of its sales, archive it instead.",
+  "archiveInstead": "Archive instead",
+  "delete": "Delete",
+  "productDeleted": "{name} was deleted",
+  "productArchived": "{name} was archived"
 }

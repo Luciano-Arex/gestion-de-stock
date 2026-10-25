@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:drift/drift.dart' show driftRuntimeOptions;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -53,5 +55,14 @@ void main() {
     expect(() => target.importJson('{"hello": 1}'), throwsFormatException);
     expect(() => target.importJson('pas du json'), throwsFormatException);
     expect(await target.watchStock().first, isEmpty);
+  });
+
+  test('une sauvegarde d\'avant la suppression de produits se restaure', () async {
+    final data = jsonDecode(await source.exportJson()) as Map<String, dynamic>;
+    for (final p in data['products'] as List) {
+      (p as Map<String, dynamic>).remove('deleted');
+    }
+    await target.importJson(jsonEncode(data));
+    expect((await target.watchStock().first).single.quantity, 5);
   });
 }

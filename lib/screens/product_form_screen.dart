@@ -7,6 +7,61 @@ import '../l10n/app_localizations.dart';
 import '../util/money.dart';
 import 'categories_screen.dart';
 
+enum _DeleteChoice { archive, delete }
+
+/// Demande confirmation, puis supprime (ou archive, au choix) le produit et
+/// revient à l'écran principal, avec « Annuler » pendant quelques secondes.
+Future<void> deleteProductWithConfirmation(
+    BuildContext context, AppDatabase db, Product product) async {
+  final t = AppLocalizations.of(context)!;
+  final choice = await showDialog<_DeleteChoice>(
+    context: context,
+    builder: (context) => AlertDialog(
+      icon: const Icon(Icons.delete_outline),
+      title: Text(t.deleteProductTitle(product.name)),
+      content: Text(t.deleteProductConfirm),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(context), child: Text(t.cancel)),
+        if (!product.archived)
+          TextButton(
+            onPressed: () => Navigator.pop(context, _DeleteChoice.archive),
+            child: Text(t.archiveInstead),
+          ),
+        FilledButton(
+          style: FilledButton.styleFrom(
+            backgroundColor: Theme.of(context).colorScheme.error,
+            foregroundColor: Theme.of(context).colorScheme.onError,
+          ),
+          onPressed: () => Navigator.pop(context, _DeleteChoice.delete),
+          child: Text(t.delete),
+        ),
+      ],
+    ),
+  );
+  if (choice == null || !context.mounted) return;
+  final messenger = ScaffoldMessenger.of(context);
+  final navigator = Navigator.of(context);
+  final deleting = choice == _DeleteChoice.delete;
+  if (deleting) {
+    await db.deleteProduct(product.id);
+  } else {
+    await db.archiveProduct(product.id);
+  }
+  // La fiche et le formulaire du produit n'ont plus de sens : retour à l'accueil.
+  navigator.popUntil((route) => route.isFirst);
+  messenger
+    ..hideCurrentSnackBar()
+    ..showSnackBar(SnackBar(
+      content: Text(deleting ? t.productDeleted(product.name) : t.productArchived(product.name)),
+      duration: const Duration(seconds: 6),
+      action: SnackBarAction(
+        label: t.undo,
+        onPressed: () =>
+            deleting ? db.undeleteProduct(product.id) : db.restoreProduct(product.id),
+      ),
+    ));
+}
+
 /// Création ou modification d'un produit. Renvoie le produit enregistré.
 class ProductFormScreen extends StatefulWidget {
   const ProductFormScreen({
@@ -151,6 +206,17 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                   icon: const Icon(Icons.archive_outlined),
                   label: Text(t.archive),
                   onPressed: _saving ? null : _archive,
+                ),
+                TextButton.icon(
+                  style: TextButton.styleFrom(
+                    minimumSize: const Size.fromHeight(48),
+                    foregroundColor: Theme.of(context).colorScheme.error,
+                  ),
+                  icon: const Icon(Icons.delete_outline),
+                  label: Text(t.deleteProduct),
+                  onPressed: _saving
+                      ? null
+                      : () => deleteProductWithConfirmation(context, widget.db, existing),
                 ),
               ],
             ],

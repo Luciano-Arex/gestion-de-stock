@@ -168,6 +168,7 @@ Map<String, Object?> productToRow(Product p) => {
       'alert_threshold': p.alertThreshold,
       'barcode': p.barcode,
       'archived': p.archived,
+      'deleted': p.deleted,
       'updated_at': p.updatedAt.toUtc().toIso8601String(),
     };
 
@@ -181,6 +182,7 @@ Product productFromRow(Map<String, Object?> r) => Product(
       alertThreshold: r['alert_threshold'] as int? ?? 0,
       barcode: r['barcode'] as String?,
       archived: r['archived'] as bool? ?? false,
+      deleted: r['deleted'] as bool? ?? false,
       updatedAt: DateTime.parse(r['updated_at'] as String).toLocal(),
     );
 

@@ -49,7 +49,9 @@ extension Backup on AppDatabase {
       throw const FormatException('Sauvegarde faite avec une version plus récente de l\'appli');
     }
     final productRows = [
-      for (final p in data['products'] as List) Product.fromJson(p as Map<String, dynamic>),
+      // Les sauvegardes d'avant la suppression de produits n'ont pas « deleted ».
+      for (final p in data['products'] as List)
+        Product.fromJson({'deleted': false, ...p as Map<String, dynamic>}),
     ];
     final movementRows = [
       for (final m in data['movements'] as List) Movement.fromJson(m as Map<String, dynamic>),

@@ -693,4 +693,32 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get typeAdjustment => 'Inventur';
+
+  @override
+  String get deleteProduct => 'Artikel löschen';
+
+  @override
+  String deleteProductTitle(String name) {
+    return '$name löschen?';
+  }
+
+  @override
+  String get deleteProductConfirm =>
+      'Der Artikel verschwindet aus dem Lager, dem Verlauf und den Berichten, auf allen deinen Geräten.\n\nWenn du ihn nur nicht mehr verkaufst und seine Verkäufe behalten willst, archiviere ihn lieber.';
+
+  @override
+  String get archiveInstead => 'Lieber archivieren';
+
+  @override
+  String get delete => 'Löschen';
+
+  @override
+  String productDeleted(String name) {
+    return '$name wurde gelöscht';
+  }
+
+  @override
+  String productArchived(String name) {
+    return '$name wurde archiviert';
+  }
 }

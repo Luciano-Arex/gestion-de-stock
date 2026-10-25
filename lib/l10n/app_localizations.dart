@@ -1305,6 +1305,48 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Inventaire'**
   String get typeAdjustment;
+
+  /// No description provided for @deleteProduct.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer le produit'**
+  String get deleteProduct;
+
+  /// No description provided for @deleteProductTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer {name} ?'**
+  String deleteProductTitle(String name);
+
+  /// No description provided for @deleteProductConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le produit disparaîtra du stock, de l\'historique et des rapports, sur tous tes appareils.\n\nSi tu ne le vends plus mais veux garder une trace de ses ventes, archive-le plutôt.'**
+  String get deleteProductConfirm;
+
+  /// No description provided for @archiveInstead.
+  ///
+  /// In fr, this message translates to:
+  /// **'Archiver plutôt'**
+  String get archiveInstead;
+
+  /// No description provided for @delete.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer'**
+  String get delete;
+
+  /// No description provided for @productDeleted.
+  ///
+  /// In fr, this message translates to:
+  /// **'{name} a été supprimé'**
+  String productDeleted(String name);
+
+  /// No description provided for @productArchived.
+  ///
+  /// In fr, this message translates to:
+  /// **'{name} a été archivé'**
+  String productArchived(String name);
 }
 
 class _AppLocalizationsDelegate
