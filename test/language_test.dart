@@ -6,6 +6,8 @@ import 'package:gestion_stock/data/database.dart';
 import 'package:gestion_stock/data/locale_controller.dart';
 import 'package:gestion_stock/main.dart';
 
+import 'nav.dart';
+
 void main() {
   setUpAll(() => driftRuntimeOptions.dontWarnAboutMultipleDatabases = true);
 
@@ -18,16 +20,14 @@ void main() {
 
     await tester.pumpWidget(StockApp(db: db, locale: locale));
     await tester.pumpAndSettle();
-    await tester.tap(find.byTooltip('Réglages'));
-    await tester.pumpAndSettle();
+    await openTab(tester, 'Réglages');
     await tester.tap(find.text('Langue'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Deutsch'));
     await tester.pumpAndSettle();
 
     expect(find.text('Sprache'), findsOneWidget);
-    await tester.tap(find.byTooltip('Zurück'));
-    await tester.pumpAndSettle();
+    await openTab(tester, 'Start');
     expect(find.text('Verkauft'), findsOneWidget);
     expect(saved, 'de');
 

@@ -317,5 +317,64 @@
   "summaryProducts": "articles",
   "summaryPieces": "pièces en stock",
   "summaryInToday": "entrées aujourd'hui",
-  "summaryOutToday": "sorties aujourd'hui"
+  "summaryOutToday": "sorties aujourd'hui",
+  "navHome": "Accueil",
+  "navStock": "Stock",
+  "lost": "Perte / sortie",
+  "stockCount": "Inventaire",
+  "countedQuestion": "Combien en avez-vous compté ?",
+  "countHelp": "Comptez ce qui est vraiment en rayon. L'appli enregistre l'écart avec la quantité calculée.",
+  "countedQuantity": "Quantité comptée",
+  "unitPriceLabel": "Prix unitaire",
+  "unitPriceSellHelp": "Modifiez-le en cas de remise.",
+  "noteLabel": "Note (facultatif)",
+  "lossNoteHelp": "Par exemple : cassé, offert, usage personnel",
+  "initialQuantity": "Quantité déjà en stock",
+  "initialQuantityHelp": "Ce que vous avez aujourd'hui. Elle est enregistrée comme une première réception, visible dans l'historique.",
+  "sortBy": "Trier",
+  "sortName": "Par nom",
+  "sortQuantityAsc": "Quantité : la plus faible d'abord",
+  "sortQuantityDesc": "Quantité : la plus forte d'abord",
+  "archivedProducts": "Produits archivés",
+  "archivedEmpty": "Aucun produit archivé. Un produit archivé disparaît du stock mais garde son historique.",
+  "restore": "Remettre en vente",
+  "restored": "{name} est de retour dans le stock",
+  "@restored": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "countUnchanged": "Inventaire de {name} : le stock était juste",
+  "@countUnchanged": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "lossDone": "{count} × {name} sorti du stock",
+  "@lossDone": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "countDone": "{name} : stock corrigé à {count}",
+  "@countDone": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "typeAdjustment": "Inventaire"
 }

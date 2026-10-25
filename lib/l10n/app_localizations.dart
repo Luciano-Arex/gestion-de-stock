@@ -1155,6 +1155,156 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'sorties aujourd\'hui'**
   String get summaryOutToday;
+
+  /// No description provided for @navHome.
+  ///
+  /// In fr, this message translates to:
+  /// **'Accueil'**
+  String get navHome;
+
+  /// No description provided for @navStock.
+  ///
+  /// In fr, this message translates to:
+  /// **'Stock'**
+  String get navStock;
+
+  /// No description provided for @lost.
+  ///
+  /// In fr, this message translates to:
+  /// **'Perte / sortie'**
+  String get lost;
+
+  /// No description provided for @stockCount.
+  ///
+  /// In fr, this message translates to:
+  /// **'Inventaire'**
+  String get stockCount;
+
+  /// No description provided for @countedQuestion.
+  ///
+  /// In fr, this message translates to:
+  /// **'Combien en avez-vous compté ?'**
+  String get countedQuestion;
+
+  /// No description provided for @countHelp.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comptez ce qui est vraiment en rayon. L\'appli enregistre l\'écart avec la quantité calculée.'**
+  String get countHelp;
+
+  /// No description provided for @countedQuantity.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quantité comptée'**
+  String get countedQuantity;
+
+  /// No description provided for @unitPriceLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prix unitaire'**
+  String get unitPriceLabel;
+
+  /// No description provided for @unitPriceSellHelp.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifiez-le en cas de remise.'**
+  String get unitPriceSellHelp;
+
+  /// No description provided for @noteLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Note (facultatif)'**
+  String get noteLabel;
+
+  /// No description provided for @lossNoteHelp.
+  ///
+  /// In fr, this message translates to:
+  /// **'Par exemple : cassé, offert, usage personnel'**
+  String get lossNoteHelp;
+
+  /// No description provided for @initialQuantity.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quantité déjà en stock'**
+  String get initialQuantity;
+
+  /// No description provided for @initialQuantityHelp.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce que vous avez aujourd\'hui. Elle est enregistrée comme une première réception, visible dans l\'historique.'**
+  String get initialQuantityHelp;
+
+  /// No description provided for @sortBy.
+  ///
+  /// In fr, this message translates to:
+  /// **'Trier'**
+  String get sortBy;
+
+  /// No description provided for @sortName.
+  ///
+  /// In fr, this message translates to:
+  /// **'Par nom'**
+  String get sortName;
+
+  /// No description provided for @sortQuantityAsc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quantité : la plus faible d\'abord'**
+  String get sortQuantityAsc;
+
+  /// No description provided for @sortQuantityDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quantité : la plus forte d\'abord'**
+  String get sortQuantityDesc;
+
+  /// No description provided for @archivedProducts.
+  ///
+  /// In fr, this message translates to:
+  /// **'Produits archivés'**
+  String get archivedProducts;
+
+  /// No description provided for @archivedEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun produit archivé. Un produit archivé disparaît du stock mais garde son historique.'**
+  String get archivedEmpty;
+
+  /// No description provided for @restore.
+  ///
+  /// In fr, this message translates to:
+  /// **'Remettre en vente'**
+  String get restore;
+
+  /// No description provided for @restored.
+  ///
+  /// In fr, this message translates to:
+  /// **'{name} est de retour dans le stock'**
+  String restored(String name);
+
+  /// No description provided for @countUnchanged.
+  ///
+  /// In fr, this message translates to:
+  /// **'Inventaire de {name} : le stock était juste'**
+  String countUnchanged(String name);
+
+  /// No description provided for @lossDone.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count} × {name} sorti du stock'**
+  String lossDone(int count, String name);
+
+  /// No description provided for @countDone.
+  ///
+  /// In fr, this message translates to:
+  /// **'{name} : stock corrigé à {count}'**
+  String countDone(int count, String name);
+
+  /// No description provided for @typeAdjustment.
+  ///
+  /// In fr, this message translates to:
+  /// **'Inventaire'**
+  String get typeAdjustment;
 }
 
 class _AppLocalizationsDelegate

@@ -12,6 +12,7 @@ import '../l10n/app_localizations.dart';
 import 'backup_screen.dart';
 import 'categories_screen.dart';
 import 'pin_screen.dart';
+import 'stock_screen.dart';
 
 /// Compte, langue, code PIN, catégories, sauvegarde et export.
 class SettingsScreen extends StatelessWidget {
@@ -72,6 +73,14 @@ class SettingsScreen extends StatelessWidget {
             title: Text(t.categories),
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute(builder: (_) => CategoriesScreen(db: db)),
+            ),
+          ),
+          ListTile(
+            minTileHeight: 64,
+            leading: const Icon(Icons.inventory_outlined),
+            title: Text(t.archivedProducts),
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => ArchivedScreen(db: db)),
             ),
           ),
           ListTile(
@@ -201,6 +210,7 @@ class ExportScreen extends StatelessWidget {
         MovementType.sold => t.typeSold,
         MovementType.loss => t.typeLoss,
         MovementType.correction => t.typeCorrection,
+        MovementType.adjustment => t.typeAdjustment,
       },
     );
     final CsvTable table;

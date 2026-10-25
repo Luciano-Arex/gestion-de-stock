@@ -9,11 +9,20 @@ import 'categories_screen.dart';
 
 /// Création ou modification d'un produit. Renvoie le produit enregistré.
 class ProductFormScreen extends StatefulWidget {
-  const ProductFormScreen({super.key, required this.db, this.product, this.initialName = ''});
+  const ProductFormScreen({
+    super.key,
+    required this.db,
+    this.product,
+    this.initialName = '',
+    this.askQuantity = true,
+  });
 
   final AppDatabase db;
   final Product? product;
   final String initialName;
+  // À la création : demander la quantité déjà en stock. Faux quand une
+  // réception suit, qui demande elle-même la quantité.
+  final bool askQuantity;
 
   @override
   State<ProductFormScreen> createState() => _ProductFormScreenState();
@@ -28,12 +37,13 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
   late final _purchasePrice =
       TextEditingController(text: formatCents(widget.product?.purchasePriceCents));
   late final _barcode = TextEditingController(text: widget.product?.barcode ?? '');
+  final _initialQuantity = TextEditingController(text: '0');
   late String _category = widget.product?.category ?? Category.autre;
   bool _saving = false;
 
   @override
   void dispose() {
-    for (final c in [_name, _threshold, _salePrice, _purchasePrice, _barcode]) {
+    for (final c in [_name, _threshold, _salePrice, _purchasePrice, _barcode, _initialQuantity]) {
       c.dispose();
     }
     super.dispose();
@@ -70,10 +80,24 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                 decoration: InputDecoration(
                   labelText: t.productName,
                   helperText: t.productNameHelp,
-                  border: const OutlineInputBorder(),
                 ),
                 validator: (v) => (v == null || v.trim().isEmpty) ? t.productNameRequired : null,
               ),
+              if (existing == null && widget.askQuantity) ...[
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _initialQuantity,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  textInputAction: TextInputAction.next,
+                  decoration: InputDecoration(
+                    labelText: t.initialQuantity,
+                    helperText: t.initialQuantityHelp,
+                    helperMaxLines: 3,
+                    prefixIcon: const Icon(Icons.inventory_2_outlined),
+                  ),
+                ),
+              ],
               const SizedBox(height: 24),
               Text(t.category, style: Theme.of(context).textTheme.titleMedium),
               const SizedBox(height: 8),
@@ -107,7 +131,6 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                   labelText: t.alertThreshold,
                   helperText: t.alertThresholdHelp,
                   helperMaxLines: 3,
-                  border: const OutlineInputBorder(),
                 ),
               ),
               const SizedBox(height: 16),
@@ -119,7 +142,6 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                 controller: _barcode,
                 decoration: InputDecoration(
                   labelText: t.barcode,
-                  border: const OutlineInputBorder(),
                 ),
               ),
               if (existing != null) ...[
@@ -146,7 +168,6 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
       decoration: InputDecoration(
         labelText: label,
         suffixText: '€',
-        border: const OutlineInputBorder(),
       ),
       validator: (v) {
         try {
@@ -178,6 +199,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
         salePriceCents: sale,
         purchasePriceCents: purchase,
         barcode: barcode,
+        initialQuantity: int.tryParse(_initialQuantity.text) ?? 0,
       );
     } else {
       saved = existing.copyWith(

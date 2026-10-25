@@ -605,4 +605,90 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get summaryOutToday => 'out today';
+
+  @override
+  String get navHome => 'Home';
+
+  @override
+  String get navStock => 'Stock';
+
+  @override
+  String get lost => 'Loss / other out';
+
+  @override
+  String get stockCount => 'Stock count';
+
+  @override
+  String get countedQuestion => 'How many did you count?';
+
+  @override
+  String get countHelp =>
+      'Count what\'s really on the shelf. The app records the difference with the calculated quantity.';
+
+  @override
+  String get countedQuantity => 'Counted quantity';
+
+  @override
+  String get unitPriceLabel => 'Unit price';
+
+  @override
+  String get unitPriceSellHelp => 'Change it for a discount.';
+
+  @override
+  String get noteLabel => 'Note (optional)';
+
+  @override
+  String get lossNoteHelp => 'For example: broken, given away, personal use';
+
+  @override
+  String get initialQuantity => 'Quantity already in stock';
+
+  @override
+  String get initialQuantityHelp =>
+      'What you have today. It\'s recorded as a first delivery, visible in the history.';
+
+  @override
+  String get sortBy => 'Sort';
+
+  @override
+  String get sortName => 'By name';
+
+  @override
+  String get sortQuantityAsc => 'Quantity: lowest first';
+
+  @override
+  String get sortQuantityDesc => 'Quantity: highest first';
+
+  @override
+  String get archivedProducts => 'Archived products';
+
+  @override
+  String get archivedEmpty =>
+      'No archived products. An archived product leaves the stock list but keeps its history.';
+
+  @override
+  String get restore => 'Restore';
+
+  @override
+  String restored(String name) {
+    return '$name is back in the stock';
+  }
+
+  @override
+  String countUnchanged(String name) {
+    return 'Stock count for $name: the stock was right';
+  }
+
+  @override
+  String lossDone(int count, String name) {
+    return '$count × $name taken out of stock';
+  }
+
+  @override
+  String countDone(int count, String name) {
+    return '$name: stock set to $count';
+  }
+
+  @override
+  String get typeAdjustment => 'Stock count';
 }

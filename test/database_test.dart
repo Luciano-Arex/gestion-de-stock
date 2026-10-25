@@ -162,4 +162,49 @@ void main() {
     final tomorrow = DateTime.now().add(const Duration(days: 1));
     expect((await db.watchTotals(since: tomorrow).first).entered, 0);
   });
+
+  test('un produit créé avec une quantité de départ a sa première réception', () async {
+    final p = await db.addProduct(
+        name: 'Jus de mangue', category: Category.autre, purchasePriceCents: 120, initialQuantity: 24);
+    expect(await db.stockOf(p.id), 24);
+    final history = await db.watchHistory(productId: p.id).first;
+    expect(history.single.movement.type, MovementType.received);
+    expect(history.single.movement.unitPriceCents, 120);
+  });
+
+  test('inventaire : l\'écart compté est enregistré, et peut être annulé', () async {
+    final p = await db.addProduct(name: 'Maillot OM M', category: Category.autre, initialQuantity: 10);
+    final ecart = await db.adjustTo(p.id, 7, note: 'compté samedi');
+    expect(ecart!.delta, -3);
+    expect(ecart.type, MovementType.adjustment);
+    expect(await db.stockOf(p.id), 7);
+    expect(await db.adjustTo(p.id, 7), isNull, reason: 'compte juste : rien à enregistrer');
+
+    await db.undo(ecart.id);
+    expect(await db.stockOf(p.id), 10);
+    // L'inventaire n'est ni une entrée ni une sortie dans les totaux.
+    final totals = await db.watchTotals().first;
+    expect((totals.entered, totals.removed), (10, 0));
+  });
+
+  test('archiver puis restaurer un produit', () async {
+    final p = await db.addProduct(name: 'Perruque', category: Category.autre, initialQuantity: 2);
+    await db.archiveProduct(p.id);
+    expect(await db.watchStock(search: 'Perruque').first, isEmpty);
+    expect((await db.watchArchived().first).single.quantity, 2);
+    await db.restoreProduct(p.id);
+    expect((await db.watchStock(search: 'Perruque').first).single.quantity, 2);
+    expect(await db.watchArchived().first, isEmpty);
+  });
+
+  test('tri du stock par quantité', () async {
+    await db.addProduct(name: 'Jus B', category: Category.autre, initialQuantity: 5);
+    await db.addProduct(name: 'Jus A', category: Category.autre, initialQuantity: 9);
+    await db.addProduct(name: 'Jus C', category: Category.autre);
+    Future<List<String>> names(StockSort sort) async =>
+        [for (final l in await db.watchStock(search: 'Jus', sort: sort).first) l.product.name];
+    expect(await names(StockSort.name), ['Jus A', 'Jus B', 'Jus C']);
+    expect(await names(StockSort.quantityAsc), ['Jus C', 'Jus B', 'Jus A']);
+    expect(await names(StockSort.quantityDesc), ['Jus A', 'Jus B', 'Jus C']);
+  });
 }

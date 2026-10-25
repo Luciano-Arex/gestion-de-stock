@@ -8,6 +8,8 @@ import 'package:gestion_stock/data/account.dart';
 import 'package:gestion_stock/data/database.dart';
 import 'package:gestion_stock/data/pin_lock.dart';
 import 'package:gestion_stock/main.dart';
+
+import 'nav.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shared_preferences_platform_interface/in_memory_shared_preferences_async.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
@@ -166,8 +168,7 @@ void main() {
       expect(find.text('J\'ai vendu'), findsOneWidget, reason: 'accueil du stock');
       expect(auth.accounts['awa@example.com'], 'secret1');
 
-      await tester.tap(find.byTooltip('Réglages'));
-      await tester.pumpAndSettle();
+      await openTab(tester, 'Réglages');
       expect(find.text('awa@example.com'), findsOneWidget);
       await tester.tap(find.widgetWithText(TextButton, 'Se déconnecter'));
       await tester.pumpAndSettle();

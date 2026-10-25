@@ -607,4 +607,90 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get summaryOutToday => 'Ausgänge heute';
+
+  @override
+  String get navHome => 'Start';
+
+  @override
+  String get navStock => 'Lager';
+
+  @override
+  String get lost => 'Verlust / Abgang';
+
+  @override
+  String get stockCount => 'Inventur';
+
+  @override
+  String get countedQuestion => 'Wie viele haben Sie gezählt?';
+
+  @override
+  String get countHelp =>
+      'Zählen Sie, was wirklich im Regal liegt. Die App speichert die Abweichung zum berechneten Bestand.';
+
+  @override
+  String get countedQuantity => 'Gezählte Menge';
+
+  @override
+  String get unitPriceLabel => 'Stückpreis';
+
+  @override
+  String get unitPriceSellHelp => 'Bei Rabatt hier ändern.';
+
+  @override
+  String get noteLabel => 'Notiz (optional)';
+
+  @override
+  String get lossNoteHelp => 'Zum Beispiel: kaputt, verschenkt, Eigenbedarf';
+
+  @override
+  String get initialQuantity => 'Bereits vorhandene Menge';
+
+  @override
+  String get initialQuantityHelp =>
+      'Was Sie heute haben. Sie wird als erster Wareneingang gespeichert und ist im Verlauf sichtbar.';
+
+  @override
+  String get sortBy => 'Sortieren';
+
+  @override
+  String get sortName => 'Nach Name';
+
+  @override
+  String get sortQuantityAsc => 'Menge: niedrigste zuerst';
+
+  @override
+  String get sortQuantityDesc => 'Menge: höchste zuerst';
+
+  @override
+  String get archivedProducts => 'Archivierte Artikel';
+
+  @override
+  String get archivedEmpty =>
+      'Keine archivierten Artikel. Ein archivierter Artikel verschwindet aus dem Lager, sein Verlauf bleibt erhalten.';
+
+  @override
+  String get restore => 'Wieder aufnehmen';
+
+  @override
+  String restored(String name) {
+    return '$name ist wieder im Lager';
+  }
+
+  @override
+  String countUnchanged(String name) {
+    return 'Inventur $name: Der Bestand stimmte';
+  }
+
+  @override
+  String lossDone(int count, String name) {
+    return '$count × $name aus dem Lager genommen';
+  }
+
+  @override
+  String countDone(int count, String name) {
+    return '$name: Bestand auf $count korrigiert';
+  }
+
+  @override
+  String get typeAdjustment => 'Inventur';
 }

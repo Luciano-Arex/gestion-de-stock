@@ -608,4 +608,90 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get summaryOutToday => 'sorties aujourd\'hui';
+
+  @override
+  String get navHome => 'Accueil';
+
+  @override
+  String get navStock => 'Stock';
+
+  @override
+  String get lost => 'Perte / sortie';
+
+  @override
+  String get stockCount => 'Inventaire';
+
+  @override
+  String get countedQuestion => 'Combien en avez-vous compté ?';
+
+  @override
+  String get countHelp =>
+      'Comptez ce qui est vraiment en rayon. L\'appli enregistre l\'écart avec la quantité calculée.';
+
+  @override
+  String get countedQuantity => 'Quantité comptée';
+
+  @override
+  String get unitPriceLabel => 'Prix unitaire';
+
+  @override
+  String get unitPriceSellHelp => 'Modifiez-le en cas de remise.';
+
+  @override
+  String get noteLabel => 'Note (facultatif)';
+
+  @override
+  String get lossNoteHelp => 'Par exemple : cassé, offert, usage personnel';
+
+  @override
+  String get initialQuantity => 'Quantité déjà en stock';
+
+  @override
+  String get initialQuantityHelp =>
+      'Ce que vous avez aujourd\'hui. Elle est enregistrée comme une première réception, visible dans l\'historique.';
+
+  @override
+  String get sortBy => 'Trier';
+
+  @override
+  String get sortName => 'Par nom';
+
+  @override
+  String get sortQuantityAsc => 'Quantité : la plus faible d\'abord';
+
+  @override
+  String get sortQuantityDesc => 'Quantité : la plus forte d\'abord';
+
+  @override
+  String get archivedProducts => 'Produits archivés';
+
+  @override
+  String get archivedEmpty =>
+      'Aucun produit archivé. Un produit archivé disparaît du stock mais garde son historique.';
+
+  @override
+  String get restore => 'Remettre en vente';
+
+  @override
+  String restored(String name) {
+    return '$name est de retour dans le stock';
+  }
+
+  @override
+  String countUnchanged(String name) {
+    return 'Inventaire de $name : le stock était juste';
+  }
+
+  @override
+  String lossDone(int count, String name) {
+    return '$count × $name sorti du stock';
+  }
+
+  @override
+  String countDone(int count, String name) {
+    return '$name : stock corrigé à $count';
+  }
+
+  @override
+  String get typeAdjustment => 'Inventaire';
 }

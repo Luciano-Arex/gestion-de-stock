@@ -4,6 +4,8 @@ import 'package:intl/intl.dart';
 import '../data/database.dart';
 import '../l10n/app_localizations.dart';
 import '../util/money.dart';
+import 'home_screen.dart';
+import 'movement_screen.dart';
 import 'product_form_screen.dart';
 
 enum HistoryPeriod { today, week, month, all }
@@ -167,6 +169,7 @@ class _HistoryTile extends StatelessWidget {
       MovementType.sold => (t.typeSold, Icons.sell),
       MovementType.loss => (t.typeLoss, Icons.broken_image_outlined),
       MovementType.correction => (t.typeCorrection, Icons.undo),
+      MovementType.adjustment => (t.typeAdjustment, Icons.fact_check_outlined),
     };
     final when = DateFormat.yMd(locale).add_Hm().format(m.createdAt);
     final details = [
@@ -252,8 +255,8 @@ class _Totals extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
           child: Row(
             children: [
-              tile(MovementDirection.entries, Icons.south_west, t.entries, '+${totals.entered}'),
-              tile(MovementDirection.exits, Icons.north_east, t.exits, '−${totals.removed}'),
+              tile(MovementDirection.entries, Icons.south_west, t.entries, totals.entered == 0 ? '0' : '+${totals.entered}'),
+              tile(MovementDirection.exits, Icons.north_east, t.exits, totals.removed == 0 ? '0' : '−${totals.removed}'),
             ],
           ),
         );
@@ -292,7 +295,8 @@ class _ProductHeader extends StatelessWidget {
         ].join(' · ');
         return Card(
           margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-          child: Padding(
+          child: Container(
+            width: double.infinity,
             padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -311,6 +315,19 @@ class _ProductHeader extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(prices, style: text.bodyLarge),
                 ],
+                const SizedBox(height: 12),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    for (final kind in MovementKind.values)
+                      FilledButton.tonalIcon(
+                        icon: Icon(movementIcon(kind)),
+                        label: Text(movementTitle(t, kind)),
+                        onPressed: () => recordMovement(context, db, kind, product: line),
+                      ),
+                  ],
+                ),
               ],
             ),
           ),
