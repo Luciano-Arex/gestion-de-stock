@@ -13,7 +13,8 @@ void main() {
       (tester) async {
     final db = AppDatabase(NativeDatabase.memory());
     addTearDown(db.close);
-    final locale = LocaleController(db, const Locale('fr'));
+    String? saved;
+    final locale = LocaleController(const Locale('fr'), save: (code) async => saved = code);
 
     await tester.pumpWidget(StockApp(db: db, locale: locale));
     await tester.pumpAndSettle();
@@ -28,9 +29,15 @@ void main() {
     await tester.tap(find.byTooltip('Zurück'));
     await tester.pumpAndSettle();
     expect(find.text('Verkauft'), findsOneWidget);
-    expect(await tester.runAsync(() => db.readSetting(LocaleController.key)), 'de');
+    expect(saved, 'de');
 
     await tester.pumpWidget(const SizedBox());
     await tester.pump(Duration.zero);
+  });
+
+  test('langue de l\'appareil non traduite : anglais', () {
+    expect(resolveLocale(null, const [Locale('es')]), const Locale('en'));
+    expect(resolveLocale(null, const [Locale('es'), Locale('de', 'AT')]), const Locale('de'));
+    expect(resolveLocale(const Locale('fr'), const [Locale('de')]), const Locale('fr'));
   });
 }

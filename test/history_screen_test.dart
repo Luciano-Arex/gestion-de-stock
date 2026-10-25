@@ -34,8 +34,9 @@ void main() {
     expect(find.text('3 en stock'), findsOneWidget);
     expect(find.text('Reçu'), findsOneWidget);
     expect(find.text('Vendu'), findsOneWidget);
-    expect(find.text('+4'), findsOneWidget);
+    expect(find.text('+4'), findsNWidgets(2)); // la ligne et le total des entrées
     expect(find.text('-1'), findsOneWidget);
+    expect(find.text('−1'), findsOneWidget); // total des sorties
 
     await unmount(tester);
   });

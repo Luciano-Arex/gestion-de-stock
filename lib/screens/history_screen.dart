@@ -34,10 +34,15 @@ class HistoryScreen extends StatefulWidget {
 
 class _HistoryScreenState extends State<HistoryScreen> {
   HistoryPeriod _period = HistoryPeriod.month;
+  MovementDirection _direction = MovementDirection.all;
   late Stream<List<HistoryEntry>> _stream = _watch();
+  late Stream<MovementTotals> _totals = _watchTotals();
 
-  Stream<List<HistoryEntry>> _watch() =>
-      widget.db.watchHistory(productId: widget.product?.id, since: periodStart(_period));
+  Stream<List<HistoryEntry>> _watch() => widget.db.watchHistory(
+      productId: widget.product?.id, since: periodStart(_period), direction: _direction);
+
+  Stream<MovementTotals> _watchTotals() =>
+      widget.db.watchTotals(productId: widget.product?.id, since: periodStart(_period));
 
   @override
   Widget build(BuildContext context) {
@@ -70,11 +75,21 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 ButtonSegment(value: HistoryPeriod.all, label: Text(t.periodAll)),
               ],
               selected: {_period},
+              showSelectedIcon: false,
               onSelectionChanged: (s) => setState(() {
                 _period = s.single;
                 _stream = _watch();
+                _totals = _watchTotals();
               }),
             ),
+          ),
+          _Totals(
+            stream: _totals,
+            direction: _direction,
+            onDirection: (d) => setState(() {
+              _direction = d;
+              _stream = _watch();
+            }),
           ),
           Expanded(
             child: StreamBuilder<List<HistoryEntry>>(
@@ -82,7 +97,18 @@ class _HistoryScreenState extends State<HistoryScreen> {
               builder: (context, snapshot) {
                 final entries = snapshot.data;
                 if (entries == null) return const Center(child: CircularProgressIndicator());
-                if (entries.isEmpty) return Center(child: Text(t.historyEmpty));
+                if (entries.isEmpty) {
+                  return Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.history, size: 48, color: Theme.of(context).colorScheme.outline),
+                        const SizedBox(height: 12),
+                        Text(t.historyEmpty),
+                      ],
+                    ),
+                  );
+                }
                 return ListView.separated(
                   itemCount: entries.length,
                   separatorBuilder: (_, _) => const Divider(height: 1),
@@ -143,6 +169,11 @@ class _HistoryTile extends StatelessWidget {
       MovementType.correction => (t.typeCorrection, Icons.undo),
     };
     final when = DateFormat.yMd(locale).add_Hm().format(m.createdAt);
+    final details = [
+      entry.cancelled ? '$when · ${t.cancelled}' : when,
+      if (m.unitPriceCents != null) '${formatCents(m.unitPriceCents)} € / ${t.unit}',
+      if (m.note case final note? when note.isNotEmpty) note,
+    ];
     final quantity = m.delta > 0 ? '+${m.delta}' : '${m.delta}';
     final strike = entry.cancelled ? const TextStyle(decoration: TextDecoration.lineThrough) : null;
     return ListTile(
@@ -152,7 +183,7 @@ class _HistoryTile extends StatelessWidget {
         showProduct ? '$label · ${entry.product.name}' : label,
         style: strike,
       ),
-      subtitle: Text(entry.cancelled ? '$when · ${t.cancelled}' : when),
+      subtitle: Text(details.join('\n')),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -161,6 +192,72 @@ class _HistoryTile extends StatelessWidget {
             IconButton(tooltip: t.undoEntry, icon: const Icon(Icons.undo), onPressed: onUndo),
         ],
       ),
+    );
+  }
+}
+
+/// Total des entrées et des sorties de la période. Un appui filtre la liste.
+class _Totals extends StatelessWidget {
+  const _Totals({required this.stream, required this.direction, required this.onDirection});
+
+  final Stream<MovementTotals> stream;
+  final MovementDirection direction;
+  final ValueChanged<MovementDirection> onDirection;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
+    return StreamBuilder<MovementTotals>(
+      stream: stream,
+      builder: (context, snapshot) {
+        final totals = snapshot.data ?? const MovementTotals(entered: 0, removed: 0);
+        Widget tile(MovementDirection d, IconData icon, String label, String value) {
+          final selected = direction == d;
+          return Expanded(
+            child: Card(
+              margin: const EdgeInsets.symmetric(horizontal: 4),
+              color: selected ? Theme.of(context).colorScheme.secondaryContainer : null,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(16),
+                onTap: () => onDirection(selected ? MovementDirection.all : d),
+                child: Semantics(
+                  selected: selected,
+                  button: true,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    child: Row(
+                      children: [
+                        Icon(icon),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(label, style: Theme.of(context).textTheme.labelLarge),
+                              Text(value, style: Theme.of(context).textTheme.titleLarge),
+                            ],
+                          ),
+                        ),
+                        if (selected) const Icon(Icons.filter_alt, size: 18),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        }
+
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
+          child: Row(
+            children: [
+              tile(MovementDirection.entries, Icons.south_west, t.entries, '+${totals.entered}'),
+              tile(MovementDirection.exits, Icons.north_east, t.exits, '−${totals.removed}'),
+            ],
+          ),
+        );
+      },
     );
   }
 }

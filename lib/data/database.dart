@@ -6,7 +6,10 @@ part 'database.g.dart';
 
 const _uuid = Uuid();
 
-/// Identifiants des catégories créées à l'installation. Les autres sont des UUID.
+/// Identifiants des catégories des premières versions. Les autres sont des UUID.
+///
+/// Un nouveau stock ne contient que [autre] : chacun crée ses propres catégories
+/// (maillots, jus, mèches…).
 abstract final class Category {
   static const meche = 'meche';
   static const maillot = 'maillot';
@@ -101,6 +104,16 @@ class StockLine {
   bool get isLow => !isOut && quantity <= product.alertThreshold;
 }
 
+/// Sens des mouvements affichés dans l'historique.
+enum MovementDirection { all, entries, exits }
+
+/// Total des entrées et des sorties sur une période.
+class MovementTotals {
+  const MovementTotals({required this.entered, required this.removed});
+  final int entered;
+  final int removed;
+}
+
 /// Une ligne de l'historique : le mouvement, son produit, et s'il a été annulé.
 class HistoryEntry {
   HistoryEntry(this.movement, this.product, {required this.cancelled});
@@ -114,7 +127,18 @@ class HistoryEntry {
 
 @DriftDatabase(tables: [Categories, Products, Movements, Settings])
 class AppDatabase extends _$AppDatabase {
-  AppDatabase([QueryExecutor? executor]) : super(executor ?? _openDefault());
+  AppDatabase([QueryExecutor? executor, this.defaultCategoryName = 'Autre'])
+      : super(executor ?? driftDatabase(name: localName));
+
+  /// Le stock enregistré sur l'appareil sous le fichier [name].
+  AppDatabase.named(String name, {String defaultCategoryName = 'Autre'})
+      : this(driftDatabase(name: name), defaultCategoryName);
+
+  /// Fichier du stock sans compte (et des versions sans comptes séparés).
+  static const localName = 'gestion_stock';
+
+  /// Nom, dans la langue de l'appli, de la catégorie créée avec un nouveau stock.
+  final String defaultCategoryName;
 
   @override
   int get schemaVersion => 2;
@@ -123,27 +147,30 @@ class AppDatabase extends _$AppDatabase {
   MigrationStrategy get migration => MigrationStrategy(
         onCreate: (m) async {
           await m.createAll();
-          await _insertDefaultCategories();
+          await _insertCategories({Category.autre: defaultCategoryName});
         },
         onUpgrade: (m, from, to) async {
           // v2 : catégories modifiables. Les produits gardent leurs identifiants
           // (« meche », « maillot », « autre »), qui deviennent des lignes de Categories.
           if (from < 2) {
             await m.createTable(categories);
-            await _insertDefaultCategories();
+            await _insertCategories({
+              Category.meche: 'Mèches',
+              Category.maillot: 'Maillots',
+              Category.autre: 'Autre',
+            });
           }
         },
       );
 
-  Future<void> _insertDefaultCategories() async {
+  Future<void> _insertCategories(Map<String, String> names) async {
     // Date ancienne : un renommage fait sur un autre appareil l'emporte toujours.
     final epoch = DateTime.utc(2000);
     await batch((b) => b.insertAll(
           categories,
           [
-            CategoriesCompanion.insert(id: const Value(Category.meche), name: 'Mèches', updatedAt: Value(epoch)),
-            CategoriesCompanion.insert(id: const Value(Category.maillot), name: 'Maillots', updatedAt: Value(epoch)),
-            CategoriesCompanion.insert(id: const Value(Category.autre), name: 'Autre', updatedAt: Value(epoch)),
+            for (final MapEntry(key: id, value: name) in names.entries)
+              CategoriesCompanion.insert(id: Value(id), name: name, updatedAt: Value(epoch)),
           ],
           mode: InsertMode.insertOrIgnore,
         ));
@@ -173,8 +200,6 @@ class AppDatabase extends _$AppDatabase {
   SimpleSelectStatement<$CategoriesTable, ProductCategory> pendingCategories() =>
       select(categories)
         ..where((c) => c.syncedAt.isNull() | c.updatedAt.isBiggerThan(c.syncedAt));
-
-  static QueryExecutor _openDefault() => driftDatabase(name: 'gestion_stock');
 
   Future<Product> addProduct({
     required String name,
@@ -281,7 +306,12 @@ class AppDatabase extends _$AppDatabase {
   /// Historique des mouvements, du plus récent au plus ancien.
   ///
   /// [productId] limite à un produit, [since] aux mouvements à partir de cette date.
-  Stream<List<HistoryEntry>> watchHistory({String? productId, DateTime? since, int limit = 500}) {
+  Stream<List<HistoryEntry>> watchHistory({
+    String? productId,
+    DateTime? since,
+    MovementDirection direction = MovementDirection.all,
+    int limit = 500,
+  }) {
     final cancellation = alias(movements, 'cancellation');
     final query = select(movements).join([
       innerJoin(products, products.id.equalsExp(movements.productId)),
@@ -291,6 +321,14 @@ class AppDatabase extends _$AppDatabase {
       ..limit(limit);
     if (productId != null) query.where(movements.productId.equals(productId));
     if (since != null) query.where(movements.createdAt.isBiggerOrEqualValue(since));
+    switch (direction) {
+      case MovementDirection.all:
+        break;
+      case MovementDirection.entries:
+        query.where(movements.type.equalsValue(MovementType.received));
+      case MovementDirection.exits:
+        query.where(movements.type.isInValues([MovementType.sold, MovementType.loss]));
+    }
     return query.watch().map((rows) => [
           for (final row in rows)
             HistoryEntry(
@@ -299,6 +337,29 @@ class AppDatabase extends _$AppDatabase {
               cancelled: row.readTableOrNull(cancellation) != null,
             ),
         ]);
+  }
+
+  /// Quantités entrées et sorties, saisies annulées exclues, pour la période
+  /// commençant à [since] (ou depuis toujours).
+  Stream<MovementTotals> watchTotals({String? productId, DateTime? since}) {
+    final m = alias(movements, 'm');
+    final c = alias(movements, 'c');
+    final entered = CaseWhenExpression<int>(
+      cases: [CaseWhen(m.delta.isBiggerThanValue(0), then: m.delta)],
+      orElse: const Constant(0),
+    ).sum();
+    final removed = CaseWhenExpression<int>(
+      cases: [CaseWhen(m.delta.isSmallerThanValue(0), then: -m.delta)],
+      orElse: const Constant(0),
+    ).sum();
+    final cancelled = existsQuery(select(c)..where((c) => c.cancelsId.equalsExp(m.id)));
+    final query = selectOnly(m)
+      ..addColumns([entered, removed])
+      ..where(m.type.equalsValue(MovementType.correction).not() & cancelled.not());
+    if (productId != null) query.where(m.productId.equals(productId));
+    if (since != null) query.where(m.createdAt.isBiggerOrEqualValue(since));
+    return query.watchSingle().map(
+        (row) => MovementTotals(entered: row.read(entered) ?? 0, removed: row.read(removed) ?? 0));
   }
 
   /// Produits en rupture ou sous leur seuil : la liste « à recommander ».

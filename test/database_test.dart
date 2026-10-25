@@ -141,4 +141,25 @@ void main() {
     await expectLater(db.undo(arrivage.id), throwsA(isA<NotEnoughStock>()));
     expect(await db.stockOf(maillot.id), 1);
   });
+
+  test('totaux de l\'historique : entrées et sorties, saisies annulées exclues', () async {
+    final p = await db.addProduct(name: 'Jus de gingembre', category: Category.autre);
+    await db.receive(p.id, 10);
+    final erreur = await db.receive(p.id, 5);
+    await db.undo(erreur.id);
+    await db.sell(p.id, 3);
+    await db.lose(p.id, 1);
+
+    final totals = await db.watchTotals().first;
+    expect(totals.entered, 10);
+    expect(totals.removed, 4);
+
+    final entries = await db.watchHistory(direction: MovementDirection.entries).first;
+    expect(entries.map((e) => e.movement.delta), unorderedEquals([5, 10]));
+    final exits = await db.watchHistory(direction: MovementDirection.exits).first;
+    expect(exits.map((e) => e.movement.type), unorderedEquals([MovementType.loss, MovementType.sold]));
+
+    final tomorrow = DateTime.now().add(const Duration(days: 1));
+    expect((await db.watchTotals(since: tomorrow).first).entered, 0);
+  });
 }

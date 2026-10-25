@@ -489,4 +489,123 @@ class AppLocalizationsFr extends AppLocalizations {
   String pinForgotWithAccount(String email) {
     return 'Entrez le mot de passe du compte $email pour supprimer le code PIN.';
   }
+
+  @override
+  String get defaultCategory => 'Autre';
+
+  @override
+  String get loginSubtitle => 'Votre stock, sur votre téléphone et votre PC.';
+
+  @override
+  String get createAccount => 'Créer un compte';
+
+  @override
+  String get showPassword => 'Afficher le mot de passe';
+
+  @override
+  String get hidePassword => 'Masquer le mot de passe';
+
+  @override
+  String get passwordRule => 'Au moins 6 caractères';
+
+  @override
+  String get passwordConfirm => 'Retapez le mot de passe';
+
+  @override
+  String get passwordMismatch => 'Les deux mots de passe ne sont pas pareils';
+
+  @override
+  String signUpCheckEmail(String email) {
+    return 'Compte créé. Ouvrez l\'e-mail envoyé à $email, cliquez sur le lien de confirmation, puis connectez-vous ici.';
+  }
+
+  @override
+  String get forgotPassword => 'Mot de passe oublié ?';
+
+  @override
+  String get resetIntro =>
+      'Entrez l\'adresse e-mail de votre compte. Vous recevrez un code pour choisir un nouveau mot de passe.';
+
+  @override
+  String resetCodeSent(String email) {
+    return 'Un code a été envoyé à $email. Entrez-le ci-dessous avec votre nouveau mot de passe.';
+  }
+
+  @override
+  String get resetCode => 'Code reçu par e-mail';
+
+  @override
+  String get newPassword => 'Nouveau mot de passe';
+
+  @override
+  String get resetSend => 'Recevoir un code';
+
+  @override
+  String get resetConfirm => 'Changer le mot de passe';
+
+  @override
+  String get authEmailInvalid => 'Adresse e-mail invalide';
+
+  @override
+  String get authOffline =>
+      'Pas de connexion internet. La première connexion sur un appareil a besoin d\'internet.';
+
+  @override
+  String get authInvalid => 'Adresse e-mail ou mot de passe incorrect';
+
+  @override
+  String get authNotConfirmed =>
+      'Adresse pas encore confirmée : cliquez d\'abord sur le lien reçu par e-mail.';
+
+  @override
+  String get authExists =>
+      'Un compte existe déjà avec cette adresse. Connectez-vous.';
+
+  @override
+  String get authSignupDisabled =>
+      'La création de comptes est désactivée sur le serveur.';
+
+  @override
+  String get authRateLimit =>
+      'Trop de demandes. Réessayez dans quelques minutes.';
+
+  @override
+  String get authCodeInvalid => 'Code incorrect ou expiré';
+
+  @override
+  String authUnknown(String message) {
+    return 'Erreur : $message';
+  }
+
+  @override
+  String get account => 'Compte';
+
+  @override
+  String get signOutConfirm =>
+      'Vous devrez entrer à nouveau votre mot de passe. Votre stock reste enregistré sur le serveur.';
+
+  @override
+  String get signOutPending =>
+      'Certaines saisies ne sont pas encore envoyées au serveur. Elles restent sur cet appareil et partiront à votre prochaine connexion.';
+
+  @override
+  String get unit => 'pièce';
+
+  @override
+  String get entries => 'Entrées';
+
+  @override
+  String get exits => 'Sorties';
+
+  @override
+  String get summaryProducts => 'articles';
+
+  @override
+  String get summaryPieces => 'pièces en stock';
+
+  @override
+  String get summaryInToday => 'entrées aujourd\'hui';
+
+  @override
+  String get summaryOutToday => 'sorties aujourd\'hui';
 }

@@ -945,6 +945,216 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Entrez le mot de passe du compte {email} pour supprimer le code PIN.'**
   String pinForgotWithAccount(String email);
+
+  /// No description provided for @defaultCategory.
+  ///
+  /// In fr, this message translates to:
+  /// **'Autre'**
+  String get defaultCategory;
+
+  /// No description provided for @loginSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre stock, sur votre téléphone et votre PC.'**
+  String get loginSubtitle;
+
+  /// No description provided for @createAccount.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer un compte'**
+  String get createAccount;
+
+  /// No description provided for @showPassword.
+  ///
+  /// In fr, this message translates to:
+  /// **'Afficher le mot de passe'**
+  String get showPassword;
+
+  /// No description provided for @hidePassword.
+  ///
+  /// In fr, this message translates to:
+  /// **'Masquer le mot de passe'**
+  String get hidePassword;
+
+  /// No description provided for @passwordRule.
+  ///
+  /// In fr, this message translates to:
+  /// **'Au moins 6 caractères'**
+  String get passwordRule;
+
+  /// No description provided for @passwordConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retapez le mot de passe'**
+  String get passwordConfirm;
+
+  /// No description provided for @passwordMismatch.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les deux mots de passe ne sont pas pareils'**
+  String get passwordMismatch;
+
+  /// No description provided for @signUpCheckEmail.
+  ///
+  /// In fr, this message translates to:
+  /// **'Compte créé. Ouvrez l\'e-mail envoyé à {email}, cliquez sur le lien de confirmation, puis connectez-vous ici.'**
+  String signUpCheckEmail(String email);
+
+  /// No description provided for @forgotPassword.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mot de passe oublié ?'**
+  String get forgotPassword;
+
+  /// No description provided for @resetIntro.
+  ///
+  /// In fr, this message translates to:
+  /// **'Entrez l\'adresse e-mail de votre compte. Vous recevrez un code pour choisir un nouveau mot de passe.'**
+  String get resetIntro;
+
+  /// No description provided for @resetCodeSent.
+  ///
+  /// In fr, this message translates to:
+  /// **'Un code a été envoyé à {email}. Entrez-le ci-dessous avec votre nouveau mot de passe.'**
+  String resetCodeSent(String email);
+
+  /// No description provided for @resetCode.
+  ///
+  /// In fr, this message translates to:
+  /// **'Code reçu par e-mail'**
+  String get resetCode;
+
+  /// No description provided for @newPassword.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouveau mot de passe'**
+  String get newPassword;
+
+  /// No description provided for @resetSend.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recevoir un code'**
+  String get resetSend;
+
+  /// No description provided for @resetConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Changer le mot de passe'**
+  String get resetConfirm;
+
+  /// No description provided for @authEmailInvalid.
+  ///
+  /// In fr, this message translates to:
+  /// **'Adresse e-mail invalide'**
+  String get authEmailInvalid;
+
+  /// No description provided for @authOffline.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pas de connexion internet. La première connexion sur un appareil a besoin d\'internet.'**
+  String get authOffline;
+
+  /// No description provided for @authInvalid.
+  ///
+  /// In fr, this message translates to:
+  /// **'Adresse e-mail ou mot de passe incorrect'**
+  String get authInvalid;
+
+  /// No description provided for @authNotConfirmed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Adresse pas encore confirmée : cliquez d\'abord sur le lien reçu par e-mail.'**
+  String get authNotConfirmed;
+
+  /// No description provided for @authExists.
+  ///
+  /// In fr, this message translates to:
+  /// **'Un compte existe déjà avec cette adresse. Connectez-vous.'**
+  String get authExists;
+
+  /// No description provided for @authSignupDisabled.
+  ///
+  /// In fr, this message translates to:
+  /// **'La création de comptes est désactivée sur le serveur.'**
+  String get authSignupDisabled;
+
+  /// No description provided for @authRateLimit.
+  ///
+  /// In fr, this message translates to:
+  /// **'Trop de demandes. Réessayez dans quelques minutes.'**
+  String get authRateLimit;
+
+  /// No description provided for @authCodeInvalid.
+  ///
+  /// In fr, this message translates to:
+  /// **'Code incorrect ou expiré'**
+  String get authCodeInvalid;
+
+  /// No description provided for @authUnknown.
+  ///
+  /// In fr, this message translates to:
+  /// **'Erreur : {message}'**
+  String authUnknown(String message);
+
+  /// No description provided for @account.
+  ///
+  /// In fr, this message translates to:
+  /// **'Compte'**
+  String get account;
+
+  /// No description provided for @signOutConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vous devrez entrer à nouveau votre mot de passe. Votre stock reste enregistré sur le serveur.'**
+  String get signOutConfirm;
+
+  /// No description provided for @signOutPending.
+  ///
+  /// In fr, this message translates to:
+  /// **'Certaines saisies ne sont pas encore envoyées au serveur. Elles restent sur cet appareil et partiront à votre prochaine connexion.'**
+  String get signOutPending;
+
+  /// No description provided for @unit.
+  ///
+  /// In fr, this message translates to:
+  /// **'pièce'**
+  String get unit;
+
+  /// No description provided for @entries.
+  ///
+  /// In fr, this message translates to:
+  /// **'Entrées'**
+  String get entries;
+
+  /// No description provided for @exits.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sorties'**
+  String get exits;
+
+  /// No description provided for @summaryProducts.
+  ///
+  /// In fr, this message translates to:
+  /// **'articles'**
+  String get summaryProducts;
+
+  /// No description provided for @summaryPieces.
+  ///
+  /// In fr, this message translates to:
+  /// **'pièces en stock'**
+  String get summaryPieces;
+
+  /// No description provided for @summaryInToday.
+  ///
+  /// In fr, this message translates to:
+  /// **'entrées aujourd\'hui'**
+  String get summaryInToday;
+
+  /// No description provided for @summaryOutToday.
+  ///
+  /// In fr, this message translates to:
+  /// **'sorties aujourd\'hui'**
+  String get summaryOutToday;
 }
 
 class _AppLocalizationsDelegate

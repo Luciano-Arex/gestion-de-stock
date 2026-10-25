@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../data/account.dart';
 import '../data/database.dart';
 import '../data/locale_controller.dart';
 import '../data/pin_lock.dart';
@@ -14,12 +15,13 @@ import 'sync_screen.dart';
 
 /// Accueil : les deux actions du quotidien, en gros, et l'accès au stock.
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key, required this.db, this.sync, this.locale, this.pin});
+  const HomeScreen({super.key, required this.db, this.sync, this.locale, this.pin, this.accounts});
 
   final AppDatabase db;
   final SyncController? sync;
   final LocaleController? locale;
   final PinLock? pin;
+  final AccountController? accounts;
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +49,7 @@ class HomeScreen extends StatelessWidget {
             tooltip: t.settings,
             icon: const Icon(Icons.settings_outlined),
             onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => SettingsScreen(db: db, locale: locale, pin: pin)),
+              MaterialPageRoute(builder: (_) => SettingsScreen(db: db, locale: locale, pin: pin, accounts: accounts)),
             ),
           ),
         ],
@@ -61,6 +63,8 @@ class HomeScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  _Summary(db: db),
+                  const SizedBox(height: 24),
                   _ReorderBanner(db: db),
                   _BigAction(
                     icon: Icons.move_to_inbox,
@@ -190,6 +194,66 @@ class _SecondaryAction extends StatelessWidget {
       icon: Icon(icon),
       label: Text(label),
       onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: builder)),
+    );
+  }
+}
+
+/// Chiffres du jour en un coup d'œil : articles, pièces en stock, entrées et sorties.
+class _Summary extends StatelessWidget {
+  const _Summary({required this.db});
+
+  final AppDatabase db;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
+    final now = DateTime.now();
+    return StreamBuilder<List<StockLine>>(
+      stream: db.watchStock(),
+      builder: (context, stock) => StreamBuilder<MovementTotals>(
+        stream: db.watchTotals(since: DateTime(now.year, now.month, now.day)),
+        builder: (context, today) {
+          final lines = stock.data ?? const <StockLine>[];
+          final pieces = lines.fold<int>(0, (sum, l) => sum + (l.quantity > 0 ? l.quantity : 0));
+          return Card(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+              child: Row(
+                children: [
+                  _Figure(value: '${lines.length}', label: t.summaryProducts),
+                  _Figure(value: '$pieces', label: t.summaryPieces),
+                  _Figure(value: '+${today.data?.entered ?? 0}', label: t.summaryInToday),
+                  _Figure(value: '−${today.data?.removed ?? 0}', label: t.summaryOutToday),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _Figure extends StatelessWidget {
+  const _Figure({required this.value, required this.label});
+
+  final String value;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final text = Theme.of(context).textTheme;
+    return Expanded(
+      child: Semantics(
+        container: true,
+        child: Column(
+          children: [
+            Text(value, style: text.headlineSmall?.copyWith(fontWeight: FontWeight.w600)),
+            const SizedBox(height: 4),
+            Text(label, style: text.bodySmall, textAlign: TextAlign.center),
+          ],
+        ),
+      ),
     );
   }
 }

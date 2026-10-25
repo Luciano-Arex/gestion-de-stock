@@ -487,4 +487,122 @@ class AppLocalizationsEn extends AppLocalizations {
   String pinForgotWithAccount(String email) {
     return 'Enter the password of the account $email to remove the PIN.';
   }
+
+  @override
+  String get defaultCategory => 'Other';
+
+  @override
+  String get loginSubtitle => 'Your stock, on your phone and your PC.';
+
+  @override
+  String get createAccount => 'Create account';
+
+  @override
+  String get showPassword => 'Show password';
+
+  @override
+  String get hidePassword => 'Hide password';
+
+  @override
+  String get passwordRule => 'At least 6 characters';
+
+  @override
+  String get passwordConfirm => 'Type the password again';
+
+  @override
+  String get passwordMismatch => 'The two passwords don\'t match';
+
+  @override
+  String signUpCheckEmail(String email) {
+    return 'Account created. Open the email sent to $email, click the confirmation link, then sign in here.';
+  }
+
+  @override
+  String get forgotPassword => 'Forgot your password?';
+
+  @override
+  String get resetIntro =>
+      'Enter your account\'s email address. You\'ll receive a code to choose a new password.';
+
+  @override
+  String resetCodeSent(String email) {
+    return 'A code was sent to $email. Enter it below with your new password.';
+  }
+
+  @override
+  String get resetCode => 'Code from the email';
+
+  @override
+  String get newPassword => 'New password';
+
+  @override
+  String get resetSend => 'Get a code';
+
+  @override
+  String get resetConfirm => 'Change password';
+
+  @override
+  String get authEmailInvalid => 'Invalid email address';
+
+  @override
+  String get authOffline =>
+      'No internet connection. The first sign-in on a device needs internet.';
+
+  @override
+  String get authInvalid => 'Wrong email address or password';
+
+  @override
+  String get authNotConfirmed =>
+      'Address not confirmed yet: first click the link in the email.';
+
+  @override
+  String get authExists =>
+      'An account already exists with this address. Please sign in.';
+
+  @override
+  String get authSignupDisabled =>
+      'Creating accounts is turned off on the server.';
+
+  @override
+  String get authRateLimit => 'Too many requests. Try again in a few minutes.';
+
+  @override
+  String get authCodeInvalid => 'Wrong or expired code';
+
+  @override
+  String authUnknown(String message) {
+    return 'Error: $message';
+  }
+
+  @override
+  String get account => 'Account';
+
+  @override
+  String get signOutConfirm =>
+      'You\'ll need to enter your password again. Your stock stays saved on the server.';
+
+  @override
+  String get signOutPending =>
+      'Some entries haven\'t been sent to the server yet. They stay on this device and will be sent next time you sign in.';
+
+  @override
+  String get unit => 'item';
+
+  @override
+  String get entries => 'In';
+
+  @override
+  String get exits => 'Out';
+
+  @override
+  String get summaryProducts => 'items';
+
+  @override
+  String get summaryPieces => 'units in stock';
+
+  @override
+  String get summaryInToday => 'in today';
+
+  @override
+  String get summaryOutToday => 'out today';
 }
