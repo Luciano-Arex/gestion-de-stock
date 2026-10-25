@@ -34,7 +34,9 @@ Future<void> recordMovement(BuildContext context, AppDatabase db, MovementKind k
     return;
   }
   messenger.showSnackBar(SnackBar(
-    duration: const Duration(seconds: 8),
+    duration: const Duration(seconds: 6),
+    // Avec un bouton, Flutter garde le bandeau jusqu'à ce qu'on le ferme : on veut qu'il parte seul.
+    persist: false,
     content: Text(switch (kind) {
       MovementKind.receive => t.receivedDone(result.quantity, name),
       MovementKind.sell => t.soldDone(result.quantity, name),
