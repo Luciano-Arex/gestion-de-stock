@@ -1,0 +1,201 @@
+import 'package:drift/drift.dart' show Value;
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+import '../data/database.dart';
+import '../l10n/app_localizations.dart';
+import '../util/money.dart';
+
+/// Création ou modification d'un produit. Renvoie le produit enregistré.
+class ProductFormScreen extends StatefulWidget {
+  const ProductFormScreen({super.key, required this.db, this.product, this.initialName = ''});
+
+  final AppDatabase db;
+  final Product? product;
+  final String initialName;
+
+  @override
+  State<ProductFormScreen> createState() => _ProductFormScreenState();
+}
+
+class _ProductFormScreenState extends State<ProductFormScreen> {
+  final _formKey = GlobalKey<FormState>();
+  late final _name = TextEditingController(text: widget.product?.name ?? widget.initialName);
+  late final _threshold =
+      TextEditingController(text: (widget.product?.alertThreshold ?? 2).toString());
+  late final _salePrice = TextEditingController(text: formatCents(widget.product?.salePriceCents));
+  late final _purchasePrice =
+      TextEditingController(text: formatCents(widget.product?.purchasePriceCents));
+  late final _barcode = TextEditingController(text: widget.product?.barcode ?? '');
+  late Category _category = widget.product?.category ?? Category.meche;
+  bool _saving = false;
+
+  @override
+  void dispose() {
+    for (final c in [_name, _threshold, _salePrice, _purchasePrice, _barcode]) {
+      c.dispose();
+    }
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
+    final existing = widget.product;
+    return Scaffold(
+      appBar: AppBar(title: Text(existing == null ? t.newProduct : t.editProduct)),
+      // Toujours visible, même quand le clavier cache le bas du formulaire.
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: FilledButton(
+            style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(56)),
+            onPressed: _saving ? null : _save,
+            child: Text(t.save),
+          ),
+        ),
+      ),
+      body: SafeArea(
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              TextFormField(
+                controller: _name,
+                autofocus: existing == null && widget.initialName.isEmpty,
+                textCapitalization: TextCapitalization.sentences,
+                textInputAction: TextInputAction.next,
+                decoration: InputDecoration(
+                  labelText: t.productName,
+                  helperText: t.productNameHelp,
+                  border: const OutlineInputBorder(),
+                ),
+                validator: (v) => (v == null || v.trim().isEmpty) ? t.productNameRequired : null,
+              ),
+              const SizedBox(height: 24),
+              Text(t.category, style: Theme.of(context).textTheme.titleMedium),
+              const SizedBox(height: 8),
+              SegmentedButton<Category>(
+                segments: [
+                  ButtonSegment(value: Category.meche, label: Text(t.categoryMeche)),
+                  ButtonSegment(value: Category.maillot, label: Text(t.categoryMaillot)),
+                  ButtonSegment(value: Category.autre, label: Text(t.categoryAutre)),
+                ],
+                selected: {_category},
+                onSelectionChanged: (s) => setState(() => _category = s.single),
+              ),
+              const SizedBox(height: 24),
+              TextFormField(
+                controller: _threshold,
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                textInputAction: TextInputAction.next,
+                decoration: InputDecoration(
+                  labelText: t.alertThreshold,
+                  helperText: t.alertThresholdHelp,
+                  helperMaxLines: 3,
+                  border: const OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 16),
+              _priceField(_salePrice, t.salePrice, t),
+              const SizedBox(height: 16),
+              _priceField(_purchasePrice, t.purchasePrice, t),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _barcode,
+                decoration: InputDecoration(
+                  labelText: t.barcode,
+                  border: const OutlineInputBorder(),
+                ),
+              ),
+              if (existing != null) ...[
+                const SizedBox(height: 24),
+                TextButton.icon(
+                  style: TextButton.styleFrom(minimumSize: const Size.fromHeight(48)),
+                  icon: const Icon(Icons.archive_outlined),
+                  label: Text(t.archive),
+                  onPressed: _saving ? null : _archive,
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _priceField(TextEditingController controller, String label, AppLocalizations t) {
+    return TextFormField(
+      controller: controller,
+      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+      textInputAction: TextInputAction.next,
+      decoration: InputDecoration(
+        labelText: label,
+        suffixText: '€',
+        border: const OutlineInputBorder(),
+      ),
+      validator: (v) {
+        try {
+          parseCents(v ?? '');
+          return null;
+        } on FormatException {
+          return t.invalidPrice;
+        }
+      },
+    );
+  }
+
+  Future<void> _save() async {
+    if (!_formKey.currentState!.validate()) return;
+    setState(() => _saving = true);
+    final name = _name.text.trim();
+    final threshold = int.tryParse(_threshold.text) ?? 0;
+    final sale = parseCents(_salePrice.text);
+    final purchase = parseCents(_purchasePrice.text);
+    final barcode = _barcode.text.trim().isEmpty ? null : _barcode.text.trim();
+
+    final existing = widget.product;
+    final Product saved;
+    if (existing == null) {
+      saved = await widget.db.addProduct(
+        name: name,
+        category: _category,
+        alertThreshold: threshold,
+        salePriceCents: sale,
+        purchasePriceCents: purchase,
+        barcode: barcode,
+      );
+    } else {
+      saved = existing.copyWith(
+        name: name,
+        category: _category,
+        alertThreshold: threshold,
+        salePriceCents: Value(sale),
+        purchasePriceCents: Value(purchase),
+        barcode: Value(barcode),
+      );
+      await widget.db.updateProduct(saved);
+    }
+    if (mounted) Navigator.of(context).pop(saved);
+  }
+
+  Future<void> _archive() async {
+    final t = AppLocalizations.of(context)!;
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(t.archive),
+        content: Text(t.archiveConfirm),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: Text(t.cancel)),
+          FilledButton(onPressed: () => Navigator.pop(context, true), child: Text(t.confirm)),
+        ],
+      ),
+    );
+    if (ok != true) return;
+    await widget.db.archiveProduct(widget.product!.id);
+    if (mounted) Navigator.of(context).pop();
+  }
+}

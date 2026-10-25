@@ -61,6 +61,26 @@ void main() {
     expect(await db.stockOf(maillot.id), 0);
   });
 
+  test('modifier un produit garde son stock', () async {
+    await db.receive(maillot.id, 4);
+    await db.updateProduct(maillot.copyWith(name: 'Maillot Cameroun domicile 2024 L'));
+
+    final lignes = await db.watchStock().first;
+    expect(lignes.single.product.name, 'Maillot Cameroun domicile 2024 L');
+    expect(lignes.single.quantity, 4);
+  });
+
+  test('un produit archivé disparaît de la liste', () async {
+    await db.archiveProduct(maillot.id);
+    expect(await db.watchStock().first, isEmpty);
+  });
+
+  test('la recherche ignore les majuscules', () async {
+    await db.addProduct(name: 'Tissage lisse 18 pouces', category: Category.meche);
+    final resultat = await db.watchStock(search: 'TISSAGE').first;
+    expect(resultat.map((l) => l.product.name), ['Tissage lisse 18 pouces']);
+  });
+
   test('la liste du stock signale ruptures et seuils bas', () async {
     final meche = await db.addProduct(name: 'Tissage lisse 18 pouces', category: Category.meche);
     await db.receive(maillot.id, 2);

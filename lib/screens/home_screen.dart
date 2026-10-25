@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../data/database.dart';
 import '../l10n/app_localizations.dart';
+import 'movement_screen.dart';
 import 'stock_screen.dart';
 
 /// Accueil : les deux actions du quotidien, en gros, et l'accès au stock.
@@ -29,14 +30,14 @@ class HomeScreen extends StatelessWidget {
                     icon: Icons.move_to_inbox,
                     label: t.received,
                     hint: t.receivedHint,
-                    onPressed: () => _comingSoon(context, t.received),
+                    onPressed: () => _record(context, MovementKind.receive),
                   ),
                   const SizedBox(height: 24),
                   _BigAction(
                     icon: Icons.sell,
                     label: t.sold,
                     hint: t.soldHint,
-                    onPressed: () => _comingSoon(context, t.sold),
+                    onPressed: () => _record(context, MovementKind.sell),
                   ),
                   const SizedBox(height: 40),
                   OutlinedButton.icon(
@@ -56,12 +57,29 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  // Les écrans de saisie arrivent aux tâches 4 et 5 du plan.
-  void _comingSoon(BuildContext context, String title) {
-    Navigator.of(context).push(MaterialPageRoute(
-      builder: (context) => Scaffold(
-        appBar: AppBar(title: Text(title)),
-        body: Center(child: Text(AppLocalizations.of(context)!.comingSoon)),
+  /// Ouvre la saisie, puis confirme avec un bouton « Annuler » pendant quelques secondes.
+  Future<void> _record(BuildContext context, MovementKind kind) async {
+    final t = AppLocalizations.of(context)!;
+    final messenger = ScaffoldMessenger.of(context);
+    final result = await Navigator.of(context).push<MovementResult>(
+      MaterialPageRoute(builder: (_) => MovementScreen(db: db, kind: kind)),
+    );
+    if (result == null) return;
+    final name = result.product.name;
+    // Une seule confirmation à l'écran : la plus récente.
+    messenger.hideCurrentSnackBar();
+    messenger.showSnackBar(SnackBar(
+      duration: const Duration(seconds: 8),
+      content: Text(kind == MovementKind.receive
+          ? t.receivedDone(result.quantity, name)
+          : t.soldDone(result.quantity, name)),
+      action: SnackBarAction(
+        label: t.undo,
+        onPressed: () async {
+          await db.undo(result.movement.id);
+          messenger.hideCurrentSnackBar();
+          messenger.showSnackBar(SnackBar(content: Text(t.undone)));
+        },
       ),
     ));
   }

@@ -99,6 +99,17 @@ class AppDatabase extends _$AppDatabase {
     ));
   }
 
+  Future<void> updateProduct(Product product) {
+    return update(products).replace(product.copyWith(updatedAt: DateTime.now()));
+  }
+
+  /// Masque un produit qu'on ne vend plus, sans perdre son historique.
+  Future<void> archiveProduct(String productId) {
+    return (update(products)..where((p) => p.id.equals(productId))).write(
+      ProductsCompanion(archived: const Value(true), updatedAt: Value(DateTime.now())),
+    );
+  }
+
   Future<int> stockOf(String productId) async {
     final total = movements.delta.sum();
     final row = await (selectOnly(movements)
@@ -145,7 +156,9 @@ class AppDatabase extends _$AppDatabase {
   }
 
   /// Liste du stock, mise à jour en direct, produits archivés exclus.
-  Stream<List<StockLine>> watchStock() {
+  ///
+  /// [search] filtre sur le nom ou le code-barres (majuscules ignorées).
+  Stream<List<StockLine>> watchStock({String search = ''}) {
     final total = movements.delta.sum();
     final query = select(products).join([
       leftOuterJoin(movements, movements.productId.equalsExp(products.id)),
@@ -153,7 +166,12 @@ class AppDatabase extends _$AppDatabase {
       ..addColumns([total])
       ..where(products.archived.equals(false))
       ..groupBy([products.id])
-      ..orderBy([OrderingTerm.asc(products.name)]);
+      ..orderBy([OrderingTerm.asc(products.name.collate(Collate.noCase))]);
+    final term = search.trim();
+    if (term.isNotEmpty) {
+      final pattern = '%${term.replaceAll('%', '').replaceAll('_', '')}%';
+      query.where(products.name.like(pattern) | products.barcode.like(pattern));
+    }
     return query.watch().map((rows) => [
           for (final row in rows) StockLine(row.readTable(products), row.read(total) ?? 0),
         ]);

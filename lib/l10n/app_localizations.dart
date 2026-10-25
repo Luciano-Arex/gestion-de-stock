@@ -136,6 +136,12 @@ abstract class AppLocalizations {
   /// **'Aucun produit pour l\'instant.'**
   String get stockEmpty;
 
+  /// No description provided for @noResult.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun produit ne correspond.'**
+  String get noResult;
+
   /// No description provided for @quantity.
   ///
   /// In fr, this message translates to:
@@ -154,11 +160,197 @@ abstract class AppLocalizations {
   /// **'À recommander'**
   String get lowStock;
 
-  /// No description provided for @comingSoon.
+  /// No description provided for @search.
   ///
   /// In fr, this message translates to:
-  /// **'Cet écran arrive dans la prochaine étape.'**
-  String get comingSoon;
+  /// **'Chercher un produit'**
+  String get search;
+
+  /// No description provided for @newProduct.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouveau produit'**
+  String get newProduct;
+
+  /// No description provided for @editProduct.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier le produit'**
+  String get editProduct;
+
+  /// No description provided for @productName.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom du produit'**
+  String get productName;
+
+  /// No description provided for @productNameHelp.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ex. : Maillot Cameroun domicile 2024, taille M'**
+  String get productNameHelp;
+
+  /// No description provided for @productNameRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Indique un nom.'**
+  String get productNameRequired;
+
+  /// No description provided for @category.
+  ///
+  /// In fr, this message translates to:
+  /// **'Catégorie'**
+  String get category;
+
+  /// No description provided for @categoryMeche.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mèches'**
+  String get categoryMeche;
+
+  /// No description provided for @categoryMaillot.
+  ///
+  /// In fr, this message translates to:
+  /// **'Maillots'**
+  String get categoryMaillot;
+
+  /// No description provided for @categoryAutre.
+  ///
+  /// In fr, this message translates to:
+  /// **'Autre'**
+  String get categoryAutre;
+
+  /// No description provided for @alertThreshold.
+  ///
+  /// In fr, this message translates to:
+  /// **'Me prévenir à partir de'**
+  String get alertThreshold;
+
+  /// No description provided for @alertThresholdHelp.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le produit passe « À recommander » quand il en reste ce nombre ou moins.'**
+  String get alertThresholdHelp;
+
+  /// No description provided for @salePrice.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prix de vente (facultatif)'**
+  String get salePrice;
+
+  /// No description provided for @purchasePrice.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prix d\'achat (facultatif)'**
+  String get purchasePrice;
+
+  /// No description provided for @barcode.
+  ///
+  /// In fr, this message translates to:
+  /// **'Code-barres (facultatif)'**
+  String get barcode;
+
+  /// No description provided for @save.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer'**
+  String get save;
+
+  /// No description provided for @archive.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ne plus vendre ce produit'**
+  String get archive;
+
+  /// No description provided for @archiveConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le produit sera masqué. Son historique est conservé.'**
+  String get archiveConfirm;
+
+  /// No description provided for @cancel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annuler'**
+  String get cancel;
+
+  /// No description provided for @confirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Confirmer'**
+  String get confirm;
+
+  /// No description provided for @whichProduct.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quel produit ?'**
+  String get whichProduct;
+
+  /// No description provided for @howMany.
+  ///
+  /// In fr, this message translates to:
+  /// **'Combien ?'**
+  String get howMany;
+
+  /// No description provided for @less.
+  ///
+  /// In fr, this message translates to:
+  /// **'Un de moins'**
+  String get less;
+
+  /// No description provided for @more.
+  ///
+  /// In fr, this message translates to:
+  /// **'Un de plus'**
+  String get more;
+
+  /// No description provided for @validate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Valider'**
+  String get validate;
+
+  /// No description provided for @invalidQuantity.
+  ///
+  /// In fr, this message translates to:
+  /// **'Indique un nombre supérieur à 0.'**
+  String get invalidQuantity;
+
+  /// No description provided for @notEnoughStock.
+  ///
+  /// In fr, this message translates to:
+  /// **'Il n\'en reste que {count}. Vérifie la quantité.'**
+  String notEnoughStock(int count);
+
+  /// No description provided for @receivedDone.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count} × {name} ajouté au stock'**
+  String receivedDone(int count, String name);
+
+  /// No description provided for @soldDone.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count} × {name} retiré du stock'**
+  String soldDone(int count, String name);
+
+  /// No description provided for @undo.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annuler'**
+  String get undo;
+
+  /// No description provided for @undone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Saisie annulée'**
+  String get undone;
+
+  /// No description provided for @invalidPrice.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prix non valide. Ex. : 25 ou 25,50'**
+  String get invalidPrice;
 }
 
 class _AppLocalizationsDelegate
